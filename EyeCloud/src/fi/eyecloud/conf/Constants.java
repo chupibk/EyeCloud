@@ -63,5 +63,4 @@ public class Constants {
 	 * Storm setting
 	 */
 	public static String PARAMETER_SPLIT			= "@";
-	
 }
