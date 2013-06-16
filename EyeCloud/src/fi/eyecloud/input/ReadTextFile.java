@@ -91,6 +91,10 @@ public class ReadTextFile {
 		return mapHeader;
 	}
 	
+	public String getCurrentLine(){
+		return currentLine;
+	}
+	
 	/**
 	 * @param args
 	 */

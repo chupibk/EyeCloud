@@ -55,7 +55,7 @@ public class Constants {
 	 */
 	public static int FIXATION_DURATION_THRESHOLD	= 100; // Millisecond
 	public static float VELOCITY_THRESHOLD			= 65;	// Degree
-	public static String OUTPUT_FILE				= "/home/hadoop/eye/result_storm.txt";
+	public static String OUTPUT_FILE				= "/Users/daothanhchung/Desktop/EyeCloud/Data/Output/result_drpc.txt";
 	//public static String OUTPUT_FILE				= "result_storm.txt";
 	public static int KIND_UNKNOWN					= 0;
 	public static int KIND_FIXATION					= 1;
@@ -63,6 +63,7 @@ public class Constants {
 	/**
 	 * Storm setting
 	 */
-	public static String PARAMETER_SPLIT			= "@";
+	public static String PARAMETER_SPLIT			= ",";
+	public static int PARAMETER_NUMBER				= 4;
 	
 }

@@ -38,7 +38,7 @@ public class Library {
 		//System.out.println(cosC);
 		float degree;
 		degree = (float)Math.acos(cosC)*180/(float)Math.PI;
-		System.out.println(degree/dur * Constants.THOUSAND + " " + dur);
+		//System.out.println(degree/dur * Constants.THOUSAND + " " + dur);
 		return degree/dur * Constants.THOUSAND;
 	}
 }
