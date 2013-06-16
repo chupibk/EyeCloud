@@ -4,8 +4,8 @@ public class Constants {
 	/**
 	 * Header setting
 	 */
-	public final static String Timestamp 			= "Timestamp";
-	public final static String Number 				= "Number";
+	public final static String Timestamp 			= "RecordingTimestamp";
+	public final static String Number 				= "GazePointIndex";
 	public final static String GazePointXLeft 		= "GazePointXLeft";
 	public final static String GazePointYLeft		= "GazePointYLeft";
 	public final static String CamXLeft 			= "CamXLeft";
@@ -39,21 +39,22 @@ public class Constants {
 	/**
 	 * Screen setting
 	 */
-	public static int RESOLUTION_WIDTH					= 1024;
-	public static int RESOLUTION_HEIGHT					= 768;
-	public static int SCREEN_WIDTH					= 53;
-	public static int SCREEN_HEIGHT					= 45;
+	public static int RESOLUTION_WIDTH					= 1920;
+	public static int RESOLUTION_HEIGHT					= 1080;
+	public static int SCREEN_WIDTH					= 51;
+	public static int SCREEN_HEIGHT					= 29;
 	
 	/**
 	 * Eye tracker setting
 	 */
-	public static int SYSTEM_TIME					= 1000;
+	public static int THOUSAND					= 1000;
+	public static int TEN						= 10;
 	
 	/**
 	 * Fixation setting
 	 */
-	public static int FIXATION_DURATION_THRESHOLD	= 200; // Millisecond
-	public static float VELOCITY_THRESHOLD			= 20;	// Degree
+	public static int FIXATION_DURATION_THRESHOLD	= 100; // Millisecond
+	public static float VELOCITY_THRESHOLD			= 65;	// Degree
 	public static String OUTPUT_FILE				= "/home/hadoop/eye/result_storm.txt";
 	//public static String OUTPUT_FILE				= "result_storm.txt";
 	public static int KIND_UNKNOWN					= 0;

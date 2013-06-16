@@ -13,8 +13,8 @@ public class Library {
 	public static float pixalToCenti(int x1, int y1, int x2, int y2){
 		float x;
 		float y;
-		x = Math.abs(x1-x2)*Constants.SCREEN_WIDTH/Constants.RESOLUTION_WIDTH;
-		y = Math.abs(y1-y2)*Constants.SCREEN_HEIGHT/Constants.RESOLUTION_HEIGHT;
+		x = Math.abs((float)(x1-x2))*Constants.SCREEN_WIDTH/Constants.RESOLUTION_WIDTH*Constants.TEN;
+		y = Math.abs((float)(y1-y2))*Constants.SCREEN_HEIGHT/Constants.RESOLUTION_HEIGHT*Constants.TEN;
 		return (float)Math.sqrt(x*x + y*y);
 	}
 	
@@ -35,8 +35,10 @@ public class Library {
 		// c2 = a2 + b2 - 2ab cos(C)
 		float cosC;
 		cosC = (a*a + b*b - c*c)/(2*a*b);
+		//System.out.println(cosC);
 		float degree;
-		degree = (float)Math.acos(Math.round(cosC*100)/100.0d)*180/(float)Math.PI;
-		return degree/dur * Constants.SYSTEM_TIME;
+		degree = (float)Math.acos(cosC)*180/(float)Math.PI;
+		System.out.println(degree/dur * Constants.THOUSAND + " " + dur);
+		return degree/dur * Constants.THOUSAND;
 	}
 }

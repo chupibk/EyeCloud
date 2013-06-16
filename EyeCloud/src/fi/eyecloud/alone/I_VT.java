@@ -147,7 +147,7 @@ public class I_VT {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		long start = System.currentTimeMillis();
-		new I_VT("/Users/daothanhchung/Desktop/01-01-All-Data.txt", "result.txt");
+		new I_VT("/Users/daothanhchung/Desktop/EyeCloud/Data/EyeCloud_Raw.txt", "/Users/daothanhchung/Desktop/EyeCloud/Data/Output/result.txt");
 		//new I_VT("/home/hadoop/eye/01-01-All-Data.txt", "result.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}
