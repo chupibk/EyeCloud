@@ -7,15 +7,15 @@ import fi.eyecloud.input.ReadTextFile;
 public class I_VT_Test {
 
 	public static void main(String[] args) throws Exception {
-		String HOSTNAME = "54.229.50.244";
-		int timePeriod = 1000;//Integer.parseInt(args[0]); 	//ms
-		int packNumber = 10;//Integer.parseInt(args[1]);		//time
+		String HOSTNAME = args[0]; //"54.229.50.244";
+		int timePeriod = Integer.parseInt(args[1]); 	//ms
+		int packNumber = Integer.parseInt(args[2]);		//time
 		
 		DRPCClient client = new DRPCClient(HOSTNAME, 3772);
 		long totalTime = 0;
 		
 		ReadTextFile data = new ReadTextFile(
-				"data/testPDF.txt");
+				"data/17June.txt");
 		String currentSend = "";
 		int currentTime = 0;
 		int currentPacket = 0;
@@ -37,15 +37,15 @@ public class I_VT_Test {
 			currentSend = currentSend + dis + Constants.PARAMETER_SPLIT;
 			
 			if (timestamp - currentTime >= timePeriod){
-				System.out.println(currentSend);
+				//System.out.println(currentSend);
 				long start = System.currentTimeMillis();
 				client.execute("I_VT", currentSend);
 				totalTime = totalTime + System.currentTimeMillis() - start;
 				
 				long dif = System.currentTimeMillis() - tmpTime;
-				tmpTime = System.currentTimeMillis();
 				if (dif < timePeriod)
 					Thread.sleep(timePeriod - dif);
+				tmpTime = System.currentTimeMillis();
 				
 				currentPacket++;
 				currentTime = timestamp;
@@ -56,7 +56,7 @@ public class I_VT_Test {
 		}
 		
 		System.out.println("Time Period: " + timePeriod + " - " + "Packet Number: " + packNumber);
-		System.out.println("Running time: " + totalTime);
+		System.out.println("Running time: " + totalTime + " - " + "Packet sent: " + currentPacket);
 		System.out.println("Average Time: " + (float)totalTime/(float)packNumber);
 		System.out.println("Testing time: " + (System.currentTimeMillis() - startTest));
 		client.close();
