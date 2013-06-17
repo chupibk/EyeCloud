@@ -24,11 +24,12 @@ public class Constants {
 	public final static String GazePointY 			= "GazePointY";
 	public final static String StimuliName 			= "StimuliName";
 	public final static String StimuliID			= "StimuliID";
+	public final static String Duration				= "Duration";
 	
 	public static final String HEADER[] = {	Timestamp, Number, GazePointXLeft, GazePointYLeft, CamXLeft, CamYLeft, 
 											DistanceLeft, PupilLeft, ValidityLeft, GazePointXRight, GazePointYRight, 
 											CamXRight, CamYRight, DistanceRight, PupilRight, ValidityRight, GazePointX,
-											GazePointY, StimuliName, StimuliID	};	
+											GazePointY, StimuliName, StimuliID, Duration};	
 	
 	/**
 	 * Text file setting
