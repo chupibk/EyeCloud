@@ -19,7 +19,7 @@ public class FixationPaint extends JPanel {
 	
 	public FixationPaint(){
 		try {
-			inputMedia = ImageIO.read(new File("data/mediaPDF.png"));
+			inputMedia = ImageIO.read(new File("data/17JuneMedia.png"));
 			scaledMedia =inputMedia.getScaledInstance(GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT, 5);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -32,26 +32,50 @@ public class FixationPaint extends JPanel {
         super.paintComponent(g);
         g.drawImage(scaledMedia, 0, 0, null);  
         this.drawFixation(g);
+        //this.drawPoint(g);
     }
     
-    private void drawPoint(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/testPDF.txt");
+    public void drawPoint(Graphics g){
+		ReadTextFile data = new ReadTextFile("data/17June.txt");
+		int preX, preY;
+		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
 			int x = Integer.parseInt(data.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
 			int y = Integer.parseInt(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR;
+			int size  = GuiConstants.DOT_SIZE;
 			
-			g.fillOval(x, y, GuiConstants.DOT_SIZE, GuiConstants.DOT_SIZE);
+			if (x !=Constants.UNKNOWN && y!=Constants.UNKNOWN){
+				int drawX = (int)x-size;
+				int drawY = (int)y-size;
+			
+				g.drawOval(drawX, drawY, size, size);
+				if (preX > Constants.UNKNOWN && preY != Constants.UNKNOWN){
+					g.drawLine(preX, preY, drawX+size/2, drawY+size/2);
+				}
+				preX = drawX+size/2;
+				preY = drawY+size/2;
+			}
 		}
     }
     
-    private void drawFixation(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/resultPDF.txt");
+    public void drawFixation(Graphics g){
+		ReadTextFile data = new ReadTextFile("data/17JuneResult.txt");
+		int preX, preY;
+		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
 			float x = Float.parseFloat(data.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
 			float y = Float.parseFloat(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR;
 			int size = Integer.parseInt(data.getField(Constants.Duration))/GuiConstants.CIRCLE_SIZE_RATE;
 			
-			g.drawOval((int)x, (int)y, size, size);
+			int drawX = (int)x-size;
+			int drawY = (int)y-size;
+			
+			g.drawOval(drawX, drawY, size, size);
+			if (preX > 0 && preY > 0 && x > 0 && y > 0){
+				g.drawLine(preX, preY, drawX+size/2, drawY+size/2);
+			}
+			preX = drawX+size/2;
+			preY = drawY+size/2;
 		}    	
     }
 }

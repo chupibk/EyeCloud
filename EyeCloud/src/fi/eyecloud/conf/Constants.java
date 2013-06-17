@@ -54,8 +54,8 @@ public class Constants {
 	/**
 	 * Fixation setting
 	 */
-	public static int FIXATION_DURATION_THRESHOLD	= 100; // Millisecond
-	public static float VELOCITY_THRESHOLD			= 65;	// Degree
+	public static int FIXATION_DURATION_THRESHOLD	= 40; // Millisecond
+	public static float VELOCITY_THRESHOLD			= 75;	// Degree
 	public static String OUTPUT_FILE				= "/Users/daothanhchung/Desktop/EyeCloud/Data/Output/result_drpc.txt";
 	//public static String OUTPUT_FILE				= "result_storm.txt";
 	public static int KIND_UNKNOWN					= 0;

@@ -32,6 +32,7 @@ public class I_VT {
 		try {
 			FileWriter fw = new FileWriter(output);
 			out = new BufferedWriter(fw);
+			out.write("GazePointX\tGazePointY\tRecordingTimestamp\tDuration\n");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -147,7 +148,7 @@ public class I_VT {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		long start = System.currentTimeMillis();
-		new I_VT("data/testPDF.txt", "data/resultPDF.txt");
+		new I_VT("data/17June.txt", "data/17JuneResult.txt");
 		//new I_VT("/home/hadoop/eye/01-01-All-Data.txt", "result.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}
