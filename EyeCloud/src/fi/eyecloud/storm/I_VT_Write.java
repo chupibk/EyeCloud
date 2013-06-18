@@ -81,6 +81,7 @@ public class I_VT_Write {
 		
 		System.out.println("Time Period: " + timePeriod);
 		System.out.println("Testing time: " + (System.currentTimeMillis() - startTest));
+		data.closeFile();
 		client.close();
 		out.close();
 	}

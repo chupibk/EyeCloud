@@ -21,8 +21,9 @@ public class I_VT_Test {
 		int currentPacket = 0;
 		long tmpTime = System.currentTimeMillis();
 		long startTest = System.currentTimeMillis();
-		
-		while (data.readNextLine() != null) {
+			
+		data.readNextLine();
+		for (;;) {
 			currentSend = currentSend + data.getField(Constants.GazePointX)
 					+ Constants.PARAMETER_SPLIT;
 			currentSend = currentSend + data.getField(Constants.GazePointY)
@@ -53,13 +54,19 @@ public class I_VT_Test {
 			}
 			
 			if (currentPacket == packNumber) break;
+			if (data.readNextLine() == null){
+				data.resetFile();
+				data.readNextLine();
+				currentTime = 0;
+			}
 		}
 		
 		System.out.println("Time Period: " + timePeriod + " - " + "Packet Number: " + packNumber);
 		System.out.println("Running time: " + totalTime + " - " + "Packet sent: " + currentPacket);
 		System.out.println("Average Time: " + (float)totalTime/(float)packNumber);
 		System.out.println("Testing time: " + (System.currentTimeMillis() - startTest));
-		client.close();
+		data.closeFile();
+		//client.close();
 	}
 
 }

@@ -15,6 +15,7 @@ public class ReadTextFile {
 	private BufferedReader br;
 	private Map<String, Integer> mapHeader = new HashMap<String, Integer>();
 	private String currentLine;
+	private String inputFile;
 	
 	/**
 	 * Read Text File
@@ -23,6 +24,7 @@ public class ReadTextFile {
 	 */
 	public ReadTextFile(String filePath){
 		FileInputStream fstream;
+		inputFile = filePath;
 		
 		br = null;
 		try {
@@ -85,6 +87,28 @@ public class ReadTextFile {
 		if (split[mapHeader.get(fieldName)].equals("")) 
 			return Integer.toString(Constants.UNKNOWN);
 		return split[mapHeader.get(fieldName)];
+	}
+	
+	public void resetFile(){
+		try {
+			closeFile();
+			FileInputStream fstream = new FileInputStream(inputFile);
+			DataInputStream in = new DataInputStream(fstream);
+			br = new BufferedReader(new InputStreamReader(in));
+			readNextLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void closeFile(){
+		try {
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public Map<String, Integer> getMapHeader(){

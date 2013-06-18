@@ -77,6 +77,8 @@ public class I_VT {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		data.closeFile();
 	}
 
 	/**
