@@ -66,7 +66,7 @@ public class I_VT_Test {
 		System.out.println("Average Time: " + (float)totalTime/(float)packNumber);
 		System.out.println("Testing time: " + (System.currentTimeMillis() - startTest));
 		data.closeFile();
-		//client.close();
+		client.close();
 	}
 
 }

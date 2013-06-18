@@ -45,8 +45,8 @@ public class FixationPaint extends JPanel {
 			int size  = GuiConstants.DOT_SIZE;
 			
 			if (x !=Constants.UNKNOWN && y!=Constants.UNKNOWN){
-				int drawX = (int)x-size;
-				int drawY = (int)y-size;
+				int drawX = (int)x-size/2;
+				int drawY = (int)y-size/2;
 			
 				g.drawOval(drawX, drawY, size, size);
 				if (preX > Constants.UNKNOWN && preY != Constants.UNKNOWN){
@@ -59,7 +59,7 @@ public class FixationPaint extends JPanel {
     }
     
     public void drawFixation(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/17JuneResult.txt");
+		ReadTextFile data = new ReadTextFile("data/17June_20");
 		int preX, preY;
 		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
@@ -67,8 +67,8 @@ public class FixationPaint extends JPanel {
 			float y = Float.parseFloat(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR;
 			int size = Integer.parseInt(data.getField(Constants.Duration))/GuiConstants.CIRCLE_SIZE_RATE;
 			
-			int drawX = (int)x-size;
-			int drawY = (int)y-size;
+			int drawX = (int)x-size/2;
+			int drawY = (int)y-size/2;
 			
 			g.drawOval(drawX, drawY, size, size);
 			if (preX > 0 && preY > 0 && x > 0 && y > 0){

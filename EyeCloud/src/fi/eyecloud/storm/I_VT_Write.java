@@ -27,8 +27,8 @@ public class I_VT_Write {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String HOSTNAME = args[0]; //"54.229.50.244";
-		int timePeriod = Integer.parseInt(args[1]); 	//ms
+		String HOSTNAME = "54.229.63.48";//args[0]; //"54.229.50.244";
+		int timePeriod = 2000;//Integer.parseInt(args[1]); 	//ms
 		
 		DRPCClient client = new DRPCClient(HOSTNAME, 3772);
 		
@@ -63,9 +63,9 @@ public class I_VT_Write {
 			currentSend = currentSend + dis + Constants.PARAMETER_SPLIT;
 			
 			if (timestamp - currentTime >= timePeriod){
-				System.out.println(currentSend);
+				//System.out.println(currentSend);
 				String result = client.execute("I_VT", currentSend);
-				System.out.println(result);
+				//System.out.println(result);
 				writeFile(out, result);
 				currentTime = timestamp;
 				currentSend = "";

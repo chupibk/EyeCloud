@@ -47,6 +47,9 @@ public class I_VT_DRPC {
     	
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
+        	result = "";
+        	numberFixation = 0;
+        	
         	Object id = tuple.getValue(0);
         	String data[] = tuple.getString(1).split(Constants.PARAMETER_SPLIT);
         	int length = data.length/Constants.PARAMETER_NUMBER;
