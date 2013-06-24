@@ -1,5 +1,6 @@
 package fi.eyecloud.gui.fixation;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
@@ -59,7 +60,7 @@ public class FixationPaint extends JPanel {
     }
     
     public void drawFixation(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/17June_20");
+		ReadTextFile data = new ReadTextFile("data/17June_1000");
 		int preX, preY;
 		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
@@ -70,6 +71,7 @@ public class FixationPaint extends JPanel {
 			int drawX = (int)x-size/2;
 			int drawY = (int)y-size/2;
 			
+			g.setColor(Color.BLUE);
 			g.drawOval(drawX, drawY, size, size);
 			if (preX > 0 && preY > 0 && x > 0 && y > 0){
 				g.drawLine(preX, preY, drawX+size/2, drawY+size/2);
