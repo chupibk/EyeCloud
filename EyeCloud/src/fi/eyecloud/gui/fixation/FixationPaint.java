@@ -60,18 +60,19 @@ public class FixationPaint extends JPanel {
     }
     
     public void drawFixation(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/17JuneResult.txt");
+		ReadTextFile data = new ReadTextFile("data/17June_2000");
 		int preX, preY;
 		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
 			float x = Float.parseFloat(data.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
 			float y = Float.parseFloat(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR;
 			int size = Integer.parseInt(data.getField(Constants.Duration))/GuiConstants.CIRCLE_SIZE_RATE;
+			if (size < GuiConstants.SMALLEST_SIZE) size = GuiConstants.SMALLEST_SIZE;
 			
 			int drawX = (int)x-size/2;
 			int drawY = (int)y-size/2;
 			
-			g.setColor(Color.BLUE);
+			g.setColor(Color.RED);
 			g.drawOval(drawX, drawY, size, size);
 			if (preX > 0 && preY > 0 && x > 0 && y > 0){
 				//g.drawLine(preX, preY, drawX+size/2, drawY+size/2);
