@@ -11,7 +11,7 @@ import fi.eyecloud.input.ReadTextFile;
 public class I_VT {
 	private int sumX;
 	private int sumY;
-	private int count;
+	private int count = 0;
 	private int startTime;
 	private int duration = 0;
 
@@ -70,6 +70,21 @@ public class I_VT {
 			pre = current;
 		}
 
+		if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
+			try {
+				out.write((float) sumX / count
+						+ Constants.SPLIT_MARK + (float) sumY
+						/ count + Constants.SPLIT_MARK + startTime
+						+ Constants.SPLIT_MARK + duration
+						+ "\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			numberFixation++;
+		}
+		
 		try {
 			out.write(numberFixation + "\n");
 			out.close();
@@ -110,7 +125,7 @@ public class I_VT {
 				sumX = x;
 				sumY = y;
 				startTime = time;
-
+				duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
 				currentLine = lineId;
 			}else{
 				count++;
@@ -118,7 +133,8 @@ public class I_VT {
 				sumY += y;
 
 				currentLine = lineId;
-				duration = time - startTime;
+				duration = time - startTime + Constants.THOUSAND / Constants.SAMPLE_RATE;
+				//System.out.println(time + " - " + startTime + " - " + duration + " - " + lineId + " - " + currentLine);
 			}
 		}else {
 			if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
@@ -135,11 +151,13 @@ public class I_VT {
 
 				numberFixation++;
 			}
+			//System.out.println(count + " - " + startTime + " - " + duration);
 			count = 0;
 			count++;
 			sumX = x;
 			sumY = y;
 			startTime = time;
+			duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
 			currentLine = lineId;
 		}		
 	}

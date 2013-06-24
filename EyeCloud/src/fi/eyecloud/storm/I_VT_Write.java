@@ -27,8 +27,8 @@ public class I_VT_Write {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		String HOSTNAME = "54.229.63.48";//args[0]; //"54.229.50.244";
-		int timePeriod = 2000;//Integer.parseInt(args[1]); 	//ms
+		String HOSTNAME = "54.229.69.151";//args[0]; //"54.229.50.244";
+		int timePeriod = 40;//Integer.parseInt(args[1]); 	//ms
 		
 		DRPCClient client = new DRPCClient(HOSTNAME, 3772);
 		

@@ -49,6 +49,9 @@ public class I_VT_DRPC {
         public void execute(Tuple tuple, BasicOutputCollector collector) {
         	result = "";
         	numberFixation = 0;
+        	count = 0;
+        	currentLine = 0;
+        	duration = 0;
         	
         	Object id = tuple.getValue(0);
         	String data[] = tuple.getString(1).split(Constants.PARAMETER_SPLIT);
@@ -86,6 +89,15 @@ public class I_VT_DRPC {
     			dis1 = dis2;
         	}
         	
+			if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
+				result = result + (float) sumX / count
+						+ Constants.PARAMETER_SPLIT + (float) sumY
+						/ count + Constants.PARAMETER_SPLIT + startTime
+						+ Constants.PARAMETER_SPLIT + duration + Constants.PARAMETER_SPLIT;
+
+				numberFixation++;
+			}
+        	
         	result = result + numberFixation;
         	collector.emit(new Values(id, result));
         }
@@ -110,15 +122,15 @@ public class I_VT_DRPC {
     				sumX = x;
     				sumY = y;
     				startTime = time;
-
     				currentLine = lineId;
+    				duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
     			}else{
     				count++;
     				sumX += x;
     				sumY += y;
 
     				currentLine = lineId;
-    				duration = time - startTime;
+    				duration = time - startTime + Constants.THOUSAND / Constants.SAMPLE_RATE;
     			}
     		}else {
     			if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
@@ -134,6 +146,7 @@ public class I_VT_DRPC {
     			sumX = x;
     			sumY = y;
     			startTime = time;
+    			duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
     			currentLine = lineId;
     		}		
     	}        

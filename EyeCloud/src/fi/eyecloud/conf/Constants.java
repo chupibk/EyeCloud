@@ -50,6 +50,7 @@ public class Constants {
 	 */
 	public static int THOUSAND					= 1000;
 	public static int TEN						= 10;
+	public static int SAMPLE_RATE				= 300;
 	
 	/**
 	 * Fixation setting

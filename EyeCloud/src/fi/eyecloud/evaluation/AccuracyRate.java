@@ -1,4 +1,4 @@
-package fi.eyecloud.storm;
+package fi.eyecloud.evaluation;
 
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.input.ReadTextFile;
@@ -21,6 +21,7 @@ public class AccuracyRate {
 	private String offlineFile;
 	
 	public AccuracyRate(String online, String offline){
+		System.out.println(online);
 		AFN = 0;
 		AFD = 0;
 		MF	= 0;
@@ -69,6 +70,10 @@ public class AccuracyRate {
 		return AFD;
 	}
 	
+	public float getTotalDuration(){
+		return totalDuration;
+	}	
+	
 	public int getMF(){
 		return MF;
 	}
@@ -78,9 +83,9 @@ public class AccuracyRate {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		AccuracyRate test = new AccuracyRate("data/17June_100", "data/17JuneResult.txt");
-		System.out.println("AFN: " + test.getAFN());
-		System.out.println("AFD: " + test.getAFD());
+		AccuracyRate test = new AccuracyRate("data/17June_2000_Merge", "data/17JuneResult.txt");
+		System.out.println("FN: " + test.getAFN());
+		System.out.println("FD: " + test.getTotalDuration());
 		System.out.println("MF: " + test.getMF());
 	}
 

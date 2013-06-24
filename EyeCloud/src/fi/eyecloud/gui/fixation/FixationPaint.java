@@ -60,7 +60,7 @@ public class FixationPaint extends JPanel {
     }
     
     public void drawFixation(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/17June_1000");
+		ReadTextFile data = new ReadTextFile("data/17JuneResult.txt");
 		int preX, preY;
 		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
@@ -74,7 +74,7 @@ public class FixationPaint extends JPanel {
 			g.setColor(Color.BLUE);
 			g.drawOval(drawX, drawY, size, size);
 			if (preX > 0 && preY > 0 && x > 0 && y > 0){
-				g.drawLine(preX, preY, drawX+size/2, drawY+size/2);
+				//g.drawLine(preX, preY, drawX+size/2, drawY+size/2);
 			}
 			preX = drawX+size/2;
 			preY = drawY+size/2;
