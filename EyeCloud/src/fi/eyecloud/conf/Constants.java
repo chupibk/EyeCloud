@@ -71,6 +71,6 @@ public class Constants {
 	/**
 	 * Gaussian
 	 */
-	public static int SIGMA							= 1;
+	public static int SIGMA							= 20;
 	
 }

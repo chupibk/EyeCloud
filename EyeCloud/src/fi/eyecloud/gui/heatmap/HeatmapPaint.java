@@ -31,7 +31,7 @@ public class HeatmapPaint extends JPanel{
         super.paintComponent(g);
         g.drawImage(scaledMedia, 0, 0, null);
         
-        HeatmapIntensity intensity = new HeatmapIntensity("data/heatmap.txt", 0, 
+        HeatmapIntensity intensity = new HeatmapIntensity("data/17JuneResult.txt", 0, 
         								Constants.RESOLUTION_WIDTH, Constants.RESOLUTION_HEIGHT);
         Colorization color = new Colorization(intensity.getIntensity(), 
         								Constants.RESOLUTION_WIDTH, Constants.RESOLUTION_HEIGHT);
