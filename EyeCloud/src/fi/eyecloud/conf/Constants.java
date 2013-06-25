@@ -67,5 +67,10 @@ public class Constants {
 	 */
 	public static String PARAMETER_SPLIT			= ",";
 	public static int PARAMETER_NUMBER				= 4;
+
+	/**
+	 * Gaussian
+	 */
+	public static int SIGMA							= 1;
 	
 }
