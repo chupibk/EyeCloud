@@ -1,6 +1,7 @@
 package fi.eyecloud.gui.heatmap;
 
 import fi.eyecloud.conf.Constants;
+import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
 
 public class HeatmapIntensity {
@@ -35,7 +36,7 @@ public class HeatmapIntensity {
 	public double gaussian(int x, int y, int i, int j, int duration){
 		double value;
 		
-		value = Math.exp(-((x-i)*(x-i) + (y-j)*(y-j))/(2*Constants.SIGMA*Constants.SIGMA));
+		value = Math.exp(-((x-i)*(x-i) + (y-j)*(y-j))/(2*GuiConstants.SIGMA*GuiConstants.SIGMA));
 		// Linear with duration
 		value = value*duration;
 		

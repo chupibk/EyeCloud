@@ -22,5 +22,11 @@ public class GuiConstants {
 	 * Heatmap
 	 */
 	public final static float GREEN_COLOR		= 0;
-	public final static float BLUE_COLOR		= 1;
+	public final static float BLUE_COLOR		= 0;
+	public final static int ALPHA				= 100;
+	
+	/**
+	 * Gaussian
+	 */
+	public static int SIGMA							= 30;	
 }
