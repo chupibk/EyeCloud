@@ -28,5 +28,6 @@ public class GuiConstants {
 	/**
 	 * Gaussian
 	 */
-	public static int SIGMA							= 30;	
+	public static int SIGMA							= 30;
+	public static int KERNEL_SIZE					= 100;
 }
