@@ -16,9 +16,9 @@ public class HeatmapPaint extends JPanel{
 	private Image scaledMedia;
 	private BufferedImage heatmap;
 	
-	public HeatmapPaint(){
+	public HeatmapPaint(String media, String data){
 		try {
-			inputMedia = ImageIO.read(new File("data/17JuneMedia.png"));
+			inputMedia = ImageIO.read(new File(media));
 			scaledMedia =inputMedia.getScaledInstance(GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT, 5);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -26,7 +26,7 @@ public class HeatmapPaint extends JPanel{
 		}
 		
 		long start = System.currentTimeMillis();
-        HeatmapIntensity intensity = new HeatmapIntensity("data/17JuneResult.txt", 0, 
+        HeatmapIntensity intensity = new HeatmapIntensity(data, 0, 
 				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
         Colorization color = new Colorization(intensity.getIntensity(), 
 				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);

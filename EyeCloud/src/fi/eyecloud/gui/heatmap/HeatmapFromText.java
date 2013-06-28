@@ -17,7 +17,7 @@ public class HeatmapFromText {
 		frame.setLayout(new BorderLayout());
 		
 		Screen.setLayout(new BorderLayout());
-		HeatmapPaint paint = new HeatmapPaint();
+		HeatmapPaint paint = new HeatmapPaint("data/17JuneMedia.png", "data/17JuneResult.txt");
 		Screen.add(paint);
 		
 		frame.add(Screen);

@@ -42,7 +42,7 @@ public class FixationPaint extends JPanel {
 		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
 			int x = Integer.parseInt(data.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
-			int y = Integer.parseInt(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR;
+			int y = Integer.parseInt(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR_USED;
 			int size  = GuiConstants.DOT_SIZE;
 			
 			if (x !=Constants.UNKNOWN && y!=Constants.UNKNOWN){
@@ -65,7 +65,7 @@ public class FixationPaint extends JPanel {
 		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
 			float x = Float.parseFloat(data.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
-			float y = Float.parseFloat(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR;
+			float y = Float.parseFloat(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR_USED;
 			int size = Integer.parseInt(data.getField(Constants.Duration))/GuiConstants.CIRCLE_SIZE_RATE;
 			if (size < GuiConstants.SMALLEST_SIZE) size = GuiConstants.SMALLEST_SIZE;
 			

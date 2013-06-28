@@ -7,6 +7,7 @@ import fi.eyecloud.input.ReadTextFile;
 public class HeatmapIntensity {
 	private ReadTextFile dataFile;
 	private double intensity[][];
+	private double gaussianWindow[][];
 	private int width;
 	private int height;
 	
@@ -21,10 +22,17 @@ public class HeatmapIntensity {
 		width = w;
 		height = h;
 		intensity = new double[width][height];
+		gaussianWindow = new double[GuiConstants.KERNEL_SIZE_USED + 1][GuiConstants.KERNEL_SIZE_USED + 1];
 		
 		for (int i=0; i < width; i++){
 			for (int j=0; j < height; j++){
 				intensity[i][j] = 0;
+			}
+		}
+		
+		for (int i=0; i <= GuiConstants.KERNEL_SIZE_USED; i++){
+			for (int j=0; j <= GuiConstants.KERNEL_SIZE_USED; j++){
+				gaussianWindow[i][j] = gaussian2D(i, j);
 			}
 		}
 		
@@ -33,13 +41,9 @@ public class HeatmapIntensity {
 		}
 	}
 	
-	public double gaussian(int x, int y, int i, int j, int duration){
+	public double gaussian2D(int x, int y){
 		double value;
-		
-		value = Math.exp(-((x-i)*(x-i) + (y-j)*(y-j))/(2*GuiConstants.SIGMA*GuiConstants.SIGMA));
-		// Linear with duration
-		value = value*duration;
-		
+		value = Math.exp(-(x*x + y*y)/(2*GuiConstants.SIGMA_USED*GuiConstants.SIGMA_USED));		
 		return value;
 	}
 	
@@ -48,13 +52,14 @@ public class HeatmapIntensity {
 	 */
 	public void fromFixation(){
 		while (dataFile.readNextLine() != null){
-			int x = (int)Float.parseFloat(dataFile.getField(Constants.GazePointX));
-			int y = (int)Float.parseFloat(dataFile.getField(Constants.GazePointY));
+			int x = (int)Float.parseFloat(dataFile.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
+			int y = (int)Float.parseFloat(dataFile.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE;
 			int d = Integer.parseInt(dataFile.getField(Constants.Duration));
 			
-			for (int i=0; i < width; i++){
-				for (int j=0; j < height; j++){
-					intensity[i][j] += gaussian(x, y, i, j, d);
+			for (int i=x - GuiConstants.KERNEL_SIZE_USED; i <= x + GuiConstants.KERNEL_SIZE_USED; i++){
+				for (int j=y - GuiConstants.KERNEL_SIZE_USED; j <= y + GuiConstants.KERNEL_SIZE_USED; j++){
+					if (i >=0 && j >=0 && i < width && j < height)
+						intensity[i][j] += gaussianWindow[Math.abs(x-i)][Math.abs(y-j)]*d;
 				}
 			}
 		}
