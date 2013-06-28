@@ -2,9 +2,10 @@ package fi.eyecloud.gui.heatmap;
 
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.gui.lib.GuiConstants;
+import fi.eyecloud.gui.lib.Intensity;
 import fi.eyecloud.input.ReadTextFile;
 
-public class HeatmapIntensity {
+public class HeatmapIntensity implements Intensity{
 	private ReadTextFile dataFile;
 	private double intensity[][];
 	private double gaussianWindow[][];
@@ -17,7 +18,8 @@ public class HeatmapIntensity {
 	 * @param input
 	 * @param option: 0 from fixation and 1 from raw data 
 	 */
-	public HeatmapIntensity(String input, int option, int w, int h){
+	@Override
+	public void run(String input, int option, int w, int h){
 		dataFile = new ReadTextFile(input);
 		width = w;
 		height = h;
@@ -50,7 +52,9 @@ public class HeatmapIntensity {
 	/**
 	 * Calculate intensity from Fixation
 	 */
+	@Override
 	public void fromFixation(){
+		long start = System.currentTimeMillis();
 		while (dataFile.readNextLine() != null){
 			int x = (int)Float.parseFloat(dataFile.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
 			int y = (int)Float.parseFloat(dataFile.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE;
@@ -63,8 +67,11 @@ public class HeatmapIntensity {
 				}
 			}
 		}
+		
+		System.out.println("Testing time: " + (System.currentTimeMillis() - start));
 	}
 	
+	@Override
 	public double[][] getIntensity(){
 		return intensity;
 	}

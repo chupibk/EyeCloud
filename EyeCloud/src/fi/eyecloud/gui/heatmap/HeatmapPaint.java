@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import fi.eyecloud.gui.lib.GuiConstants;
+import fi.eyecloud.gui.lib.Intensity;
 
 @SuppressWarnings("serial")
 public class HeatmapPaint extends JPanel{
@@ -16,7 +17,7 @@ public class HeatmapPaint extends JPanel{
 	private Image scaledMedia;
 	private BufferedImage heatmap;
 	
-	public HeatmapPaint(String media, String data){
+	public HeatmapPaint(String media, String data, Intensity intensity){
 		try {
 			inputMedia = ImageIO.read(new File(media));
 			scaledMedia =inputMedia.getScaledInstance(GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT, 5);
@@ -26,8 +27,11 @@ public class HeatmapPaint extends JPanel{
 		}
 		
 		long start = System.currentTimeMillis();
-        HeatmapIntensity intensity = new HeatmapIntensity(data, 0, 
+        intensity.run(data, 0, 
 				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
+        System.out.println("Testing time: " + (System.currentTimeMillis() - start));
+        
+        start = System.currentTimeMillis();
         Colorization color = new Colorization(intensity.getIntensity(), 
 				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
         heatmap = color.getImage();
