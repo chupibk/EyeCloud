@@ -1,5 +1,7 @@
 package fi.eyecloud.storm;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +22,11 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
 import fi.eyecloud.conf.Constants;
+import fi.eyecloud.gui.heatmap.Colorization;
 import fi.eyecloud.gui.heatmap.HeatmapFromText;
-import fi.eyecloud.gui.heatmap.HeatmapIntensityCloud;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
+import fi.eyecloud.utils.ImageUtils;
 
 @SuppressWarnings("deprecation")
 public class HeatmapIntensity_DRPC {
@@ -63,6 +66,12 @@ public class HeatmapIntensity_DRPC {
         			count = 0;
         		}
         	}
+        	
+        	if (send.size() > 0){
+        		send.add(widthMedia);
+        		send.add(heightMedia);
+        		collector.emit(new Values(id, send));
+        	}
         }
 
         @Override
@@ -76,12 +85,12 @@ public class HeatmapIntensity_DRPC {
 		private double gaussianWindow[][];
 		
 		public ProcessData(){
+			gaussianWindow = new double[GuiConstants.KERNEL_SIZE_USED + 1][GuiConstants.KERNEL_SIZE_USED + 1];
 			for (int i=0; i <= GuiConstants.KERNEL_SIZE_USED; i++){
 				for (int j=0; j <= GuiConstants.KERNEL_SIZE_USED; j++){
 					gaussianWindow[i][j] = gaussian2D(i, j);
 				}
 			}
-			gaussianWindow = new double[GuiConstants.KERNEL_SIZE_USED + 1][GuiConstants.KERNEL_SIZE_USED + 1];
 		}
 		
 		public double gaussian2D(int x, int y){
@@ -98,16 +107,17 @@ public class HeatmapIntensity_DRPC {
         	int width = data.get(data.size() - 1);
         	int height = data.get(data.size() - 2);
         	
-        	double intensity[][] = new double[width][height];
+        	double[][] intensity = new double[width][height];
+        	
     		for (int i=0; i < width; i++){
     			for (int j=0; j < height; j++){
     				intensity[i][j] = 0;
     			}
     		}
-        	
+    		
     		for (int k=0; k < data.size()/Constants.PARAMETER_NUMBER_HEATMAP; k++){
-    			int x = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP);
-    			int y = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP + 1);
+    			int x = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP)/GuiConstants.SCREEN_RATE;;
+    			int y = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP + 1)/GuiConstants.SCREEN_RATE;;
     			int d = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP + 2);
     			
     			for (int i=x - GuiConstants.KERNEL_SIZE_USED; i <= x + GuiConstants.KERNEL_SIZE_USED; i++){
@@ -132,8 +142,8 @@ public class HeatmapIntensity_DRPC {
 		BatchOutputCollector _collector;
         Object _id;
         double intensity[][] = null;
-        int width;
-        int height;
+        int width = 0;
+        int height = 0;
         
         @Override
         public void prepare(Map conf, TopologyContext context, BatchOutputCollector collector, Object id) {
@@ -144,28 +154,30 @@ public class HeatmapIntensity_DRPC {
     	@Override
         public void execute(Tuple tuple) {
     		double[][] data = (double[][]) tuple.getValue(1);
-    		width = tuple.getInteger(2);
-    		height = tuple.getInteger(3);
+    		if (width == 0) width = tuple.getInteger(2);
+    		if (height == 0) height = tuple.getInteger(3);
     		
     		if (intensity == null){
-    			intensity = data;
-    		}else{
-    			for (int i=0; i < width; i++){
-    				for (int j=0; j < height; j++){
-    					intensity[i][j] += data[i][j];
-    				}
+    			intensity = new double[width][height];
+        		for (int i=0; i < width; i++){
+        			for (int j=0; j < height; j++){
+        				intensity[i][j] = 0;
+        			}
+        		}
+    		}
+    		
+    		for (int i=0; i < width; i++){
+    			for (int j=0; j < height; j++){
+    				intensity[i][j] += data[i][j];
     			}
     		}
+    		
         }
 
         @Override
         public void finishBatch() {
-        	String result = "";
-			for (int i=0; i < width; i++){
-				for (int j=0; j < height; j++){
-					result = result + intensity[i][j] + Constants.PARAMETER_SPLIT;
-				}
-			}
+        	Colorization color = new Colorization(intensity, width, height);
+        	String result = ImageUtils.encodeToString(color.getImage(), "png");
         	_collector.emit(new Values(_id, result));
         }
     	
@@ -184,12 +196,12 @@ public class HeatmapIntensity_DRPC {
     }
     
     public static void main(String[] args) throws Exception {
-        //LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1], 1));
-    	LinearDRPCTopologyBuilder builder = construct(1, 5, 1);
+        LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1]), 1);
+    	//LinearDRPCTopologyBuilder builder = construct(1, 5, 1);
         Config conf = new Config();
         
         if(args==null || args.length==0) {
-            conf.setMaxTaskParallelism(3);
+            conf.setMaxTaskParallelism(5);
             LocalDRPC drpc = new LocalDRPC();
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("reach-drpc", conf, builder.createLocalTopology(drpc));
@@ -204,16 +216,21 @@ public class HeatmapIntensity_DRPC {
             
             send = send + GuiConstants.MEDIA_WIDTH + Constants.PARAMETER_SPLIT 
             			+ GuiConstants.MEDIA_HEIGHT + Constants.PARAMETER_SPLIT
-            			+ "5";
+            			+ "3";
             
             // Send data
-            HeatmapIntensityCloud intensity = new HeatmapIntensityCloud();
             long start = System.currentTimeMillis();
-            intensity.run(drpc.execute("Intensity", send), 0, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
+            String imageString = drpc.execute("Intensity", send);
             System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
             
+            BufferedWriter out = null;
+			FileWriter fw = new FileWriter("data/base64");
+			out = new BufferedWriter(fw);
+			out.write(imageString);
+			out.close();
+            
             // Draw
-            new HeatmapFromText("data/17JuneMedia.png", intensity);
+            new HeatmapFromText("data/17JuneMedia.png", ImageUtils.decodeToImage(imageString));
             
             cluster.shutdown();
             drpc.shutdown();

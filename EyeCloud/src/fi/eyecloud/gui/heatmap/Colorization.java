@@ -11,7 +11,6 @@ public class Colorization {
 	public Colorization(double[][] intensity, int width, int height){
         GetMaxMin maxMin = new GetMaxMin(intensity, width, height);
 		double max = maxMin.getMax();
-        System.out.println(max);
 		
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		int rgb[] = new Rainbow().getRGB();
@@ -19,7 +18,9 @@ public class Colorization {
 		for (int i=0; i < width; i++){
 			for (int j=0; j < height; j++){
 				float red = (float) (intensity[i][j]/max);
-	            int color = rgb[rgb.length - (int)(red*(rgb.length-1)) - 1];
+				if (red < 0) red = 0;
+				if (red > 1) red = 1;
+				int color = rgb[rgb.length - (int)(red*(rgb.length-1)) - 1];
 
 	    		int alpha = GuiConstants.ALPHA;
 	            int newcolor = (alpha << 24) | color;
