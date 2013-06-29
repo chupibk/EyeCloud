@@ -12,12 +12,12 @@ public class I_VT_Write {
 
 	public static void writeFile(BufferedWriter o, String data){
 		String split[] = data.split(Constants.PARAMETER_SPLIT);
-		for (int i=0; i < split.length/Constants.PARAMETER_NUMBER; i++){
+		for (int i=0; i < split.length/Constants.PARAMETER_NUMBER_FIXATION; i++){
 			try {
-				o.write(split[i*Constants.PARAMETER_NUMBER]
-						+ Constants.SPLIT_MARK + split[i*Constants.PARAMETER_NUMBER + 1]
-						+ Constants.SPLIT_MARK + split[i*Constants.PARAMETER_NUMBER + 2]
-						+ Constants.SPLIT_MARK + split[i*Constants.PARAMETER_NUMBER + 3]
+				o.write(split[i*Constants.PARAMETER_NUMBER_FIXATION]
+						+ Constants.SPLIT_MARK + split[i*Constants.PARAMETER_NUMBER_FIXATION + 1]
+						+ Constants.SPLIT_MARK + split[i*Constants.PARAMETER_NUMBER_FIXATION + 2]
+						+ Constants.SPLIT_MARK + split[i*Constants.PARAMETER_NUMBER_FIXATION + 3]
 						+ "\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

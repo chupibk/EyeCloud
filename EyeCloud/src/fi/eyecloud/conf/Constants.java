@@ -66,6 +66,10 @@ public class Constants {
 	 * Storm setting
 	 */
 	public static String PARAMETER_SPLIT			= ",";
-	public static int PARAMETER_NUMBER				= 4;
+	public static int PARAMETER_NUMBER_FIXATION		= 4;
 	
+	/**
+	 * Heatmap 
+	 */
+	public static int PARAMETER_NUMBER_HEATMAP		= 3;
 }

@@ -4,37 +4,22 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
 import backtype.storm.StormSubmitter;
-import backtype.storm.coordination.BatchOutputCollector;
-import backtype.storm.coordination.CoordinatedBolt.FinishedCallback;
 import backtype.storm.drpc.LinearDRPCTopologyBuilder;
-import backtype.storm.task.OutputCollector;
-import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
-import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
-import backtype.storm.topology.base.BaseBatchBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.conf.Library;
 import fi.eyecloud.input.ReadTextFile;
 
+@SuppressWarnings("deprecation")
 public class I_VT_DRPC {
-    public static class ProcessData extends BaseBasicBolt {
+    @SuppressWarnings("serial")
+	public static class ProcessData extends BaseBasicBolt {
     	private int sumX;
     	private int sumY;
     	private int count;
@@ -55,17 +40,17 @@ public class I_VT_DRPC {
         	
         	Object id = tuple.getValue(0);
         	String data[] = tuple.getString(1).split(Constants.PARAMETER_SPLIT);
-        	int length = data.length/Constants.PARAMETER_NUMBER;
+        	int length = data.length/Constants.PARAMETER_NUMBER_FIXATION;
         	int x1,y1,time1,x2,y2,time2;
         	float dis1, dis2;
         	x1 = y1 = time1 = 0;
         	dis1 = 0;
         	
         	for (int i=0; i < length; i++){
-        		x2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER]);
-        		y2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER + 1]);
-        		time2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER + 2]);
-        		dis2 = Float.parseFloat(data[i*Constants.PARAMETER_NUMBER + 3]);
+        		x2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION]);
+        		y2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 1]);
+        		time2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 2]);
+        		dis2 = Float.parseFloat(data[i*Constants.PARAMETER_NUMBER_FIXATION + 3]);
         		
         		if (i == 0){
         			x1 = x2;

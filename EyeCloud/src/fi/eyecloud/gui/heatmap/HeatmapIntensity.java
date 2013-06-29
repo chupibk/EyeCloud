@@ -54,7 +54,6 @@ public class HeatmapIntensity implements Intensity{
 	 */
 	@Override
 	public void fromFixation(){
-		long start = System.currentTimeMillis();
 		while (dataFile.readNextLine() != null){
 			int x = (int)Float.parseFloat(dataFile.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
 			int y = (int)Float.parseFloat(dataFile.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE;
@@ -67,8 +66,6 @@ public class HeatmapIntensity implements Intensity{
 				}
 			}
 		}
-		
-		System.out.println("Testing time: " + (System.currentTimeMillis() - start));
 	}
 	
 	@Override

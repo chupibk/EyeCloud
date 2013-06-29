@@ -17,7 +17,7 @@ public class HeatmapPaint extends JPanel{
 	private Image scaledMedia;
 	private BufferedImage heatmap;
 	
-	public HeatmapPaint(String media, String data, Intensity intensity){
+	public HeatmapPaint(String media, Intensity intensity){
 		try {
 			inputMedia = ImageIO.read(new File(media));
 			scaledMedia =inputMedia.getScaledInstance(GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT, 5);
@@ -26,16 +26,11 @@ public class HeatmapPaint extends JPanel{
 			e.printStackTrace();
 		}
 		
-		long start = System.currentTimeMillis();
-        intensity.run(data, 0, 
-				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
-        System.out.println("Testing time: " + (System.currentTimeMillis() - start));
-        
-        start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         Colorization color = new Colorization(intensity.getIntensity(), 
 				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
         heatmap = color.getImage();
-        System.out.println("Testing time: " + (System.currentTimeMillis() - start));
+        System.out.println("Colorizing time: " + (System.currentTimeMillis() - start));
 	}
 	
     @Override

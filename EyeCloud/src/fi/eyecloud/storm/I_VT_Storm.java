@@ -5,12 +5,9 @@ import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
 import backtype.storm.StormSubmitter;
 import backtype.storm.coordination.BatchOutputCollector;
-import backtype.storm.coordination.CoordinatedBolt.FinishedCallback;
 import backtype.storm.drpc.LinearDRPCTopologyBuilder;
-import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
-import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.topology.base.BaseBatchBolt;
@@ -22,19 +19,18 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.conf.Library;
 import fi.eyecloud.input.ReadTextFile;
 
+@SuppressWarnings("deprecation")
 public class I_VT_Storm {
-    public static class LoadData extends BaseBasicBolt {
+    @SuppressWarnings("serial")
+	public static class LoadData extends BaseBasicBolt {
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
         	Object id = tuple.getValue(0);
@@ -77,7 +73,8 @@ public class I_VT_Storm {
         }        
     }
     
-    public static class SplitData extends BaseBasicBolt {
+    @SuppressWarnings("serial")
+	public static class SplitData extends BaseBasicBolt {
     	private Map<String, Integer> mapHeader;
     	private List<String> packetData;
     	
@@ -167,7 +164,8 @@ public class I_VT_Storm {
         }
     }
     
-    public static class MergeAggregator extends BaseBatchBolt {
+    @SuppressWarnings({ "serial", "rawtypes" })
+	public static class MergeAggregator extends BaseBatchBolt {
         BatchOutputCollector _collector;
         Object _id;
         private Map<Integer, Integer> mapX    = new HashMap<Integer, Integer>();
