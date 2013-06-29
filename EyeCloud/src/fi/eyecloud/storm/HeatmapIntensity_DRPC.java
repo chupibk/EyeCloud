@@ -177,7 +177,7 @@ public class HeatmapIntensity_DRPC {
         @Override
         public void finishBatch() {
         	Colorization color = new Colorization(intensity, width, height);
-        	String result = ImageUtils.encodeToString(color.getImage(), "png");
+        	String result = ImageUtils.encodeToString(color.getImage(), "jpg");
         	_collector.emit(new Values(_id, result));
         }
     	
