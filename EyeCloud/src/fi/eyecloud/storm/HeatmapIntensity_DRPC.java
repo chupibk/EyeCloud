@@ -47,6 +47,8 @@ public class HeatmapIntensity_DRPC {
         		value[i] = Float.parseFloat(data[i]);
         	}
         	
+        	numberPart = value.length/(Constants.PARAMETER_NUMBER_HEATMAP*numberPart);
+        	
         	int count = 0;
         	List<Integer> send = new ArrayList<Integer>();
         	for (int i=0; i < value.length/Constants.PARAMETER_NUMBER_HEATMAP; i++){
@@ -197,11 +199,11 @@ public class HeatmapIntensity_DRPC {
     
     public static void main(String[] args) throws Exception {
         LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1]), 1);
-    	//LinearDRPCTopologyBuilder builder = construct(1, 5, 1);
+    	//LinearDRPCTopologyBuilder builder = construct(1, 3, 1);
         Config conf = new Config();
         
         if(args==null || args.length==0) {
-            conf.setMaxTaskParallelism(5);
+            conf.setMaxTaskParallelism(3);
             LocalDRPC drpc = new LocalDRPC();
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("reach-drpc", conf, builder.createLocalTopology(drpc));

@@ -17,7 +17,11 @@ public class Colorization {
 		
 		for (int i=0; i < width; i++){
 			for (int j=0; j < height; j++){
-				float red = (float) (intensity[i][j]/max);
+				float red;
+				if (max != 0)
+					red = (float) (intensity[i][j]/max);
+				else 
+					red = 0;
 				if (red < 0) red = 0;
 				if (red > 1) red = 1;
 				int color = rgb[rgb.length - (int)(red*(rgb.length-1)) - 1];
