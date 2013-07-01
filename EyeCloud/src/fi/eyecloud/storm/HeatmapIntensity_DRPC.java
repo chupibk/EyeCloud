@@ -199,8 +199,8 @@ public class HeatmapIntensity_DRPC {
     }
     
     public static void main(String[] args) throws Exception {
-        //LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1]), 1);
-    	LinearDRPCTopologyBuilder builder = construct(1, 3, 1);
+        LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1]), 1);
+    	//LinearDRPCTopologyBuilder builder = construct(1, 3, 1);
         Config conf = new Config();
         
         if(args==null || args.length==0) {

@@ -1,0 +1,14 @@
+#png1 {
+    position:absolute;
+    top:0;
+    left:0;
+    width: 960px;
+    z-index:0;
+}
+
+#png2 {
+    position:absolute;
+    top:0px;
+    left:0px;
+    z-index:1;
+}
