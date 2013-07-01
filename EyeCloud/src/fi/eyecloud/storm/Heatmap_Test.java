@@ -13,7 +13,7 @@ import fi.eyecloud.utils.ImageUtils;
 public class Heatmap_Test {
     public static void main(String[] args) throws Exception {
 			String HOSTNAME = "54.229.78.45";//args[0];
-			int numberPart = 20;//Integer.parseInt(args[1]);
+			int numberPart = 3;//Integer.parseInt(args[1]);
 		
 			DRPCClient client = new DRPCClient(HOSTNAME, 3772);    
             

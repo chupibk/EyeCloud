@@ -2,6 +2,7 @@ package fi.eyecloud.storm;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -147,11 +148,14 @@ public class HeatmapIntensity_DRPC {
         double intensity[][] = null;
         int width = 0;
         int height = 0;
+        TopologyContext contextData;
         
         @Override
         public void prepare(Map conf, TopologyContext context, BatchOutputCollector collector, Object id) {
             _collector = collector;
             _id = id;
+            contextData = context;
+            intensity = (double[][]) context.getTaskData("data");
         }		
 		
     	@Override
@@ -179,9 +183,17 @@ public class HeatmapIntensity_DRPC {
 
         @Override
         public void finishBatch() {
+        	contextData.setTaskData("data", intensity);
         	Colorization color = new Colorization(intensity, width, height);
-        	String result = ImageUtils.encodeToString(color.getImage(), "png");
-        	_collector.emit(new Values(_id, result));
+        	try {
+				new ClientFile(color.getImage());
+				_collector.emit(new Values(_id, "Ok"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				_collector.emit(new Values(_id, "Fail"));
+			}
+        	//String result = ImageUtils.encodeToString(color.getImage(), "png");
         }
     	
         @Override
@@ -209,7 +221,7 @@ public class HeatmapIntensity_DRPC {
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("reach-drpc", conf, builder.createLocalTopology(drpc));
             
-            ReadTextFile data = new ReadTextFile("data/17JuneResult.txt");
+            ReadTextFile data = new ReadTextFile("data/heatmap.txt");
             String send = "";
             while (data.readNextLine() != null){
             	send = send + data.getField(Constants.GazePointX) + Constants.PARAMETER_SPLIT;

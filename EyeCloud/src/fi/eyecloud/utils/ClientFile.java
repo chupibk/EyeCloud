@@ -13,12 +13,11 @@ import javax.imageio.ImageIO;
 
 public class ClientFile {
 	public ClientFile (BufferedImage image) throws IOException{
-		String fileName = "data/tmp.png";
+		String fileName = "/home/storm/storm/tmp.png";
 		File file = new File(fileName);
 		ImageIO.write(image, "png",file);
 		
-		
-		Socket socket = new Socket("localhost", 3332);
+		Socket socket = new Socket("172.31.4.197", 3332);
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 		ObjectOutputStream oos = new ObjectOutputStream(
 				socket.getOutputStream());

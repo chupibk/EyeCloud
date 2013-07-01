@@ -35,7 +35,7 @@ public class ServerFile extends Thread {
 		Object o = ois.readObject();
 
 		if (o instanceof String) {
-			fos = new FileOutputStream("server/" + o.toString());
+			fos = new FileOutputStream("./" + o.toString());
 		} else {
 			throwException("Something is wrong");
 		}
