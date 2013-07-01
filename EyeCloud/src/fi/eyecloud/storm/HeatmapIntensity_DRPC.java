@@ -26,6 +26,7 @@ import fi.eyecloud.gui.heatmap.Colorization;
 import fi.eyecloud.gui.heatmap.HeatmapFromText;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
+import fi.eyecloud.utils.ClientFile;
 import fi.eyecloud.utils.ImageUtils;
 
 @SuppressWarnings("deprecation")
@@ -179,7 +180,7 @@ public class HeatmapIntensity_DRPC {
         @Override
         public void finishBatch() {
         	Colorization color = new Colorization(intensity, width, height);
-        	String result = ImageUtils.encodeToString(color.getImage(), "jpg");
+        	String result = ImageUtils.encodeToString(color.getImage(), "png");
         	_collector.emit(new Values(_id, result));
         }
     	
@@ -198,8 +199,8 @@ public class HeatmapIntensity_DRPC {
     }
     
     public static void main(String[] args) throws Exception {
-        LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1]), 1);
-    	//LinearDRPCTopologyBuilder builder = construct(1, 3, 1);
+        //LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1]), 1);
+    	LinearDRPCTopologyBuilder builder = construct(1, 3, 1);
         Config conf = new Config();
         
         if(args==null || args.length==0) {
@@ -225,6 +226,7 @@ public class HeatmapIntensity_DRPC {
             String imageString = drpc.execute("Intensity", send);
             System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
             
+            
             BufferedWriter out = null;
 			FileWriter fw = new FileWriter("data/base64");
 			out = new BufferedWriter(fw);
@@ -232,6 +234,7 @@ public class HeatmapIntensity_DRPC {
 			out.close();
             
             // Draw
+            new ClientFile(ImageUtils.decodeToImage(imageString));
             new HeatmapFromText("data/17JuneMedia.png", ImageUtils.decodeToImage(imageString));
             
             cluster.shutdown();
