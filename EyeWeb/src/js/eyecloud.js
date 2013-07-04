@@ -95,6 +95,8 @@ window.onresize = function() {
  */
 function updatePosition() {
 	$("#window_position").html(posLeft() + " - " + posTop());
+	$("#web_position").html($("#wrap").position().left + " - " 
+			+ $("#wrap").position().top + " - " + $("#web_page").width());
 }
 
 /**
@@ -122,10 +124,22 @@ function convertData(x, y){
 	newX = newX - $("#wrap").position().left;
 	newY = newY - $("#wrap").position().top;
 	
-	if (newX < 0 || newY < 0){
+	// Error
+	if (windowWidth() - documentWidth() != 0){
+		newX = newX + 7;
+		newY = newY + 7;
+	}
+	
+	var frameWidth = $("#web_page").width();
+	var frameHeight = documentHeight() - $("#wrap").position().top;
+	
+	if (newX < 0 || newY < 0 || newX > frameWidth || newY > frameHeight){
 		newX = -1;
 		newY = -1;
 	}
+	
+	// Scroll
+	//newY = newY + window.scrollY;
 	
 	return newX + "," + newY;
 }
@@ -142,8 +156,8 @@ $("#window_size").html(windowWidth() + " - " + windowHeight());
 $("#document_size").html(documentWidth() + " - " + documentHeight());
 
 $("#window_position").html(posLeft() + " - " + posTop());
-//$("#web_position").html($("#wrap").position().left + " - " 
-//						+ $("#wrap").position().top + " - " + $("#web_page").width());
-$("#web_position").html(convertData(136,489));
+$("#web_position").html($("#wrap").position().left + " - " 
+						+ $("#wrap").position().top + " - " + $("#web_page").width());
+//$("#web_position").html(convertData(136,489));
 
 
