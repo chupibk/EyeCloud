@@ -49,7 +49,7 @@ function documentHeight() {
  * 
  * @returns
  */
-function windowWidth(){
+function windowWidth() {
 	return window.outerWidth;
 }
 
@@ -58,7 +58,7 @@ function windowWidth(){
  * 
  * @returns
  */
-function windowHeight(){
+function windowHeight() {
 	return window.outerHeight;
 }
 
@@ -95,52 +95,53 @@ window.onresize = function() {
  */
 function updatePosition() {
 	$("#window_position").html(posLeft() + " - " + posTop());
-	$("#web_position").html($("#wrap").position().left + " - " 
-			+ $("#wrap").position().top + " - " + $("#web_page").width());
+	$("#web_position").html(
+			$("#wrap").position().left + " - " + $("#wrap").position().top
+					+ " - " + $("#web_page").width());
 }
 
 /**
  * Mouse position
  * 
  */
-window.onmousemove = function(event){
-    event = event || window.event;
-    $("#mouse_position").html(event.clientX + " - " + event.clientY);
+window.onmousemove = function(event) {
+	event = event || window.event;
+	$("#mouse_position").html(event.clientX + " - " + event.clientY);
 };
 
-function convertData(x, y){
+function convertData(x, y) {
 	var newX = x;
 	var newY = y;
-	
+
 	// Position in window
 	newX = newX - posLeft();
 	newY = newY - posTop();
-	
+
 	// Position in document
 	newX = newX - (windowWidth() - documentWidth());
 	newY = newY - (windowHeight() - documentHeight());
-	
+
 	// Position in iFrame
 	newX = newX - $("#wrap").position().left;
 	newY = newY - $("#wrap").position().top;
-	
+
 	// Error
-	if (windowWidth() - documentWidth() != 0){
+	if (windowWidth() - documentWidth() != 0) {
 		newX = newX + 7;
 		newY = newY + 7;
 	}
-	
+
 	var frameWidth = $("#web_page").width();
 	var frameHeight = documentHeight() - $("#wrap").position().top;
-	
-	if (newX < 0 || newY < 0 || newX > frameWidth || newY > frameHeight){
+
+	if (newX < 0 || newY < 0 || newX > frameWidth || newY > frameHeight) {
 		newX = -1;
 		newY = -1;
 	}
-	
+
 	// Scroll
 	//newY = newY + window.scrollY;
-	
+
 	return newX + "," + newY;
 }
 
@@ -156,8 +157,23 @@ $("#window_size").html(windowWidth() + " - " + windowHeight());
 $("#document_size").html(documentWidth() + " - " + documentHeight());
 
 $("#window_position").html(posLeft() + " - " + posTop());
-$("#web_position").html($("#wrap").position().left + " - " 
-						+ $("#wrap").position().top + " - " + $("#web_page").width());
+$("#web_position").html(
+		$("#wrap").position().left + " - " + $("#wrap").position().top + " - "
+				+ $("#web_page").width());
 //$("#web_position").html(convertData(136,489));
+
+// RPC
+$.ajax({
+    dataType: 'jsonp',
+    data: "",
+    url: "http://localhost:8080/EyeServer/DRPC",
+    success: function(result) {
+    	alert(result);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        alert("error " + errorThrown);
+    }
+});
+
 
 
