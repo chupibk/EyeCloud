@@ -1,6 +1,8 @@
 package fi.eyecloud.utils;
 
+import java.io.EOFException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -24,7 +26,7 @@ public class ServerFile extends Thread {
 		}
 	}
 
-	private void saveFile(Socket socket) throws Exception {
+	private void saveFile(Socket socket) throws Exception, IOException, EOFException {
 		ObjectOutputStream oos = new ObjectOutputStream(
 				socket.getOutputStream());
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());

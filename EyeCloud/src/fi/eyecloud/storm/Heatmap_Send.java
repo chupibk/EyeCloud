@@ -8,8 +8,8 @@ import fi.eyecloud.input.ReadTextFile;
 
 public class Heatmap_Send {
     public static void main(String[] args) throws Exception {
-			String HOSTNAME = "54.229.79.213";//args[0];
-			int numberPart = 3;//Integer.parseInt(args[1]);
+			String HOSTNAME = "54.229.84.177";//args[0];
+			int numberPart = 1;//Integer.parseInt(args[1]);
 		
 			DRPCClient client = new DRPCClient(HOSTNAME, 3772);    
             
