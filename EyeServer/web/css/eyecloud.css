@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+
+body {
+    overflow-y: hidden;
+}
+
+#web_page{ 
+    width: 1100px;
+    height: 100%;
+    position: absolute;
+}
+
+#wrap{ 
+    width: 100%;
+    position: absolute;
+    top: 300px; 
+    left: 0px;
+    bottom: 0;
+}
