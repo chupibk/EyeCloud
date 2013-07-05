@@ -17,3 +17,9 @@ body {
     left: 0px;
     bottom: 0;
 }
+
+#overlay{
+    position: absolute;
+    top:0px;
+    left:0px;
+}
