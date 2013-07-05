@@ -7,7 +7,7 @@ public class GuiConstants {
 	/**
 	 * ZOOM Rate
 	 */
-	public final static int SCREEN_RATE = 2;
+	public final static int SCREEN_RATE = 1;
 	public final static int SCREEN_WIDTH = Constants.RESOLUTION_WIDTH/SCREEN_RATE + 100;
 	public final static int SCREEN_HEIGHT = Constants.RESOLUTION_HEIGHT/SCREEN_RATE + 50;
 	public final static int MEDIA_WIDTH = Constants.RESOLUTION_WIDTH/SCREEN_RATE;
@@ -16,7 +16,7 @@ public class GuiConstants {
 	/**
 	 * Error of position
 	 */
-	public final static int ERROR				= 20;
+	public final static int ERROR				= 0;
 	public final static int DOT_SIZE			= 3;
 	public final static int CIRCLE_SIZE_RATE	= 20;
 	public final static int SMALLEST_SIZE		= 5;
@@ -35,7 +35,7 @@ public class GuiConstants {
 	/**
 	 * Kernel size
 	 */
-	public static int KERNEL_SIZE					= 500;
+	public static int KERNEL_SIZE					= 200;
 	// Do not change the below line
 	public static int SIGMA_USED					= SIGMA/SCREEN_RATE;
 	// Do not change the below line
