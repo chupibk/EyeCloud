@@ -5,5 +5,7 @@ public interface Intensity {
 	
 	void fromFixation();
 	
+	void fromGazePoints(int duration);
+	
 	double[][] getIntensity();
 }

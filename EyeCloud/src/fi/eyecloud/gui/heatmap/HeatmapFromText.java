@@ -34,9 +34,14 @@ public class HeatmapFromText {
 		// TODO Auto-generated method stub
 		long start = System.currentTimeMillis();
 		HeatmapIntensity intensity = new HeatmapIntensity();
-		intensity.run("data/17JuneResult.txt", 0, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
-        Colorization color = new Colorization(intensity.getIntensity(), 
+		if (args.length == 0)
+			intensity.run("data/heatmap/30000.txt", 1, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
+		else
+			intensity.run(args[0], 1, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
+		long start1 = System.currentTimeMillis();
+		Colorization color = new Colorization(intensity.getIntensity(), 
 				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
+		System.out.println("Colorization time: " + (System.currentTimeMillis() - start1));
 		System.out.println("Running time: " + (System.currentTimeMillis() - start));
 		new HeatmapFromText("data/17JuneMedia.png", color.getImage());
 	}

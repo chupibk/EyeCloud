@@ -40,6 +40,8 @@ public class HeatmapIntensity implements Intensity{
 		
 		if (option == 0){
 			fromFixation();
+		}else{
+			fromGazePoints(Constants.THOUSAND/Constants.SAMPLE_RATE);
 		}
 	}
 	
@@ -67,6 +69,24 @@ public class HeatmapIntensity implements Intensity{
 			}
 		}
 	}
+	
+	/**
+	 * Calculate intensity from Gaze Points
+	 */
+	@Override
+	public void fromGazePoints(int d){
+		while (dataFile.readNextLine() != null){
+			int x = (int)Float.parseFloat(dataFile.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
+			int y = (int)Float.parseFloat(dataFile.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE;
+			
+			for (int i=x - GuiConstants.KERNEL_SIZE_USED; i <= x + GuiConstants.KERNEL_SIZE_USED; i++){
+				for (int j=y - GuiConstants.KERNEL_SIZE_USED; j <= y + GuiConstants.KERNEL_SIZE_USED; j++){
+					if (i >=0 && j >=0 && i < width && j < height)
+						intensity[i][j] += gaussianWindow[Math.abs(x-i)][Math.abs(y-j)]*d;
+				}
+			}
+		}
+	}	
 	
 	@Override
 	public double[][] getIntensity(){

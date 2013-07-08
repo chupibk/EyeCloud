@@ -7,7 +7,7 @@ public class Rainbow {
 	    int width;
 	    int height;
 	    
-	    int rate = 3;
+	    int rate = 4;
 	    width = GuiConstants.RAINBOW_SIZE/rate;
 	    height = rate;
 	    rgb = new int[width * height];

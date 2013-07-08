@@ -9,7 +9,9 @@ public class Colorization {
 	private BufferedImage image;
 	
 	public Colorization(double[][] intensity, int width, int height){
+		long start = System.currentTimeMillis();
         GetMaxMin maxMin = new GetMaxMin(intensity, width, height);
+        System.out.println("Max finding time: " + (System.currentTimeMillis() - start));
 		double max = maxMin.getMax();
 		
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

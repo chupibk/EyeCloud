@@ -16,7 +16,7 @@ public class GuiConstants {
 	/**
 	 * Error of position
 	 */
-	public final static int ERROR				= 0;
+	public final static int ERROR				= 20; // Change it
 	public final static int DOT_SIZE			= 3;
 	public final static int CIRCLE_SIZE_RATE	= 20;
 	public final static int SMALLEST_SIZE		= 5;
@@ -24,7 +24,7 @@ public class GuiConstants {
 	public final static int ERROR_USED			= ERROR/SCREEN_RATE;
 	
 	// Heatmap
-	public final static int ALPHA				= 100;
+	public final static int ALPHA				= 150;
 	public final static int RAINBOW_SIZE		= 1000;
 	
 	// Gaussian
@@ -35,9 +35,9 @@ public class GuiConstants {
 	/**
 	 * Kernel size
 	 */
-	public static int KERNEL_SIZE					= 200;
+	public static int KERNEL_SIZE					= 300;
 	// Do not change the below line
 	public static int SIGMA_USED					= SIGMA/SCREEN_RATE;
 	// Do not change the below line
-	public static int KERNEL_SIZE_USED				= KERNEL_SIZE/SCREEN_RATE;
+	public static int KERNEL_SIZE_USED				= KERNEL_SIZE/SCREEN_RATE/2;
 }

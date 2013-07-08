@@ -23,6 +23,12 @@ public class HeatmapIntensityCloud implements Intensity{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void fromGazePoints(int duration) {
+		// TODO Auto-generated method stub
+		
+	}	
 
 	@Override
 	public double[][] getIntensity() {
