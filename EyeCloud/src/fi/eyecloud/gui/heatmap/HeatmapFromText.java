@@ -35,7 +35,7 @@ public class HeatmapFromText {
 		long start = System.currentTimeMillis();
 		HeatmapIntensity intensity = new HeatmapIntensity();
 		if (args.length == 0)
-			intensity.run("data/heatmap/30000.txt", 1, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
+			intensity.run("data/heatmap/100000.txt", 1, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
 		else
 			intensity.run(args[0], 1, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
 		long start1 = System.currentTimeMillis();

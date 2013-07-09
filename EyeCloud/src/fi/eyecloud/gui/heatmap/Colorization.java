@@ -7,11 +7,13 @@ import fi.eyecloud.gui.lib.Rainbow;
 public class Colorization {
 
 	private BufferedImage image;
+	private long timeMax;
 	
 	public Colorization(double[][] intensity, int width, int height){
 		long start = System.currentTimeMillis();
         GetMaxMin maxMin = new GetMaxMin(intensity, width, height);
-        System.out.println("Max finding time: " + (System.currentTimeMillis() - start));
+        timeMax = System.currentTimeMillis() - start;
+        System.out.println("Max finding time: " + timeMax);
 		double max = maxMin.getMax();
 		
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -37,6 +39,10 @@ public class Colorization {
 	            	image.setRGB(i, j, newcolor);
 			}
 		}		
+	}
+	
+	public long getTimeMax(){
+		return timeMax;
 	}
 	
 	public BufferedImage getImage(){

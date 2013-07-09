@@ -35,7 +35,7 @@ public class GuiConstants {
 	/**
 	 * Kernel size
 	 */
-	public static int KERNEL_SIZE					= 300;
+	public static int KERNEL_SIZE					= 160;
 	// Do not change the below line
 	public static int SIGMA_USED					= SIGMA/SCREEN_RATE;
 	// Do not change the below line
