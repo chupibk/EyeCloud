@@ -1,13 +1,39 @@
+// Constants
+/**
+ * Reference report about refresh rate
+ * @type Number
+ */
+var REFRESH_RATE = 100; //ms
+/**
+ * Duration of each data
+ * @type int
+ */
+var DURATION = parseInt(1000/120);
+/**
+ * When number of packets reaches to this number, data is sent
+ * @type int
+ */
+var PACKET_NUMBER = parseInt(REFRESH_RATE/DURATION);
+
+var PARAMETER_SPLIT = ",";
+/**
+ * Number of part is divided in cloud cluster, normally it is set to 1
+ * @type Number
+ */
+var NUMBER_PART = 1;
+/**
+ * Control error for each screen in aspect of x,y axis
+ * @type Number
+ */
+var ERROR = 7;
+
+// Variables
 var sendData = "";
 var count = 0;
 var frameWidth = $("#web_page").width();
 var frameHeight = documentHeight() - $("#wrap").position().top;
-
-// Constants
-var PARAMETER_SPLIT = ",";
-var NUMBER_PART = 1;
-var PACKET_NUMBER = 50;
-var ERROR = 7;
+var sentCount = 0;
+var totalDelay = 0;
 
 /**
  * Screen Width
@@ -120,6 +146,13 @@ window.onmousemove = function(event) {
     $("#mouse_position").html(event.clientX + " - " + event.clientY);
 };
 
+/**
+ * convert x,y coordinate in screen to coordinate in frame window
+ * 
+ * @param {type} x
+ * @param {type} y
+ * @returns {Number|String|int}
+ */
 function convertData(x, y) {
     var newX = x;
     var newY = y;
@@ -142,18 +175,25 @@ function convertData(x, y) {
         newY = newY + ERROR;
     }
 
+    // Check whether this coordinate belongs to frame window or not
     if (newX < 0 || newY < 0 || newX > frameWidth || newY > frameHeight) {
         newX = -1;
         newY = -1;
         return "-1";
     }
 
-    // Scroll
+    // Scroll is implemented here
     //newY = newY + window.scrollY;
 
-    return newX + PARAMETER_SPLIT + newY + PARAMETER_SPLIT + "20" + PARAMETER_SPLIT;
+    return newX + PARAMETER_SPLIT + newY + PARAMETER_SPLIT + DURATION + PARAMETER_SPLIT;
 }
 
+/**
+ * Add data to send string, if number of small data is bigger than Packet number, data is sent
+ * 
+ * @param {type} s
+ * @returns {undefined}
+ */
 function addData(s) {
     sendData = sendData + s;
     count++;
@@ -164,22 +204,28 @@ function addData(s) {
         sendData = "data=" + sendData;
         console.log(sendData);
         
+        var start = new Date().getTime();
         $.ajax({
             dataType: 'jsonp',
             data: sendData,
             url: "DRPC",
             success: function(result) {
                 $("#send_status").html(result);
-                console.log("Ok");
+                console.log("Ok sending: " + result);
+                var end = new Date().getTime();
+                sentCount++;
+                totalDelay += (end - start);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                $("#send_status").html("Send failed: " + errorThrown);
+                $("#send_status").html("Failed: " + errorThrown);
                 console.log("Fail to send");
             }
         });
         
         count = 0;
         sendData = "";
+        
+        console.log(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay/sentCount));
     }
 }
 
@@ -198,4 +244,3 @@ $("#window_position").html(posLeft() + " - " + posTop());
 $("#web_position").html(
         $("#wrap").position().left + " - " + $("#wrap").position().top + " - "
         + $("#web_page").width());
-//$("#web_position").html(convertData(136,489));

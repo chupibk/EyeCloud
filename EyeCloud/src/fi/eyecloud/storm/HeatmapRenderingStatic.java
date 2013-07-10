@@ -31,7 +31,7 @@ import fi.eyecloud.utils.ClientFile;
 import fi.eyecloud.utils.ImageUtils;
 
 @SuppressWarnings("deprecation")
-public class HeatmapIntensity_DRPC {
+public class HeatmapRenderingStatic {
     @SuppressWarnings("serial")
 	public static class ReadData extends BaseBasicBolt {
 
@@ -203,7 +203,7 @@ public class HeatmapIntensity_DRPC {
     }	
 	
     public static LinearDRPCTopologyBuilder construct(int numberRead, int numberProcess, int numberAggregator) {
-    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("Intensity");
+    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("heatmap_static");
     	builder.addBolt(new ReadData(), numberRead);
         builder.addBolt(new ProcessData(), numberProcess).shuffleGrouping();
         builder.addBolt(new AggregatorData(), numberAggregator).fieldsGrouping(new Fields("id"));
@@ -235,7 +235,7 @@ public class HeatmapIntensity_DRPC {
             
             // Send data
             long start = System.currentTimeMillis();
-            String imageString = drpc.execute("Intensity", send);
+            String imageString = drpc.execute("heatmap_static", send);
             System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
             
             

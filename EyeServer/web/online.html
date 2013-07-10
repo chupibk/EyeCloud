@@ -1,49 +1,63 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="js/lib/jquery.ba-hashchange.js"></script>
-<script type="text/javascript">
-	var auto_refresh = setInterval(
-		function (){
-			d = new Date();
-			$("#overlay").fadeOut("slow").attr("src", "http://54.229.79.167/heatmap/tmp.png?" + d.getTime()).fadeIn("slow");
-		}, 2000);
-</script>
-<link rel="stylesheet" type="text/css" href="css/eyecloud.css">
-<title>Heat map</title>
-</head>
-<body>
-	Screen Size:
-	<div id="screen_size">
-	</div>
-	Window Size:
-	<div id="window_size">
-	</div>
-	Document Size:
-	<div id="document_size">
-	</div>	
-	Window Position:
-	<div id="window_position">
-	</div>
-	Mouse Position:
-	<div id="mouse_position">
-	</div>
-	
-	Web Position:
-	<div id="web_position">
-	</div>		
-	
-        Send status:
-        <div id="send_status">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="js/lib/jquery.ba-hashchange.js"></script>
+        <script type="text/javascript">
+            var auto_refresh = setInterval(
+                    function() {
+                        d = new Date();
+                        $("#overlay").fadeOut("slow").attr("src", "http://54.229.79.167/heatmap/tmp.png?" + d.getTime()).fadeIn("slow");
+                    }, 2000);
+        </script>
+        <link rel="stylesheet" type="text/css" href="css/eyecloud.css">
+        <title>Heat map</title>
+    </head>
+    <body>
+        <div id="info">
+            <div class="info_div">
+                Screen Size
+                <div id="screen_size">
+                </div>
+            </div>
+            <div class="info_div">
+                Window Size
+                <div id="window_size">
+                </div>
+            </div>
+            <div class="info_div">
+                Document Size
+                <div id="document_size">
+                </div>	
+            </div>
+            <div class="info_div">
+                Window Position
+                <div id="window_position">
+                </div>
+            </div>
+            <div class="info_div">
+                Mouse Position
+                <div id="mouse_position">
+                </div>
+            </div>
+            <div class="info_div">
+                Web Position
+                <div id="web_position">
+                </div>		
+            </div>
+            <div class="info_div">
+                Send status
+                <div id="send_status">
+                </div>
+            </div>
+        </div>      
+
+        <div id="wrap"> 
+            <iframe  id="web_page" frameBorder="1" src="http://www.bloomberg.com/"></iframe>
+            <img id="overlay" src="images/tmp.png" />
         </div>
-        
-	<div id="wrap"> 
-    	<iframe  id="web_page" frameBorder="1" src="http://www.bloomberg.com/"></iframe>
-        <img id="overlay" src="images/tmp.png" />
-        </div>
-        
-<script type="text/javascript" src="js/eyecloud.js"></script>	
-</body>
+
+        <script type="text/javascript" src="js/eyecloud.js"></script>	
+    </body>
 </html>

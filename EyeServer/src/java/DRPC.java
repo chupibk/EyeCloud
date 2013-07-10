@@ -21,7 +21,7 @@ import java.util.Collection;
 
 /**
  *
- * @author daothanhchung
+ * @author chung-pi
  */
 @WebServlet(urlPatterns = {"/DRPC"})
 public class DRPC extends HttpServlet {
@@ -40,15 +40,14 @@ public class DRPC extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String callback = request.getParameter("callback") == null ? "" : request.getParameter("callback");
-        String data = request.getParameter("data");
+        String callback = request.getParameter(Constants.TAG_CALLBACK) == null ? "" : request.getParameter(Constants.TAG_CALLBACK);
+        String data = request.getParameter(Constants.TAG_DATA);
         Collection collection = new ArrayList();
         
-        String HOSTNAME = "54.229.84.177";
-        DRPCClient client = new DRPCClient(HOSTNAME, 3772);
+        DRPCClient client = new DRPCClient(Constants.HOSTNAME, Constants.PORT);
         String result = "";
         try {
-            result = client.execute("Intensity", data);
+            result = client.execute(Constants.METHOD_HEATMAP, data);
         } catch (TException ex) {
             Logger.getLogger(DRPC.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DRPCExecutionException ex) {

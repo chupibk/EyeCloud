@@ -192,7 +192,7 @@ public class HeatmapRenderingSpeed {
     }	
 	
     public static LinearDRPCTopologyBuilder construct(int numberRead, int numberProcess, int numberAggregator) {
-    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("Intensity");
+    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("heatmap_speed");
     	builder.addBolt(new ReadData(), numberRead);
         builder.addBolt(new ProcessData(), numberProcess).shuffleGrouping();
         builder.addBolt(new AggregatorData(), numberAggregator).fieldsGrouping(new Fields("id"));
@@ -218,7 +218,7 @@ public class HeatmapRenderingSpeed {
             
             // Send data
             long start = System.currentTimeMillis();
-            System.out.println(drpc.execute("Intensity", send));
+            System.out.println(drpc.execute("heatmap_speed", send));
             System.out.println("Running time: " + (System.currentTimeMillis() - start));
                         
             cluster.shutdown();

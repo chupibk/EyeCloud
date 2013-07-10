@@ -191,8 +191,10 @@ function ETUDPlugin_data(timestamp, x, y)
 	if(ETUDPlugin_dataHandler)
 		ETUDPlugin_dataHandler(timestamp, x, y);
 	else{
+                // Convert data here
 		var result = convertData(x,y);
 		document.getElementById("etudPlugin_log").innerHTML = timestamp + " --- " + x + ", " + y + " --- " + result;
+                // Add to send string if returned result is not -1
                 if (result != "-1")
                    addData(result);
         }

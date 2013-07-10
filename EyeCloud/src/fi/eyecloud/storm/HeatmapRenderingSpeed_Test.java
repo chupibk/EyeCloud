@@ -6,10 +6,10 @@ import fi.eyecloud.gui.lib.GuiConstants;
 
 public class HeatmapRenderingSpeed_Test {
     public static void main(String[] args) throws Exception {
-			String HOSTNAME = "54.229.78.45"; //args[0];
-			String fileName = "data/heatmap/100000.txt"; //args[1];
-			int gazeNumber = 1000; //Integer.parseInt(args[2]);
-			int numberPart = 3; //Integer.parseInt(args[3]);
+			String HOSTNAME = args[0];
+			String fileName = args[1];
+			int gazeNumber = Integer.parseInt(args[2]);
+			int numberPart = Integer.parseInt(args[3]);
 			
 			DRPCClient client = new DRPCClient(HOSTNAME, 3772);    
             
@@ -21,7 +21,7 @@ public class HeatmapRenderingSpeed_Test {
             
             // Send data
             long start = System.currentTimeMillis();
-            System.out.println(client.execute("Intensity", send));
+            System.out.println(client.execute("heatmap_speed", send));
             System.out.println("Running time: " + (System.currentTimeMillis() - start));
             
             client.close();
