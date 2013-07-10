@@ -31,7 +31,7 @@ import fi.eyecloud.utils.ClientFile;
 import fi.eyecloud.utils.ImageUtils;
 
 @SuppressWarnings("deprecation")
-public class HeatmapRenderingStatic {
+public class HeatmapRenderingStaticNoDivide {
     @SuppressWarnings("serial")
 	public static class ReadData extends BaseBasicBolt {
 
@@ -41,8 +41,8 @@ public class HeatmapRenderingStatic {
         	String tmp = tuple.getString(1);
         	String data[] = tmp.split(Constants.PARAMETER_SPLIT);
         	int numberPart = Integer.parseInt(data[data.length - 1]);
-        	int widthMedia = Integer.parseInt(data[data.length - 3]);
-        	int heightMedia = Integer.parseInt(data[data.length - 2]);
+        	int widthMedia = Integer.parseInt(data[data.length - 2]);
+        	int heightMedia = Integer.parseInt(data[data.length - 3]);
         	
         	float value[] = new float[data.length - 3];
         	for (int i=0; i < data.length - 3; i++){
@@ -103,13 +103,18 @@ public class HeatmapRenderingStatic {
 			return value;
 		}
 		
-    	@SuppressWarnings("unchecked")
 		@Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
         	Object id = tuple.getValue(0);
-        	List<Integer> data = (List<Integer>) tuple.getValue(1);
-        	int width = data.get(data.size() - 2);
-        	int height = data.get(data.size() - 1);
+        	String tmp = tuple.getString(1);
+        	String data[] = tmp.split(Constants.PARAMETER_SPLIT);
+        	int width = Integer.parseInt(data[data.length - 3]);
+        	int height = Integer.parseInt(data[data.length - 2]);        	
+        	
+        	int value[] = new int[data.length - 3];
+        	for (int i=0; i < data.length - 3; i++){
+        		value[i] = Math.round(Float.parseFloat(data[i]));
+        	}
         	
         	double[][] intensity = new double[width][height];
         	
@@ -119,10 +124,10 @@ public class HeatmapRenderingStatic {
     			}
     		}
     		
-    		for (int k=0; k < data.size()/Constants.PARAMETER_NUMBER_HEATMAP; k++){
-    			int x = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP)/GuiConstants.SCREEN_RATE;;
-    			int y = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP + 1)/GuiConstants.SCREEN_RATE;;
-    			int d = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP + 2);
+    		for (int k=0; k < value.length/Constants.PARAMETER_NUMBER_HEATMAP; k++){
+    			int x = value[k*Constants.PARAMETER_NUMBER_HEATMAP]/GuiConstants.SCREEN_RATE;;
+    			int y = value[k*Constants.PARAMETER_NUMBER_HEATMAP +1]/GuiConstants.SCREEN_RATE;;
+    			int d = value[k*Constants.PARAMETER_NUMBER_HEATMAP +2];
     			
     			for (int i=x - GuiConstants.KERNEL_SIZE_USED; i <= x + GuiConstants.KERNEL_SIZE_USED; i++){
     				for (int j=y - GuiConstants.KERNEL_SIZE_USED; j <= y + GuiConstants.KERNEL_SIZE_USED; j++){
@@ -202,17 +207,16 @@ public class HeatmapRenderingStatic {
         }
     }	
 	
-    public static LinearDRPCTopologyBuilder construct(int numberRead, int numberProcess, int numberAggregator) {
+    public static LinearDRPCTopologyBuilder construct(int numberProcess, int numberAggregator) {
     	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("heatmap_static");
-    	builder.addBolt(new ReadData(), numberRead);
-        builder.addBolt(new ProcessData(), numberProcess).shuffleGrouping();
+        builder.addBolt(new ProcessData(), numberProcess);
         builder.addBolt(new AggregatorData(), numberAggregator).fieldsGrouping(new Fields("id"));
         return builder;
     }
     
     public static void main(String[] args) throws Exception {
-        LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), Integer.parseInt(args[1]), 1);
-    	//LinearDRPCTopologyBuilder builder = construct(1, 3, 1);
+        LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), 1);
+    	//LinearDRPCTopologyBuilder builder = construct(3, 1);
         Config conf = new Config();
         
         if(args==null || args.length==0) {
