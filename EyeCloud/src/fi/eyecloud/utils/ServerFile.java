@@ -21,12 +21,19 @@ public class ServerFile extends Thread {
 				Socket s = serverSocket.accept();
 				saveFile(s);
 			}
+		} catch (EOFException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private void saveFile(Socket socket) throws Exception, IOException, EOFException {
+	private void saveFile(Socket socket) {
+		try {
 		ObjectOutputStream oos = new ObjectOutputStream(
 				socket.getOutputStream());
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
@@ -73,6 +80,19 @@ public class ServerFile extends Thread {
 
 		ois.close();
 		oos.close();
+		}catch (EOFException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void throwException(String message) throws Exception {

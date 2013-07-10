@@ -8,7 +8,7 @@
  * @author chung-pi <cdao@cs.uef.fi>
  */
 public class Constants {
-    public final static String HOSTNAME = "";
+    public final static String HOSTNAME = "172.31.15.51";
     public final static int PORT        = 3772;
     
     // Method name in the cluster

@@ -5,10 +5,23 @@
         <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="js/lib/jquery.ba-hashchange.js"></script>
         <script type="text/javascript">
+            function GetURLParameter(sParam) {
+                var sPageURL = window.location.search.substring(1);
+                var sURLVariables = sPageURL.split('&');
+                for (var i = 0; i < sURLVariables.length; i++) {
+                    var sParameterName = sURLVariables[i].split('=');
+                    if (sParameterName[0] === sParam) {
+                        return sParameterName[1];
+                    }
+                }
+            }
+            
+            var link = GetURLParameter('url');
+
             var auto_refresh = setInterval(
                     function() {
                         d = new Date();
-                        $("#overlay").fadeOut("slow").attr("src", "http://54.229.79.167/heatmap/tmp.png?" + d.getTime()).fadeIn("slow");
+                        $("#overlay").fadeOut("slow").attr("src", "http://" + link + "/heatmap/tmp.png?" + d.getTime()).fadeIn("slow");
                     }, 2000);
         </script>
         <link rel="stylesheet" type="text/css" href="css/eyecloud.css">
@@ -47,6 +60,11 @@
                 </div>		
             </div>
             <div class="info_div">
+                Frame size
+                <div id="frame_size">
+                </div>		
+            </div>              
+            <div class="info_div">
                 Send status
                 <div id="send_status">
                 </div>
@@ -55,7 +73,7 @@
 
         <div id="wrap"> 
             <iframe  id="web_page" frameBorder="1" src="http://www.bloomberg.com/"></iframe>
-            <img id="overlay" src="images/tmp.png" />
+            <img id="overlay" src="images/noimage.png" />
         </div>
 
         <script type="text/javascript" src="js/eyecloud.js"></script>	

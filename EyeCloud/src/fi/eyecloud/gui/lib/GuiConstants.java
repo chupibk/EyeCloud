@@ -16,7 +16,7 @@ public class GuiConstants {
 	/**
 	 * Error of position
 	 */
-	public final static int ERROR				= 20; // Change it
+	public final static int ERROR				= 0; // Change it
 	public final static int DOT_SIZE			= 3;
 	public final static int CIRCLE_SIZE_RATE	= 20;
 	public final static int SMALLEST_SIZE		= 5;

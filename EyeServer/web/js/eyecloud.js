@@ -3,7 +3,14 @@
  * Reference report about refresh rate
  * @type Number
  */
-var REFRESH_RATE = 100; //ms
+var REFRESH_RATE = parseInt(GetURLParameter('refresh')); //ms
+console.log(REFRESH_RATE);
+/**
+ * Sample rate
+ * 
+ * @type Number
+ */
+var SAMPLE_RATE = 120;
 /**
  * Duration of each data
  * @type int
@@ -26,12 +33,13 @@ var NUMBER_PART = 1;
  * @type Number
  */
 var ERROR = 7;
+var EYE_ERROR = 0;
 
 // Variables
 var sendData = "";
 var count = 0;
 var frameWidth = $("#web_page").width();
-var frameHeight = documentHeight() - $("#wrap").position().top;
+var frameHeight = $("#web_page").height();
 var sentCount = 0;
 var totalDelay = 0;
 
@@ -175,6 +183,9 @@ function convertData(x, y) {
         newY = newY + ERROR;
     }
 
+    // Eye tracker error
+    newY = newY - EYE_ERROR;
+
     // Check whether this coordinate belongs to frame window or not
     if (newX < 0 || newY < 0 || newX > frameWidth || newY > frameHeight) {
         newX = -1;
@@ -195,8 +206,8 @@ function convertData(x, y) {
  * @returns {undefined}
  */
 function addData(s) {
-    sendData = sendData + s;
-    count++;
+    sendData = sendData + s + s + s + s;
+    count = count + 4;
     console.log(count);
 
     if (count >= PACKET_NUMBER) {
@@ -214,7 +225,11 @@ function addData(s) {
                 console.log("Ok sending: " + result);
                 var end = new Date().getTime();
                 sentCount++;
+                console.log("Start: " + start);
+                console.log("End: " + end);
+                console.log(end - start);
                 totalDelay += (end - start);
+                console.log(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay/sentCount));
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 $("#send_status").html("Failed: " + errorThrown);
@@ -224,8 +239,17 @@ function addData(s) {
         
         count = 0;
         sendData = "";
-        
-        console.log(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay/sentCount));
+    }
+}
+
+function GetURLParameter(sParam){
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++){
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] === sParam){
+            return sParameterName[1];
+        }
     }
 }
 
@@ -239,7 +263,7 @@ setInterval(updatePosition, 2000);
 $("#screen_size").html(screenWidth() + " - " + screenHeight());
 $("#window_size").html(windowWidth() + " - " + windowHeight());
 $("#document_size").html(documentWidth() + " - " + documentHeight());
-
+$("#frame_size").html(frameWidth + " - " + frameHeight);
 $("#window_position").html(posLeft() + " - " + posTop());
 $("#web_position").html(
         $("#wrap").position().left + " - " + $("#wrap").position().top + " - "
