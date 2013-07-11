@@ -1,5 +1,6 @@
 // Constants
-var REFRESH_ONLINE = 1000;
+var REFRESH_ONLINE = parseInt(GetURLParameter('refresh')); //ms
+console.log("Refresh online: " + REFRESH_ONLINE);
 
 // Variables
 var sentOnline = 0;
@@ -34,3 +35,14 @@ var auto_refresh = setInterval(
             
         }, REFRESH_ONLINE
 );
+    
+function GetURLParameter(sParam){
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++){
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] === sParam){
+            return sParameterName[1];
+        }
+    }
+}
