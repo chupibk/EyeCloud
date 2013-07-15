@@ -156,6 +156,8 @@ public class WebsiteRendering {
 				
 				contextData.setTaskData(INTENSITY, intensity);
 				collector.emit(new Values(id, type, intensity, width, height));
+			}else{
+				collector.emit(new Values(id, type, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 			}
 		}
 		
@@ -182,6 +184,8 @@ public class WebsiteRendering {
 				Colorization color = new Colorization(data, width, height);
 				String result = UploadData.upload(Constants.UPLOAD_HOST, color.getImage());
 				collector.emit(new Values(id, result));
+			}else{
+				collector.emit(new Values(id, "Nothing"));
 			}
 		}
 
@@ -203,8 +207,8 @@ public class WebsiteRendering {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), 1, Integer.parseInt(args[1]));
-		LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
+		LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), 1, Integer.parseInt(args[1]));
+		//LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
 		Config conf = new Config();
 
 		if (args == null || args.length == 0) {
