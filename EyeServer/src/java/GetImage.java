@@ -44,18 +44,9 @@ public class GetImage extends HttpServlet {
         String callback = request.getParameter(Constants.TAG_CALLBACK) == null ? "" : request.getParameter(Constants.TAG_CALLBACK);
         Collection collection = new ArrayList();
         
-        DRPCClient client = new DRPCClient(Constants.HOSTNAME, Constants.PORT);
-        String result = "";
-        try {
-            result = client.execute(Constants.METHOD_HEATMAP, "0");
-        } catch (TException ex) {
-            Logger.getLogger(DRPC.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DRPCExecutionException ex) {
-            Logger.getLogger(DRPC.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        client.close();
-
+        String dir = getServletContext().getRealPath("") + Constants.UPLOAD_PATH;
+        String result = Libs.lastFileModified(dir);
+        
         collection.add(result);
         
         response.setContentType("application/json");

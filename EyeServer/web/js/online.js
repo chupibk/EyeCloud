@@ -16,7 +16,7 @@ var auto_refresh = setInterval(
             url: "GetImage",
             success: function(result) {
                 $("#send_status").html("Ok");
-                $("#overlay").fadeOut("slow").attr("src", "data:image/png;base64," + result).fadeIn("slow");
+                $("#overlay").fadeOut("slow").attr("src", "upload/" + result).fadeIn("slow");
                 
                 console.log("Ok sending");
                 var end = new Date().getTime();

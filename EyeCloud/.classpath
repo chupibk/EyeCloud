@@ -51,5 +51,6 @@
 	<classpathentry kind="lib" path="lib/tools.logging-0.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/tools.macro-0.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/zookeeper-3.3.3.jar"/>
+	<classpathentry kind="lib" path="lib/httpmime-4.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -72,4 +72,10 @@ public class Constants {
 	 * Heatmap 
 	 */
 	public static int PARAMETER_NUMBER_HEATMAP		= 3;
+	
+	/**
+	 * Upload host
+	 */
+	//public static String UPLOAD_HOST = "http://localhost:8080/EyeServer/UploadServlet";
+	public static String UPLOAD_HOST = "http://172.31.15.51:8080/EyeServer/UploadServlet";
 }

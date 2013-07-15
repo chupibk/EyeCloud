@@ -18,7 +18,7 @@ import fi.eyecloud.conf.Constants;
 import fi.eyecloud.gui.heatmap.Colorization;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
-import fi.eyecloud.utils.ImageUtils;
+import fi.eyecloud.utils.UploadData;
 
 @SuppressWarnings("deprecation")
 public class WebsiteRendering {
@@ -155,35 +155,56 @@ public class WebsiteRendering {
 				}
 				
 				contextData.setTaskData(INTENSITY, intensity);
-				collector.emit(new Values(id, "Ok"));
-			} else {
-				if (intensity != null){
-					Colorization color = new Colorization(intensity, width, height);
-					collector.emit(new Values(id, ImageUtils.encodeToString(color.getImage(), "png")));
-				}else{
-					collector.emit(new Values(id, "NULL"));
-				}
+				collector.emit(new Values(id, type, intensity, width, height));
 			}
 		}
 		
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			declarer.declare(new Fields("id", "result"));
+			declarer.declare(new Fields("id", "type", "intensity", "width", "height"));
 		}
 	}
 
-	public static LinearDRPCTopologyBuilder construct(int numberProcess,int numberAggregator) {
+	@SuppressWarnings("serial")
+	public static class ReturnData extends BaseBasicBolt {
+
+		@Override
+		public void execute(Tuple tuple, BasicOutputCollector collector) {
+			// TODO Auto-generated method stub
+			Object id = tuple.getValue(0);
+			int type = tuple.getInteger(1);
+			
+			if (type == 1){
+				double[][] data = (double[][]) tuple.getValue(2);
+				int	width = tuple.getInteger(3);
+				int	height = tuple.getInteger(4);
+				
+				Colorization color = new Colorization(data, width, height);
+				String result = UploadData.upload(Constants.UPLOAD_HOST, color.getImage());
+				collector.emit(new Values(id, result));
+			}
+		}
+
+		@Override
+		public void declareOutputFields(OutputFieldsDeclarer declarer) {
+			// TODO Auto-generated method stub
+			declarer.declare(new Fields("id", "result"));
+		}
+		
+	}
+	
+	public static LinearDRPCTopologyBuilder construct(int numberProcess,int numberAggregator, int numberReturn) {
 		LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder(
 				"website_rendering");
 		builder.addBolt(new ProcessData(), numberProcess);
-		builder.addBolt(new AggregatorData(), numberAggregator).fieldsGrouping(
-				new Fields("id"));
+		builder.addBolt(new AggregatorData(), numberAggregator).shuffleGrouping();
+		builder.addBolt(new ReturnData(), numberReturn).shuffleGrouping();
 		return builder;
 	}
 
 	public static void main(String[] args) throws Exception {
-		LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), 1);
-		//LinearDRPCTopologyBuilder builder = construct(3, 1);
+		//LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), 1, Integer.parseInt(args[1]));
+		LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
 		Config conf = new Config();
 
 		if (args == null || args.length == 0) {
