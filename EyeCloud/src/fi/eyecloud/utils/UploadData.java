@@ -65,6 +65,6 @@ public class UploadData {
 	
 	public static void main(String args[]) throws IOException{
 		BufferedImage originalImage = ImageIO.read(new File("/Users/daothanhchung/Desktop/Bull/Avatar/bull.jpg"));
-		System.out.println(UploadData.upload("http://localhost:8080/EyeServer/UploadServlet", originalImage));
+		System.out.println(UploadData.upload("http://54.229.100.28:8080/EyeServer/UploadServlet", originalImage));
 	}
 }

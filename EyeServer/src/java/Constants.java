@@ -24,6 +24,6 @@ public class Constants {
     public static final String UPLOAD_LINK  = "/UploadServlet";
     public static final String UPLOAD_PATH  = "/upload/";
     public static final int maxFileSize     = 10 * 1024 * 1024;
-    public static final int maxMemSize      = 100 * 1024;
+    public static final int maxMemSize      = 100 * 1024 * 1024;
     public static final String TEMP         = "/tmp/";
 }

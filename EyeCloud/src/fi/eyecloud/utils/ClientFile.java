@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 
 public class ClientFile {
 	public ClientFile (BufferedImage image) throws IOException{
-		String fileName = "/home/storm/storm/tmp.png";
+		String fileName = "/home/storm/storm/" + System.currentTimeMillis() + ".png";
 		File file = new File(fileName);
 		ImageIO.write(image, "png",file);
 		

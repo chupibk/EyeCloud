@@ -30,6 +30,14 @@ body {
     position: absolute;
 }
 
+#youtube{ 
+    width: 1000px;
+    height: 563px;
+    top:0px;
+    left:0px;
+    position: absolute;
+}
+
 #overlay{
     width: 1100px;
     height: 500px;    

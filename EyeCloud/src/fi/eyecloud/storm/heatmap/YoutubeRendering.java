@@ -22,7 +22,7 @@ import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.utils.ClientFile;
 
 @SuppressWarnings("deprecation")
-public class WebsiteRendering {
+public class YoutubeRendering {
 
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt {
