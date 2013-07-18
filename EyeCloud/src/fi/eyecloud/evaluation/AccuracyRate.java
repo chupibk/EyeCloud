@@ -83,7 +83,7 @@ public class AccuracyRate {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		AccuracyRate test = new AccuracyRate("data/17June_2000_Merge", "data/17JuneResult.txt");
+		AccuracyRate test = new AccuracyRate("data/17June_2000_Merge_Cloud", "data/17JuneResult.txt");
 		System.out.println("FN: " + test.getAFN());
 		System.out.println("FD: " + test.getTotalDuration());
 		System.out.println("MF: " + test.getMF());

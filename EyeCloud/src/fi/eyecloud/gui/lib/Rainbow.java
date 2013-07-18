@@ -22,22 +22,23 @@ public class Rainbow {
 	        rgb[index++] = (red << 16) | (green << 8) | blue;
 	      }
 	    }*/
-		rgb = new int[101];
+		rgb = new int[76];
 		int count = 0;
+		
 		for (int i=0; i < 25; i++){
 			int red = 0;
 			int green = (int)(10.2 * i);
-			int blue = 255;
+			int blue = 0;
 			rgb[count++] = (red << 16) | (green << 8) | blue;
 		}
-
+		/*
 		for (int i=25; i < 50; i++){
 			int red = 0;
 			int green = 255;
 			int blue = (int)(-10.2 * i + 510);
 			rgb[count++] = (red << 16) | (green << 8) | blue;
 		}	
-		
+		*/
 		for (int i=0; i < 25; i++){
 			int red = (int)(10.2 * i);
 			int green = 255;

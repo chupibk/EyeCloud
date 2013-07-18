@@ -29,7 +29,7 @@ public class Colorization {
 				if (red < 0) red = 0;
 				if (red > 1) red = 1;
 				int color = rgb[(int)(red*(rgb.length-1))];
-
+				
 	    		int alpha = GuiConstants.ALPHA;
 	            int newcolor = (alpha << 24) | color;
 	            
