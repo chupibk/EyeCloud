@@ -68,6 +68,7 @@
             {
                 document.form1.ddlstmName.value = hdnstname;
             }
+          
         }
 
         function  Setdropdownvalue() {
@@ -81,6 +82,10 @@
             document.form2.hdnvleft.value = document.form1.ddlvleft.value;
             document.form2.hdnvright.value = document.form1.ddlvrght.value;
             document.form2.hdnstname.value = document.form1.ddlstmName.value;
+        }
+        
+        function  SetPartddlvalue(){
+            document.form2.hdnpart.value = document.form2.ddlpart.value;
         }
 
         window.onload = selectedValue;
@@ -193,16 +198,25 @@
                                 <input type="hidden" name="hdnvleft"/>
                                 <input type="hidden" name="hdnvright"/>
                                 <input type="hidden" name="hdnstname"/>
+                                <input type="hidden" name="hdnpart"/>
 
-                                Participant ID: <select name="ddlpart" style="margin-bottom: 10px">
+                                Participant ID: <select name="ddlpart" style="margin-bottom: 10px" onchange="SetPartddlvalue(),this.form.submit()">
 
                                     <c:forEach items="${partarrls}" var="partarrl">
-                                        <option value="${partarrl.key}">
+                                        <option value="${partarrl.key}" ${partarrl.key == selectedDept ? 'selected="selected"' : ''}>
+
                                             <c:out value="${partarrl.value}" /></option>
                                     </c:forEach></select> </td> 
                         </form> 
-                        <td style="vertical-align: top"> <table border="1" > <tr><td>Test11</td> <td>Test12</td></tr>
-                                <tr><td>Test21</td> <td>Test22</td></tr></table></td>
+                        <td style="vertical-align: top"> 
+                            <table>
+                                <c:forEach items="${lstpart}" var="DemoNames">
+                                    <tr>
+                                        <td>${DemoNames}</td>
+                                    </tr>
+                                </c:forEach>
+                            </table>
+                        </td>
                         <td style="vertical-align: top"> <table border="1" > <tr><td>Test11</td> <td>Test12</td></tr>
                                 <tr><td>Test21</td> <td>Test22</td></tr></table></td>
                         <td style="text-align: right; vertical-align: top"> Select Label files folder: <input type="file" name="loadlabel" size="30" /> <input type="button" name="btnlblfiles" style="margin-bottom: 10px" value="Load" /> <br/>

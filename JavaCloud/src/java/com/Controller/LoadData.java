@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.commons.collections.MultiHashMap;
 
 /**
  *
@@ -46,11 +48,13 @@ public class LoadData extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     static String hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
-            hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null;
+            hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null;
     //HashMap<String, String> arrls = new HashMap<String, String>();
     LinkedHashMap<String, String> arrls = new LinkedHashMap<String, String>();
     LinkedHashMap<String, String> partarrls = new LinkedHashMap<String, String>();
-    LinkedHashMap<String, String> partarrlsvalue = new LinkedHashMap<String, String>();
+    MultiHashMap partarrlsvalue=new MultiHashMap();
+    
+    
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
@@ -143,24 +147,24 @@ public class LoadData extends HttpServlet {
 //                                                    break;
 
                                                     case Cell.CELL_TYPE_NUMERIC:
-                                                        //System.out.print(cell.getNumericCellValue() + "\t\t");
-                                                        partarrlsvalue.put(strhold.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
-                                                       // break;
+                                                         partarrlsvalue.put(strhold.get(partcountcell),  String.valueOf(cell.getNumericCellValue()));
+                                                        break;
                                                     case Cell.CELL_TYPE_STRING:
-                                                        partarrlsvalue.put(strhold.get(partcountcell), cell.getStringCellValue());
-                                                       // break;
-                                                        
+                                                          partarrlsvalue.put(strhold.get(partcountcell), cell.getStringCellValue());
+                                                        break;
+
                                                 }
                                                 partcountcell++;
                                             }
-                                            
+
                                         }
                                         // System.out.println(hold);
                                         // System.out.println("xlsx");
                                         // break;
-                                        partcountcell=0;
+                                        partcountcell = 0;
                                         partcountrow++;
-                                        //System.out.println(partarrlsvalue);
+                                        // holdpartvalue=partarrlsvalue.toString();
+
                                     }
                                 } else {
                                     HSSFWorkbook workbook = new HSSFWorkbook(fileItem.getInputStream());
@@ -195,6 +199,7 @@ public class LoadData extends HttpServlet {
                             }
                         }
 
+
                     } else if ("btnloadsavedfiles".equals(fielditem.getFieldName())) {
                         System.out.println(fielditem.getString());
                         break;
@@ -224,12 +229,30 @@ public class LoadData extends HttpServlet {
                     } else if ("hdnstname".equals(fielditem.getFieldName())) {
                         hdnstname = fielditem.getString();
                     }
+                    else if ("hdnpart".equals(fielditem.getFieldName())) {
+                        hdnpart = fielditem.getString();
+                    }
 
 
                 }
             }
-           // System.out.println(arrls);
-            System.out.println(partarrlsvalue);
+            
+            
+            List lstpart=null;
+            if(hdnpart.equals("")){
+                request.setAttribute("selectedDept", "ID");
+                 lstpart= (List) partarrlsvalue.get("ID");
+            }
+            else{
+                request.setAttribute("selectedDept", hdnpart);
+                 lstpart= (List) partarrlsvalue.get(hdnpart);
+            }
+            
+           
+            //System.out.println(lst);
+            
+            
+            request.setAttribute("lstpart", lstpart);
             request.setAttribute("arrls", arrls);
             request.setAttribute("partarrls", partarrls);
             request.setAttribute("hdntimestamp", hdntimestamp);
