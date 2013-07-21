@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import javax.print.DocFlavor;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -43,15 +45,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class LoadData extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    static String hdntimestamp = null,hdnxleft =null, hdnxright=null, hdnyleft=null, hdnyright=null,
-            hdndleft=null, hdndright=null, hdnvleft=null, hdnvright=null, hdnstname=null;
+    static String hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
+            hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null;
     //HashMap<String, String> arrls = new HashMap<String, String>();
     LinkedHashMap<String, String> arrls = new LinkedHashMap<String, String>();
     LinkedHashMap<String, String> partarrls = new LinkedHashMap<String, String>();
+    LinkedHashMap<String, String> partarrlsvalue = new LinkedHashMap<String, String>();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
-   
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -87,7 +89,7 @@ public class LoadData extends HttpServlet {
                                         String[] strArr = str.split("	");
                                         for (int a = 0; a <= strArr.length - 1; a++) {
                                             // out.println(strArr[a] + "<br/>");
-                                           // arrls.put("Select", "Select");
+                                            // arrls.put("Select", "Select");
                                             arrls.put(strArr[a], strArr[a]);
                                             request.setAttribute("fileload", "0");
                                         }
@@ -120,32 +122,49 @@ public class LoadData extends HttpServlet {
                                     //Iterate through each rows from first sheet
                                     Iterator<Row> rowIterator = sheet.iterator();
                                     partarrls.put("Select", "Select");
+                                    int partcountrow = 0, partcountcell = 0;
+                                    ArrayList<String> strhold = new ArrayList<String>();
+                                    String hold = null;
                                     while (rowIterator.hasNext()) {
                                         Row row = rowIterator.next();
                                         //For each row, iterate through each columns
                                         Iterator<Cell> cellIterator = row.cellIterator();
                                         while (cellIterator.hasNext()) {
                                             Cell cell = cellIterator.next();
-                                            partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
-//                                        switch (cell.getCellType()) {
-//                                            case Cell.CELL_TYPE_BOOLEAN:
-//                                                System.out.print(cell.getBooleanCellValue() + "\t\t");
-//                                                break;
-//                                            case Cell.CELL_TYPE_NUMERIC:
-//                                                System.out.print(cell.getNumericCellValue() + "\t\t");
-//                                                break;
-//                                            case Cell.CELL_TYPE_STRING:
-//                                                System.out.print(cell.getStringCellValue() + "\t\t");
-//                                                break;
-//                                        }
+                                            if (partcountrow == 0) {
+                                                partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
+                                                strhold.add(cell.getStringCellValue());
+                                                //    hold  =(String) strhold.get(0);
+                                            } else {
 
+                                                switch (cell.getCellType()) {
+//                                                case Cell.CELL_TYPE_BOOLEAN:
+//                                                    System.out.print(cell.getBooleanCellValue() + "\t\t");
+//                                                    break;
+
+                                                    case Cell.CELL_TYPE_NUMERIC:
+                                                        //System.out.print(cell.getNumericCellValue() + "\t\t");
+                                                        partarrlsvalue.put(strhold.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
+                                                       // break;
+                                                    case Cell.CELL_TYPE_STRING:
+                                                        partarrlsvalue.put(strhold.get(partcountcell), cell.getStringCellValue());
+                                                       // break;
+                                                        
+                                                }
+                                                partcountcell++;
+                                            }
+                                            
                                         }
+                                        // System.out.println(hold);
                                         // System.out.println("xlsx");
-                                        break;
+                                        // break;
+                                        partcountcell=0;
+                                        partcountrow++;
+                                        //System.out.println(partarrlsvalue);
                                     }
                                 } else {
                                     HSSFWorkbook workbook = new HSSFWorkbook(fileItem.getInputStream());
-                                    //Get first sheet from the workbook
+                                    //Get first System.out.println("xlsx");sheet from the workbook
                                     HSSFSheet sheet = workbook.getSheetAt(0);
                                     //Iterate through each rows from first sheet
                                     Iterator<Row> rowIterator = sheet.iterator();
@@ -186,29 +205,31 @@ public class LoadData extends HttpServlet {
 //                    }
                     if ("hdntimestamp".equals(fielditem.getFieldName())) {
                         hdntimestamp = fielditem.getString();
-                    }else  if ("hdnxleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdnxleft".equals(fielditem.getFieldName())) {
                         hdnxleft = fielditem.getString();
-                    }else  if ("hdnxright".equals(fielditem.getFieldName())) {
+                    } else if ("hdnxright".equals(fielditem.getFieldName())) {
                         hdnxright = fielditem.getString();
-                    }else  if ("hdnyleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdnyleft".equals(fielditem.getFieldName())) {
                         hdnyleft = fielditem.getString();
-                    }else  if ("hdnyright".equals(fielditem.getFieldName())) {
+                    } else if ("hdnyright".equals(fielditem.getFieldName())) {
                         hdnyright = fielditem.getString();
-                    }else  if ("hdndleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdndleft".equals(fielditem.getFieldName())) {
                         hdndleft = fielditem.getString();
-                    }else  if ("hdndright".equals(fielditem.getFieldName())) {
+                    } else if ("hdndright".equals(fielditem.getFieldName())) {
                         hdndright = fielditem.getString();
-                    }else  if ("hdnvleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdnvleft".equals(fielditem.getFieldName())) {
                         hdnvleft = fielditem.getString();
-                    }else  if ("hdnvright".equals(fielditem.getFieldName())) {
+                    } else if ("hdnvright".equals(fielditem.getFieldName())) {
                         hdnvright = fielditem.getString();
-                    }else  if ("hdnstname".equals(fielditem.getFieldName())) {
+                    } else if ("hdnstname".equals(fielditem.getFieldName())) {
                         hdnstname = fielditem.getString();
                     }
-               
-           
+
+
                 }
             }
+           // System.out.println(arrls);
+            System.out.println(partarrlsvalue);
             request.setAttribute("arrls", arrls);
             request.setAttribute("partarrls", partarrls);
             request.setAttribute("hdntimestamp", hdntimestamp);
