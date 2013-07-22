@@ -47,14 +47,13 @@ import org.apache.commons.collections.MultiHashMap;
 public class LoadData extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    static String hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
+    static String hdnlblfilename="", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
             hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null;
     //HashMap<String, String> arrls = new HashMap<String, String>();
     LinkedHashMap<String, String> arrls = new LinkedHashMap<String, String>();
     LinkedHashMap<String, String> partarrls = new LinkedHashMap<String, String>();
-    MultiHashMap partarrlsvalue=new MultiHashMap();
-    
-    
+    MultiHashMap partarrlsvalue = new MultiHashMap();
+    LinkedHashMap<String, String> lblarrls = new LinkedHashMap<String, String>();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
@@ -70,8 +69,11 @@ public class LoadData extends HttpServlet {
             for (FileItem fielditem : fields) {
                 if (fielditem.isFormField()) {
                     if ("btnload".equals(fielditem.getFieldName())) {
+                        System.out.println(fielditem.getString());
+                        if (arrls.size() != 0) {
+                            arrls.clear();
+                        }
 
-                        System.out.println(fielditem.getFieldName());
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
 
@@ -81,10 +83,8 @@ public class LoadData extends HttpServlet {
 
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
                                 String str;
-                                // System.out.println(br.);
+
                                 LineNumberReader ln = new LineNumberReader(br);
-                                // while((str=br.readLine())!=null){
-                                //arrls.clear();
 
                                 while (ln.getLineNumber() == 0) {
                                     str = ln.readLine();
@@ -108,6 +108,10 @@ public class LoadData extends HttpServlet {
                         }
 
                     } else if ("btnpart".equals(fielditem.getFieldName())) {
+                        System.out.println(fielditem.getString());
+                        if (partarrlsvalue.size() != 0) {
+                            partarrlsvalue.clear();
+                        }
                         //System.out.println(fielditem.getString());
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
@@ -128,7 +132,6 @@ public class LoadData extends HttpServlet {
                                     partarrls.put("Select", "Select");
                                     int partcountrow = 0, partcountcell = 0;
                                     ArrayList<String> strhold = new ArrayList<String>();
-                                    String hold = null;
                                     while (rowIterator.hasNext()) {
                                         Row row = rowIterator.next();
                                         //For each row, iterate through each columns
@@ -147,10 +150,10 @@ public class LoadData extends HttpServlet {
 //                                                    break;
 
                                                     case Cell.CELL_TYPE_NUMERIC:
-                                                         partarrlsvalue.put(strhold.get(partcountcell),  String.valueOf(cell.getNumericCellValue()));
+                                                        partarrlsvalue.put(strhold.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
                                                         break;
                                                     case Cell.CELL_TYPE_STRING:
-                                                          partarrlsvalue.put(strhold.get(partcountcell), cell.getStringCellValue());
+                                                        partarrlsvalue.put(strhold.get(partcountcell), cell.getStringCellValue());
                                                         break;
 
                                                 }
@@ -200,8 +203,46 @@ public class LoadData extends HttpServlet {
                         }
 
 
-                    } else if ("btnloadsavedfiles".equals(fielditem.getFieldName())) {
+                    } else if ("btnlblfiles".equals(fielditem.getFieldName())) {
                         System.out.println(fielditem.getString());
+                        if (lblarrls.size() != 0) {
+                            lblarrls.clear();
+                        }
+                        System.out.println(fielditem.getFieldName());
+                        Iterator<FileItem> it = fields.iterator();
+                        while (it.hasNext()) {
+
+                            FileItem fileItem = it.next();
+                            boolean isFormField = fileItem.isFormField();
+                            if (!isFormField) {
+
+                                BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
+                                String str;
+                                // System.out.println(br.);
+                                LineNumberReader ln = new LineNumberReader(br);
+                                // while((str=br.readLine())!=null){
+                                //arrls.clear();
+
+                                while (ln.getLineNumber() == 0) {
+                                    str = ln.readLine();
+                                    if (str != null) {
+
+                                        String[] strArr = str.split("	");
+                                        for (int a = 0; a <= strArr.length - 1; a++) {
+                                            // out.println(strArr[a] + "<br/>");
+                                            // arrls.put("Select", "Select");
+                                            lblarrls.put(strArr[a], strArr[a]);
+                                            request.setAttribute("fileload", "0");
+                                        }
+                                    } else {
+                                        request.setAttribute("fileload", "1");
+                                        break;
+                                    }
+                                }
+                                br.close();
+                            }
+
+                        }
                         break;
                     }
 //                    } else if ("".equals(fielditem.getFieldName())) {
@@ -228,33 +269,44 @@ public class LoadData extends HttpServlet {
                         hdnvright = fielditem.getString();
                     } else if ("hdnstname".equals(fielditem.getFieldName())) {
                         hdnstname = fielditem.getString();
-                    }
-                    else if ("hdnpart".equals(fielditem.getFieldName())) {
+                    } else if ("hdnpart".equals(fielditem.getFieldName())) {
                         hdnpart = fielditem.getString();
+                    } else if ("hdnfilename".equals(fielditem.getFieldName())) {
+                        hdnfilename = fielditem.getString();
+                    }else if ("hdnlblfilename".equals(fielditem.getFieldName())) {
+                        hdnlblfilename = fielditem.getString();
+                        System.out.println(fielditem.getString());
                     }
 
 
                 }
             }
-            
-            
-            List lstpart=null;
-            if(hdnpart.equals("")){
-                request.setAttribute("selectedDept", "ID");
-                 lstpart= (List) partarrlsvalue.get("ID");
-            }
-            else{
+
+
+            List lstpart = null;
+            if (hdnpart != null && !hdnpart.isEmpty()) {
                 request.setAttribute("selectedDept", hdnpart);
-                 lstpart= (List) partarrlsvalue.get(hdnpart);
+                lstpart = (List) partarrlsvalue.get(hdnpart);
+
+            } else {
+                request.setAttribute("selectedDept", "ID");
+                lstpart = (List) partarrlsvalue.get("ID");
             }
-            
-           
-            //System.out.println(lst);
-            
-            
+            if (hdnfilename.contains("\\")) {
+                String[] holdpath = hdnfilename.split("[\\\\]");
+                hdnfilename = holdpath[2];
+            }
+            if (hdnlblfilename.contains("\\")) {
+                String[] holdpath = hdnlblfilename.split("[\\\\]");
+                hdnlblfilename = holdpath[2];
+            }
+
             request.setAttribute("lstpart", lstpart);
             request.setAttribute("arrls", arrls);
+            request.setAttribute("lblarrls", lblarrls);
             request.setAttribute("partarrls", partarrls);
+            request.setAttribute("hdnfilename", hdnfilename);
+            request.setAttribute("hdnlblfilename", hdnlblfilename);
             request.setAttribute("hdntimestamp", hdntimestamp);
             request.setAttribute("hdnxleft", hdnxleft);
             request.setAttribute("hdnxright", hdnxright);
@@ -265,6 +317,7 @@ public class LoadData extends HttpServlet {
             request.setAttribute("hdnvleft", hdnvleft);
             request.setAttribute("hdnvright", hdnvright);
             request.setAttribute("hdnstname", hdnstname);
+
             RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp");
             rd.forward(request, response);
             //	out.println("</tr>");

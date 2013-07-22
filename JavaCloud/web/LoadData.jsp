@@ -68,7 +68,7 @@
             {
                 document.form1.ddlstmName.value = hdnstname;
             }
-          
+
         }
 
         function  Setdropdownvalue() {
@@ -82,10 +82,14 @@
             document.form2.hdnvleft.value = document.form1.ddlvleft.value;
             document.form2.hdnvright.value = document.form1.ddlvrght.value;
             document.form2.hdnstname.value = document.form1.ddlstmName.value;
-        }
-        
-        function  SetPartddlvalue(){
             document.form2.hdnpart.value = document.form2.ddlpart.value;
+        }
+
+        function Sethdnfield() {
+            document.form1.hdnfilename.value = document.form1.file1.value;
+        }
+        function  setlblhdnfield(){
+            document.form1.hdnlblfilename.value = document.form1.loadlabel.value;
         }
 
         window.onload = selectedValue;
@@ -98,14 +102,16 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td style="text-align: right">Select Eye Tracking Folder: <input type="file" size="50" name="file1"> <input type="submit" name="btnload" id="btnload" value="Load file" style="margin-bottom: 10px"/><br/></td>
-                            <td colspan="2"> <% if (fileload == "1") {
-                                    out.print("Please Select File to Load");
+                    <input type="hidden" name="hdnfilename"/>
+                    <input type="hidden" name="hdnlblfilename"/>
+                    <td style="text-align: right; font-size:14px; ">Select Eye Tracking Folder: <input type="file" size="50" name="file1"> <input type="submit" name="btnload" id="btnload" onclick="Sethdnfield()" value="Load file" style="margin-bottom: 10px"/><br/></td>
+                    <td colspan="2"> <% if (fileload == "1") {
+                            out.print("Please Select File to Load");
 
-                                } else {
-                                    out.print("");
+                        } else {
+                            out.print("");
 
-                                }%>  </td>
+                        }%>  </td>
                     <br/><br/><br/>
                     </tr>
 
@@ -130,7 +136,7 @@
                                 </c:forEach>
                             </select>
                             <br/>                    
-                            * X Right: <select name="ddlxright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                            X Right: <select name="ddlxright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
                                 <c:forEach items="${arrls}" var="arrl">
                                     <option value="${arrl.key}">
@@ -186,7 +192,8 @@
                                 </c:forEach></select> <br/> <br/>
                             </form>
                             <form name="form2" action="./LoadData" method="POST" enctype="multipart/form-data">
-                                Load Participant identity Excel file: <input type="file" name="loadpart" size="50" /> <input type="submit" name="btnpart" value="Load" onclick="Setdropdownvalue()" style="margin-bottom: 10px" />
+                                Load Participant identity Excel file: 
+                                <input type="file" name="loadpart" size="50" /> <input type="submit" name="btnpart" value="Load" onclick="Setdropdownvalue()" style="margin-bottom: 10px" />
                                 <br/>
                                 <input type="hidden" name="hdntimestamp"/>
                                 <input type="hidden" name="hdnxleft"/>
@@ -200,31 +207,56 @@
                                 <input type="hidden" name="hdnstname"/>
                                 <input type="hidden" name="hdnpart"/>
 
-                                Participant ID: <select name="ddlpart" style="margin-bottom: 10px" onchange="SetPartddlvalue(),this.form.submit()">
+                                Participant ID: <select name="ddlpart" style="margin-bottom: 10px" onchange="Setdropdownvalue(), this.form.submit()">
 
                                     <c:forEach items="${partarrls}" var="partarrl">
                                         <option value="${partarrl.key}" ${partarrl.key == selectedDept ? 'selected="selected"' : ''}>
 
                                             <c:out value="${partarrl.value}" /></option>
                                     </c:forEach></select> </td> 
-                        </form> 
+
                         <td style="vertical-align: top"> 
-                            <table>
+                            <table border="1">
+                                <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
                                 <c:forEach items="${lstpart}" var="DemoNames">
                                     <tr>
-                                        <td>${DemoNames}</td>
+                                        <td style="font-size:12px;"> '${hdnfilename}'</td>
+                                        <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
                                     </tr>
                                 </c:forEach>
                             </table>
                         </td>
-                        <td style="vertical-align: top"> <table border="1" > <tr><td>Test11</td> <td>Test12</td></tr>
-                                <tr><td>Test21</td> <td>Test22</td></tr></table></td>
-                        <td style="text-align: right; vertical-align: top"> Select Label files folder: <input type="file" name="loadlabel" size="30" /> <input type="button" name="btnlblfiles" style="margin-bottom: 10px" value="Load" /> <br/>
-                            * Time Stamp Start Point: <select name="ddlstartpoint" style="margin-bottom: 10px"><option>Select </option></select> <br/>
-                            * Duration: <select name="ddlduration" style="margin-bottom: 10px"><option>Select </option></select> <br/>
-                            * Stimuli Name/ID: <select name="ddlstimuli" style="margin-bottom: 10px"><option>Select </option></select> <br/>
-                            * Screen Size: x: <input type="text" name="txtxscreen" size="5" style="margin-bottom: 10px" /> y: <input type="text" name="txtyscreen" size="5" style="margin-bottom: 10px" /> <br/>
-                            * Resolution x: <input type="text" name="txtxresol" size="5" style="margin-bottom: 10px" /> y: <input type="text" name="txtyresol" size="5" style="margin-bottom: 10px" /> 
+
+                        </form> 
+                        <td style="vertical-align: top"> <table border="1">
+                                <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
+                                <c:forEach items="${lstpart}" var="DemoNames">
+                                    <tr>
+                                        <td style="font-size:12px;"> '${hdnlblfilename}'</td>
+                                        <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
+                                    </tr>
+                                </c:forEach>
+                            </table></td>
+                        <td style="text-align: right; vertical-align: top;font-size:14px;"> Select Label files folder: <input type="file"  name="loadlabel" size="30" /> 
+                            <input type="submit" name="btnlblfiles" style="margin-bottom: 10px" value="Load" onclick="setlblhdnfield()"  /> <br/>
+
+                            * Time Stamp Start Point: <select name="ddlstartpoint" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
+                                    <option value="${lblarrl.key}">
+                                        <c:out value="${lblarrl.value}" />
+                                    </option>
+                                </c:forEach></select> <br/>
+                            * Duration: <select name="ddlduration" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
+                                    <option value="${lblarrl.key}">
+                                        <c:out value="${lblarrl.value}" />
+                                    </option>
+                                </c:forEach></select> <br/>
+                            * Stimuli Name/ID: <select name="ddlstimuli" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
+                                    <option value="${lblarrl.key}">
+                                        <c:out value="${lblarrl.value}" />
+                                    </option>
+                                </c:forEach></select> <br/>
+                            * Screen Size: x: <input type="text" name="txtxscreen" size="5" value="35" style="margin-bottom: 10px" /> y: <input type="text" name="txtyscreen" size="5" value="45" style="margin-bottom: 10px" /> <br/>
+                            * Resolution x: <input type="text" name="txtxresol" size="5" value="1024" style="margin-bottom: 10px" /> y: <input type="text" name="txtyresol" value="768" size="5" style="margin-bottom: 10px" /> 
                             <br/><br/><br/><br/><br/><br/><br/><br/>
                             <input type="button" name="btnloadsavedfiles" value="Load" style="margin-bottom: 10px" /> <br/>
                             <input type="button" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></td>
