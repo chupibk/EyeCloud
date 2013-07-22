@@ -275,19 +275,14 @@ public class LoadData extends HttpServlet {
                         hdnfilename = fielditem.getString();
                     }else if ("hdnlblfilename".equals(fielditem.getFieldName())) {
                         hdnlblfilename = fielditem.getString();
-                        System.out.println(fielditem.getString());
                     }
-
-
                 }
             }
-
 
             List lstpart = null;
             if (hdnpart != null && !hdnpart.isEmpty()) {
                 request.setAttribute("selectedDept", hdnpart);
                 lstpart = (List) partarrlsvalue.get(hdnpart);
-
             } else {
                 request.setAttribute("selectedDept", "ID");
                 lstpart = (List) partarrlsvalue.get("ID");

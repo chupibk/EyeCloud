@@ -27,6 +27,8 @@
             var hdnvleft = '${hdnvleft}';
             var hdnvright = '${hdnvright}';
             var hdnstname = '${hdnstname}';
+            var hdnfilename = '${hdnfilename}';
+            var hdnlblfilename = '${hdnlblfilename}';
             // var tt = <%=(String) request.getParameter("selectedValue")%>
             if (hdntimestamp !== null)
             {
@@ -67,6 +69,12 @@
             if (hdnstname !== null)
             {
                 document.form1.ddlstmName.value = hdnstname;
+            }
+            if(hdnfilename!==null){
+                document.form1.hdnfilename.value = hdnfilename;
+            }
+            if(hdnlblfilename!==null){
+                document.form1.hdnlblfilename.value = hdnlblfilename;
             }
 
         }
