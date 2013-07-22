@@ -4,7 +4,10 @@
  * @type Number
  */
 var REFRESH_RATE = parseInt(GetURLParameter('refresh')); //ms
-console.log(REFRESH_RATE);
+console.log("Refresh rate: " + REFRESH_RATE);
+
+var NUMBER_PARTICIPANT = 1;
+
 /**
  * Sample rate
  * 
@@ -28,6 +31,14 @@ var PARAMETER_SPLIT = ",";
  * @type Number
  */
 var NUMBER_PART = 1;
+
+/**
+ * Type of data
+ * 
+ * @type Number
+ */
+var TYPE = 1;
+
 /**
  * Control error for each screen in aspect of x,y axis
  * @type Number
@@ -195,7 +206,11 @@ function convertData(x, y) {
 
     // Scroll is implemented here
     //newY = newY + window.scrollY;
-
+    
+    if (typeof YOUTUBE_STATE !== 'undefined' && YOUTUBE_STATE === 0){
+        return "-1";
+    }
+    
     return newX + PARAMETER_SPLIT + newY + PARAMETER_SPLIT + DURATION + PARAMETER_SPLIT;
 }
 
@@ -211,7 +226,14 @@ function addData(s) {
     console.log(count);
 
     if (count >= PACKET_NUMBER) {
-        sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + NUMBER_PART;
+        if (typeof YOUTUBE_STATE !== 'undefined'){
+            var currenTime = player.getCurrentTime().toFixed(1);
+            var roundTime = parseInt(currenTime*1000/REFRESH_YOUTUBE) + 1;
+            sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
+            sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
+        }else{
+            sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + TYPE;
+        }
         sendData = "data=" + sendData;
         console.log(sendData);
         

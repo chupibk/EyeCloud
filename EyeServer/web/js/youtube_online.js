@@ -3,6 +3,9 @@
  * and open the template in the editor.
  */
 
+var REFRESH_YOUTUBE = parseInt(GetURLParameter('refresh')); //ms
+console.log("Refresh Youtube: " + REFRESH_YOUTUBE);
+
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
@@ -36,7 +39,7 @@ var done = false;
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
         $("#wrap").append("<img id=\"overlay\" src=\"images/noimage.png\" />");
-        setInterval(updateYoutubeTime, 500);
+        setInterval(updateYoutubeTime, REFRESH_YOUTUBE);
     }
 }
 function stopVideo() {
@@ -50,6 +53,7 @@ var totalOnline = 0;
 function updateYoutubeTime() {
     $("#youtube_time").html(player.getCurrentTime());
     var start = new Date().getTime();
+    /*
     $.ajax({
         dataType: 'jsonp',
         data: "",
@@ -72,6 +76,18 @@ function updateYoutubeTime() {
             console.log("Fail to send");
         }
     });
+    */
+   var currenTime = player.getCurrentTime().toFixed(1);
+   var roundTime = parseInt(currenTime*1000/REFRESH_YOUTUBE) + 1;
+   $("#overlay").fadeOut("fast").attr("src", "upload/" + roundTime + ".png").fadeIn("fast");
+   var end = new Date().getTime();
+   sentOnline++;
+   console.log("Start: " + start);
+   console.log("End: " + end);
+   console.log(end - start);
+   console.log("upload/" + roundTime + ".png");
+   totalOnline += (end - start);
+   console.log(totalOnline + " - " + sentOnline + " - " + parseFloat(totalOnline / sentOnline));   
 }
 
 

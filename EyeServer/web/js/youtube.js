@@ -3,6 +3,24 @@
  * and open the template in the editor.
  */
 
+/**
+ * Refresh youtube when playing
+ * @type type
+ */
+var REFRESH_YOUTUBE = parseInt(GetURLParameter('refresh')); //ms
+console.log("Refresh Youtube: " + REFRESH_YOUTUBE);
+
+/**
+ * Check Youtube state is playing or stopping
+ * 
+ * @type Number
+ */
+var YOUTUBE_STATE = 0;
+var UPDATE_FUNCTION_CALL = 0;
+
+/**
+ * Youtube setup
+ */
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
@@ -35,16 +53,36 @@ function onPlayerReady(event) {
 var done = false;
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
+        YOUTUBE_STATE = 1;
+        if (UPDATE_FUNCTION_CALL === 0){
+            setInterval(updateYoutubeTime, REFRESH_YOUTUBE);
+            UPDATE_FUNCTION_CALL = 1;
+        }
+    }else{
+        YOUTUBE_STATE = 0;
     }
 }
+
+/**
+ * When video is stopped
+ * 
+ * @returns {undefined}
+ */
 function stopVideo() {
     player.stopVideo();
 }
 
+/**
+ * Update Youtube status
+ * 
+ * @returns {undefined}
+ */
 function updateYoutubeTime(){
-    $("#youtube_time").html(player.getCurrentTime());
+    if (YOUTUBE_STATE === 1){
+        var currenTime = player.getCurrentTime().toFixed(1);
+        var round = parseInt(currenTime*1000/REFRESH_YOUTUBE) + 1;
+        $("#youtube_time").html(currenTime);
+        console.log(currenTime + " - " + round);
+    }
 }
-
-setInterval(updateYoutubeTime, 500);
-
 
