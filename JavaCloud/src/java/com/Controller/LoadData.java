@@ -47,7 +47,7 @@ import org.apache.commons.collections.MultiHashMap;
 public class LoadData extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    static String hdnlblfilename="", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
+    static String hdnlblfilename = "", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
             hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null;
     //HashMap<String, String> arrls = new HashMap<String, String>();
     LinkedHashMap<String, String> arrls = new LinkedHashMap<String, String>();
@@ -61,7 +61,8 @@ public class LoadData extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-//test
+
+
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         try {
@@ -69,27 +70,31 @@ public class LoadData extends HttpServlet {
             for (FileItem fielditem : fields) {
                 if (fielditem.isFormField()) {
                     if ("btnload".equals(fielditem.getFieldName())) {
-                        System.out.println(fielditem.getString());
                         if (arrls.size() != 0) {
                             arrls.clear();
                         }
+                        if (partarrls.size() != 0) {
+                            partarrls.clear();
+                        }
+                        if (partarrlsvalue.size() != 0) {
+                            partarrlsvalue.clear();
+                        }
+                        if (lblarrls.size() != 0) {
+                            lblarrls.clear();
+                        }
 
+                        //System.out.println(fielditem.getString());
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
-
                             FileItem fileItem = it.next();
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
-
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
                                 String str;
-
                                 LineNumberReader ln = new LineNumberReader(br);
-
                                 while (ln.getLineNumber() == 0) {
                                     str = ln.readLine();
                                     if (str != null) {
-
                                         String[] strArr = str.split("	");
                                         for (int a = 0; a <= strArr.length - 1; a++) {
                                             // out.println(strArr[a] + "<br/>");
@@ -109,9 +114,6 @@ public class LoadData extends HttpServlet {
 
                     } else if ("btnpart".equals(fielditem.getFieldName())) {
                         System.out.println(fielditem.getString());
-                        if (partarrlsvalue.size() != 0) {
-                            partarrlsvalue.clear();
-                        }
                         //System.out.println(fielditem.getString());
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
@@ -204,11 +206,6 @@ public class LoadData extends HttpServlet {
 
 
                     } else if ("btnlblfiles".equals(fielditem.getFieldName())) {
-                        System.out.println(fielditem.getString());
-                        if (lblarrls.size() != 0) {
-                            lblarrls.clear();
-                        }
-                        System.out.println(fielditem.getFieldName());
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
 
@@ -273,7 +270,7 @@ public class LoadData extends HttpServlet {
                         hdnpart = fielditem.getString();
                     } else if ("hdnfilename".equals(fielditem.getFieldName())) {
                         hdnfilename = fielditem.getString();
-                    }else if ("hdnlblfilename".equals(fielditem.getFieldName())) {
+                    } else if ("hdnlblfilename".equals(fielditem.getFieldName())) {
                         hdnlblfilename = fielditem.getString();
                     }
                 }

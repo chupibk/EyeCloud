@@ -70,10 +70,10 @@
             {
                 document.form1.ddlstmName.value = hdnstname;
             }
-            if(hdnfilename!==null){
+            if (hdnfilename !== null) {
                 document.form1.hdnfilename.value = hdnfilename;
             }
-            if(hdnlblfilename!==null){
+            if (hdnlblfilename !== null) {
                 document.form1.hdnlblfilename.value = hdnlblfilename;
             }
 
@@ -96,7 +96,7 @@
         function Sethdnfield() {
             document.form1.hdnfilename.value = document.form1.file1.value;
         }
-        function  setlblhdnfield(){
+        function  setlblhdnfield() {
             document.form1.hdnlblfilename.value = document.form1.loadlabel.value;
         }
 
@@ -234,16 +234,22 @@
                                 </c:forEach>
                             </table>
                         </td>
+                        <td>
+                        </td>
 
                         </form> 
                         <td style="vertical-align: top"> <table border="1">
                                 <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
+                                <% String hdnlblfilename = (String) request.getAttribute("hdnlblfilename");
+
+                                    if (hdnlblfilename != null && !hdnlblfilename.isEmpty()) {%>
                                 <c:forEach items="${lstpart}" var="DemoNames">
                                     <tr>
                                         <td style="font-size:12px;"> '${hdnlblfilename}'</td>
                                         <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
                                     </tr>
                                 </c:forEach>
+                                <%}%>
                             </table></td>
                         <td style="text-align: right; vertical-align: top;font-size:14px;"> Select Label files folder: <input type="file"  name="loadlabel" size="30" /> 
                             <input type="submit" name="btnlblfiles" style="margin-bottom: 10px" value="Load" onclick="setlblhdnfield()"  /> <br/>
