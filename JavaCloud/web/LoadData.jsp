@@ -29,6 +29,9 @@
             var hdnstname = '${hdnstname}';
             var hdnfilename = '${hdnfilename}';
             var hdnlblfilename = '${hdnlblfilename}';
+            var hdnstartpnt = '${hdnstartpnt}';
+            var hdnduration = '${hdnduration}';
+            var hdnlblstlname = '${hdnlblstlname}';
             // var tt = <%=(String) request.getParameter("selectedValue")%>
             if (hdntimestamp !== null)
             {
@@ -76,6 +79,15 @@
             if (hdnlblfilename !== null) {
                 document.form1.hdnlblfilename.value = hdnlblfilename;
             }
+            if (hdnstartpnt !== null) {
+                document.form1.hdnstartpnt.value = hdnstartpnt;
+            }
+            if (hdnduration !== null) {
+                document.form1.hdnduration.value = hdnduration;
+            }
+            if (hdnlblstlname !== null) {
+                document.form1.hdnlblstlname.value = hdnlblstlname;
+            }
 
         }
 
@@ -112,6 +124,9 @@
                         <tr>
                     <input type="hidden" name="hdnfilename"/>
                     <input type="hidden" name="hdnlblfilename"/>
+                    <input type="hidden" name="hdnstartpnt"/>
+                    <input type="hidden" name="hdnduration"/>
+                    <input type="hidden" name="hdnlblstlname"/>
                     <td style="text-align: right; font-size:14px; ">Select Eye Tracking Folder: <input type="file" size="50" name="file1"> <input type="submit" name="btnload" id="btnload" onclick="Sethdnfield()" value="Load file" style="margin-bottom: 10px"/><br/></td>
                     <td colspan="2"> <% if (fileload == "1") {
                             out.print("Please Select File to Load");
@@ -218,7 +233,7 @@
                                 Participant ID: <select name="ddlpart" style="margin-bottom: 10px" onchange="Setdropdownvalue(), this.form.submit()">
 
                                     <c:forEach items="${partarrls}" var="partarrl">
-                                        <option value="${partarrl.key}" ${partarrl.key == selectedDept ? 'selected="selected"' : ''}>
+                                        <option value="${partarrl.key}" ${partarrl.key == selectedpart ? 'selected="selected"' : ''}>
 
                                             <c:out value="${partarrl.value}" /></option>
                                     </c:forEach></select> </td> 
@@ -226,45 +241,74 @@
                         <td style="vertical-align: top"> 
                             <table border="1">
                                 <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
-                                <c:forEach items="${lstpart}" var="DemoNames">
-                                    <tr>
-                                        <td style="font-size:12px;"> '${hdnfilename}'</td>
-                                        <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
-                                    </tr>
-                                </c:forEach>
+                                <tr><td style="vertical-align: top">
+                                        <table border="1">
+                                            <c:forEach items="${hdnfilename}" var="hdnfilename">
+                                                <tr>
+                                                    <td style="font-size:12px;"> '${hdnfilename}'</td>
+                                                </tr>    
+
+                                            </c:forEach>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border="1">
+                                            <c:forEach items="${lstpart}" var="DemoNames">
+                                                <tr>
+
+                                                    <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
+                                                </tr>
+                                            </c:forEach>
+                                        </table>
+                                    </td></tr>
                             </table>
-                        </td>
-                        <td>
                         </td>
 
                         </form> 
                         <td style="vertical-align: top"> <table border="1">
                                 <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
                                 <% String hdnlblfilename = (String) request.getAttribute("hdnlblfilename");
-
                                     if (hdnlblfilename != null && !hdnlblfilename.isEmpty()) {%>
-                                <c:forEach items="${lstpart}" var="DemoNames">
-                                    <tr>
-                                        <td style="font-size:12px;"> '${hdnlblfilename}'</td>
-                                        <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
-                                    </tr>
-                                </c:forEach>
+
+                                       <tr><td style="vertical-align: top">
+                                        <table border="1">
+                                            <c:forEach items="${hdnlblfilename}" var="hdnlblfilename">
+                                                <tr>
+                                                    <td style="font-size:12px;"> '${hdnlblfilename}'</td>
+                                                </tr>    
+                                            </c:forEach>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border="1">
+                                            <c:forEach items="${lstpart}" var="DemoNames">
+                                                <tr>
+                                                    <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
+                                                </tr>
+                                            </c:forEach>
+                                        </table>
+                                    </td></tr>
+                                    
                                 <%}%>
                             </table></td>
                         <td style="text-align: right; vertical-align: top;font-size:14px;"> Select Label files folder: <input type="file"  name="loadlabel" size="30" /> 
                             <input type="submit" name="btnlblfiles" style="margin-bottom: 10px" value="Load" onclick="setlblhdnfield()"  /> <br/>
 
-                            * Time Stamp Start Point: <select name="ddlstartpoint" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
+                            * Time Stamp Start Point: <select name="ddlstartpoint" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                <c:forEach items="${lblarrls}" var="lblarrl">
                                     <option value="${lblarrl.key}">
                                         <c:out value="${lblarrl.value}" />
                                     </option>
                                 </c:forEach></select> <br/>
+                                
+                                
                             * Duration: <select name="ddlduration" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
                                     <option value="${lblarrl.key}">
                                         <c:out value="${lblarrl.value}" />
                                     </option>
                                 </c:forEach></select> <br/>
-                            * Stimuli Name/ID: <select name="ddlstimuli" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
+                            * Stimuli Name/ID: <select name="ddlstimuli" style="margin-bottom: 10px">
+                                <c:forEach items="${lblarrls}" var="lblarrl">
                                     <option value="${lblarrl.key}">
                                         <c:out value="${lblarrl.value}" />
                                     </option>
