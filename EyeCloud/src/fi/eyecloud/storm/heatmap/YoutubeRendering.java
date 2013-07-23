@@ -20,7 +20,7 @@ import fi.eyecloud.gui.heatmap.Colorization;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.utils.ClientFile;
-
+ 
 @SuppressWarnings("deprecation")
 public class YoutubeRendering {
 
@@ -61,8 +61,10 @@ public class YoutubeRendering {
 			int type = Integer.parseInt(data[data.length - 1]);
 
 			if (type == 1) {
-				int width = Integer.parseInt(data[data.length - 3]);
-				int height = Integer.parseInt(data[data.length - 2]);
+				int numberParticipant = Integer.parseInt(data[data.length - 2]);
+				int timeId = Integer.parseInt(data[data.length - 3]);
+				int height = Integer.parseInt(data[data.length - 4]);
+				int width = Integer.parseInt(data[data.length - 5]);
 
 				int value[] = new int[data.length - 3];
 				for (int i = 0; i < data.length - 3; i++) {
@@ -98,17 +100,17 @@ public class YoutubeRendering {
 					}
 				}
 
-				collector.emit(new Values(id, type, intensity, width, height));
+				collector.emit(new Values(id, type, intensity, width, height, timeId, numberParticipant));
 			} else {
 				collector.emit(new Values(id, type, Constants.UNKNOWN,
-						Constants.UNKNOWN, Constants.UNKNOWN));
+						Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 			}
 		}
 
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
 			declarer.declare(new Fields("id", "type", "intensity", "width",
-					"height"));
+					"height", "timeid", "numberparticipant"));
 		}
 	}
 
@@ -118,20 +120,24 @@ public class YoutubeRendering {
 		private double intensity[][] = null;
 		private int width = 0;
 		private int height = 0;
-
+		private int timeId = 0;
+		private int numberParticipant = 0;
+		private int currentParticipant = 0;
+		
 		private static String INTENSITY = "intensity";
+		private static String PARTICIPANT = "participant";
 		
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void prepare(Map conf, TopologyContext context) {
 			contextData = context;
-			intensity = (double[][]) context.getTaskData(INTENSITY);
 		}
 
 		@Override
 		public void execute(Tuple tuple, BasicOutputCollector collector) {
 			Object id = tuple.getValue(0);
 			int type = tuple.getInteger(1);
+			currentParticipant = 0;
 			
 			if (type == 1) {
 				double[][] data = (double[][]) tuple.getValue(2);
@@ -139,7 +145,14 @@ public class YoutubeRendering {
 					width = tuple.getInteger(3);
 				if (height == 0)
 					height = tuple.getInteger(4);
-
+				timeId = tuple.getInteger(5);
+				numberParticipant = tuple.getInteger(6);
+				
+				intensity = (double[][]) contextData.getTaskData(Integer.toString(timeId) + INTENSITY);
+				if (contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT) != null)
+					currentParticipant = Integer.parseInt(contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT).toString());
+				currentParticipant++;
+				
 				if (intensity == null) {
 					intensity = new double[width][height];
 					for (int i = 0; i < width; i++) {
@@ -155,16 +168,23 @@ public class YoutubeRendering {
 					}
 				}
 				
-				contextData.setTaskData(INTENSITY, intensity);
-				collector.emit(new Values(id, type, intensity, width, height));
+				if (numberParticipant == currentParticipant){
+					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, null);
+					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, null);					
+					collector.emit(new Values(id, type, intensity, width, height, timeId));
+				}else{
+					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
+					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, currentParticipant);
+					collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
+				}
 			}else{
-				collector.emit(new Values(id, type, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
+				collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 			}
 		}
 		
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			declarer.declare(new Fields("id", "type", "intensity", "width", "height"));
+			declarer.declare(new Fields("id", "type", "intensity", "width", "height", "timeid"));
 		}
 	}
 
@@ -181,18 +201,18 @@ public class YoutubeRendering {
 				double[][] data = (double[][]) tuple.getValue(2);
 				int	width = tuple.getInteger(3);
 				int	height = tuple.getInteger(4);
-			
-				collector.emit(new Values(id, "Ok"));
+				int timeId = tuple.getInteger(5);
+				
+				collector.emit(new Values(id, "Generated Ok"));
 				Colorization color = new Colorization(data, width, height);
-				//UploadData.upload(Constants.UPLOAD_HOST, color.getImage());	
 				try {
-					new ClientFile(color.getImage());
+					new ClientFile(color.getImage(), Integer.toString(timeId));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else{
-				collector.emit(new Values(id, "Nothing"));
+				collector.emit(new Values(id, "Stored  Ok"));
 			}
 		}
 
