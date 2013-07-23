@@ -20,7 +20,7 @@ import fi.eyecloud.gui.heatmap.Colorization;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.utils.ClientFile;
-
+ 
 @SuppressWarnings("deprecation")
 public class YoutubeRendering {
 
