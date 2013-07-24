@@ -81,21 +81,21 @@ function ETUDPlugin_init()
 		fontFamily = "Arial";
 	}
 	
-	var btnShowOptions = document.createElement("input");
+	var btnShowOptions = document.getElementsByName("option")[0];
 	btnShowOptions.id = "etudPlugin_showOptions";
 	btnShowOptions.type = "button";
 	btnShowOptions.value = "Options...";
 	btnShowOptions.disabled = true;
 	ETUDPlugin_addEvent(btnShowOptions, "click", ETUDPlugin_showOptions);
 
-	var btnCalibrate = document.createElement("input");
+	var btnCalibrate = document.getElementsByName("calibrate")[0];
 	btnCalibrate.id = "etudPlugin_calibrate";
 	btnCalibrate.type = "button";
 	btnCalibrate.value = "Calibrate";
 	btnCalibrate.disabled = true;
 	ETUDPlugin_addEvent(btnCalibrate, "click", ETUDPlugin_calibrate);
 
-	var btnStartStop = document.createElement("input");
+	var btnStartStop = document.getElementsByName("start")[0];
 	btnStartStop.id = "etudPlugin_startStop";
 	btnStartStop.type = "button";
 	btnStartStop.value = "Start";
@@ -108,9 +108,9 @@ function ETUDPlugin_init()
 	controlPanel.appendChild(etudPluginContainer);
 	controlPanel.appendChild(etudPluginInfo);
 	controlPanel.appendChild(etudPluginDevice);
-	controlPanel.appendChild(btnShowOptions);
-	controlPanel.appendChild(btnCalibrate);
-	controlPanel.appendChild(btnStartStop);
+	//controlPanel.appendChild(btnShowOptions);
+	//controlPanel.appendChild(btnCalibrate);
+	//controlPanel.appendChild(btnStartStop);
 	controlPanel.appendChild(log);
 
 	document.body.insertBefore(controlPanel, document.body.firstChild);
@@ -147,6 +147,8 @@ function ETUDPlugin_startStop()
 	{
 		ETUDPlugin.Tracking ? ETUDPlugin.stop() : ETUDPlugin.start();
 	}
+        
+        $("#overlay").remove();
 }
 		
 function ETUDPlugin_loaded() 
