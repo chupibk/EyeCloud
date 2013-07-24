@@ -9,7 +9,12 @@
         <title>Heat map</title>
     </head>
     <body>
+       <div id="wrap"> 
+            <iframe  id="web_page" frameBorder="0" scrolling="no" src="http://www.bloomberg.com/"></iframe>
+        </div>         
+        
         <div id="info">
+        <input type="button" id="button" value="Info"/>
             <div class="info_div">
                 Screen Size
                 <div id="screen_size">
@@ -52,9 +57,7 @@
             </div>           
         </div>      
         
-        <div id="wrap"> 
-            <iframe  id="web_page" frameBorder="1" src="http://www.bloomberg.com/"></iframe>
-        </div> 
+        <script type="text/javascript" src="js/page.js"></script>
         <script type="text/javascript" src="js/eyecloud.js"></script>	
     </body>
 </html>

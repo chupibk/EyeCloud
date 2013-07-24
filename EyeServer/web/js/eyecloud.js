@@ -281,6 +281,16 @@ function GetURLParameter(sParam){
  */
 setInterval(updatePosition, 2000);
 
+// Move to center position
+console.log($("#web_page").width());
+if (documentWidth() > $("#web_page").width()){
+    $("#wrap").css("left", (documentWidth()-$("#web_page").width())/2);
+    $("#info").css("left", (documentWidth()-$("#web_page").width())/2);
+}
+
+// Page setup
+
+
 // Update div elements
 $("#screen_size").html(screenWidth() + " - " + screenHeight());
 $("#window_size").html(windowWidth() + " - " + windowHeight());
@@ -290,3 +300,7 @@ $("#window_position").html(posLeft() + " - " + posTop());
 $("#web_position").html(
         $("#wrap").position().left + " - " + $("#wrap").position().top + " - "
         + $("#web_page").width());
+$(".info_div").hide();
+$("#info").click(function (){
+    $(".info_div").toggle();
+});
