@@ -48,12 +48,14 @@ public class LoadData extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     static String hdnlblfilename = "", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
-            hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null;
-    //HashMap<String, String> arrls = new HashMap<String, String>();
+            hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null,
+            hdnstartpnt = null, hdnduration = null, hdnlblstlname = null;
+    int partcountrow = 0, partcountcell = 0;
     LinkedHashMap<String, String> arrls = new LinkedHashMap<String, String>();
     LinkedHashMap<String, String> partarrls = new LinkedHashMap<String, String>();
     MultiHashMap partarrlsvalue = new MultiHashMap();
     LinkedHashMap<String, String> lblarrls = new LinkedHashMap<String, String>();
+    ArrayList<String> strholdexcel = new ArrayList<String>();
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
@@ -71,6 +73,17 @@ public class LoadData extends HttpServlet {
                 if (fielditem.isFormField()) {
                     if ("btnload".equals(fielditem.getFieldName())) {
                         if (arrls.size() != 0) {
+                            hdntimestamp = null;
+                            hdnxleft = null;
+                            hdnxright = null;
+                            hdnyleft = null;
+                            hdnyright = null;
+                            hdndleft = null;
+                            hdndright = null;
+                            hdnvleft = null;
+                            hdnvright = null;
+                            hdnstname = null;
+                            hdnpart = null;
                             arrls.clear();
                         }
                         if (partarrls.size() != 0) {
@@ -83,7 +96,6 @@ public class LoadData extends HttpServlet {
                             lblarrls.clear();
                         }
 
-                        //System.out.println(fielditem.getString());
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
                             FileItem fileItem = it.next();
@@ -113,11 +125,11 @@ public class LoadData extends HttpServlet {
                         }
 
                     } else if ("btnpart".equals(fielditem.getFieldName())) {
-                        System.out.println(fielditem.getString());
-                        //System.out.println(fielditem.getString());
                         Iterator<FileItem> it = fields.iterator();
+                        partcountrow=0;
                         while (it.hasNext()) {
                             FileItem fileItem = it.next();
+                            System.out.println(fileItem.getName());
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
 
@@ -132,8 +144,6 @@ public class LoadData extends HttpServlet {
                                     //Iterate through each rows from first sheet
                                     Iterator<Row> rowIterator = sheet.iterator();
                                     partarrls.put("Select", "Select");
-                                    int partcountrow = 0, partcountcell = 0;
-                                    ArrayList<String> strhold = new ArrayList<String>();
                                     while (rowIterator.hasNext()) {
                                         Row row = rowIterator.next();
                                         //For each row, iterate through each columns
@@ -142,8 +152,7 @@ public class LoadData extends HttpServlet {
                                             Cell cell = cellIterator.next();
                                             if (partcountrow == 0) {
                                                 partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
-                                                strhold.add(cell.getStringCellValue());
-                                                //    hold  =(String) strhold.get(0);
+                                                strholdexcel.add(cell.getStringCellValue());
                                             } else {
 
                                                 switch (cell.getCellType()) {
@@ -152,10 +161,10 @@ public class LoadData extends HttpServlet {
 //                                                    break;
 
                                                     case Cell.CELL_TYPE_NUMERIC:
-                                                        partarrlsvalue.put(strhold.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
+                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
                                                         break;
                                                     case Cell.CELL_TYPE_STRING:
-                                                        partarrlsvalue.put(strhold.get(partcountcell), cell.getStringCellValue());
+                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
                                                         break;
 
                                                 }
@@ -163,12 +172,8 @@ public class LoadData extends HttpServlet {
                                             }
 
                                         }
-                                        // System.out.println(hold);
-                                        // System.out.println("xlsx");
-                                        // break;
                                         partcountcell = 0;
                                         partcountrow++;
-                                        // holdpartvalue=partarrlsvalue.toString();
 
                                     }
                                 } else {
@@ -184,21 +189,33 @@ public class LoadData extends HttpServlet {
                                         Iterator<Cell> cellIterator = row.cellIterator();
                                         while (cellIterator.hasNext()) {
                                             Cell cell = cellIterator.next();
-                                            partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
-//                                        switch (cell.getCellType()) {
-//                                            case Cell.CELL_TYPE_BOOLEAN:
-//                                                System.out.print(cell.getBooleanCellValue() + "\t\t");
-//                                                break;
-//                                            case Cell.CELL_TYPE_NUMERIC:
-//                                                System.out.print(cell.getNumericCellValue() + "\t\t");
-//                                                break;
-//                                            case Cell.CELL_TYPE_STRING:
-//                                                System.out.print(cell.getStringCellValue() + "\t\t");
-//                                                break;
-//                                        }
+                                            if (partcountrow == 0) {
+                                                partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
+                                                strholdexcel.add(cell.getStringCellValue());
+                                                //    hold  =(String) strholdexcel.get(0);
+                                            } else {
+
+                                                switch (cell.getCellType()) {
+//                                                case Cell.CELL_TYPE_BOOLEAN:
+//                                                    System.out.print(cell.getBooleanCellValue() + "\t\t");
+//                                                    break;
+
+                                                    case Cell.CELL_TYPE_NUMERIC:
+                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
+                                                        break;
+                                                    case Cell.CELL_TYPE_STRING:
+                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
+                                                        break;
+
+                                                }
+                                                partcountcell++;
+                                            }
+
                                         }
+                                        partcountcell = 0;
+                                        partcountrow++;
                                         //System.out.println("xls");
-                                        break;
+                                        //  break;
                                     }
                                 }
                             }
@@ -207,9 +224,11 @@ public class LoadData extends HttpServlet {
 
                     } else if ("btnlblfiles".equals(fielditem.getFieldName())) {
                         Iterator<FileItem> it = fields.iterator();
+                        lblarrls.put("Select", "Select");
                         while (it.hasNext()) {
 
                             FileItem fileItem = it.next();
+                            System.out.println(fileItem.getName());
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
 
@@ -272,16 +291,23 @@ public class LoadData extends HttpServlet {
                         hdnfilename = fielditem.getString();
                     } else if ("hdnlblfilename".equals(fielditem.getFieldName())) {
                         hdnlblfilename = fielditem.getString();
+                    } else if ("hdnstartpnt".equals(fielditem.getFieldName())) {
+                        hdnstartpnt = fielditem.getString();
+                    } else if ("hdnduration".equals(fielditem.getFieldName())) {
+                        hdnduration = fielditem.getString();
+                    } else if ("hdnlblstlname".equals(fielditem.getFieldName())) {
+                        hdnlblstlname = fielditem.getString();
                     }
+
                 }
             }
 
             List lstpart = null;
             if (hdnpart != null && !hdnpart.isEmpty()) {
-                request.setAttribute("selectedDept", hdnpart);
+                request.setAttribute("selectedpart", hdnpart);
                 lstpart = (List) partarrlsvalue.get(hdnpart);
             } else {
-                request.setAttribute("selectedDept", "ID");
+                request.setAttribute("selectedpart", "ID");
                 lstpart = (List) partarrlsvalue.get("ID");
             }
             if (hdnfilename.contains("\\")) {
