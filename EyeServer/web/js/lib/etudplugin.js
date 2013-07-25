@@ -120,6 +120,8 @@ function ETUDPlugin_init()
 	if(!ETUDPlugin_isInstalled()) {
 		log.style.display = "none";
 	}
+        
+        $("#etudPlugin_panel").css("opacity", "0");
 }
 		
 function ETUDPlugin_free()
@@ -140,7 +142,11 @@ function ETUDPlugin_calibrate()
 {
 	if(ETUDPlugin && ETUDPlugin.Ready) ETUDPlugin.calibrate();
 }
-		
+
+/**
+ * Called when start button is clicked
+ * @returns {undefined}
+ */
 function ETUDPlugin_startStop()
 {
 	if(ETUDPlugin && ETUDPlugin.Calibrated)
@@ -148,7 +154,8 @@ function ETUDPlugin_startStop()
 		ETUDPlugin.Tracking ? ETUDPlugin.stop() : ETUDPlugin.start();
 	}
         
-        $("#overlay").remove();
+        $("#overlay").hide();
+        startTracking();
 }
 		
 function ETUDPlugin_loaded() 

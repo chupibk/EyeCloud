@@ -39,6 +39,8 @@ var NUMBER_PART = 1;
  */
 var TYPE = 1;
 
+var EXPERIMENT_TIME = 1000;
+
 /**
  * Control error for each screen in aspect of x,y axis
  * @type Number
@@ -206,9 +208,14 @@ function convertData(x, y) {
 }
 
 var startTime;
+var sendToServerVariable = null;
+var checkSendDone;
+var checkStop;
 function startTracking(){
     startTime = new Date().getTime();
-    setInterval(sendToServer, REFRESH_RATE);
+    checkSendDone = 0;
+    sendToServerVariable = setInterval(sendToServer, REFRESH_RATE);
+    checkStop=0;
 }
 
 function sendToServer() {
@@ -218,15 +225,25 @@ function sendToServer() {
         sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
         sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
     } else {
-        var currenTime = player.getCurrentTime().toFixed(1);
-        var roundTime = parseInt(currenTime * 1000 / REFRESH_YOUTUBE) + 1;
+        var currenTime = parseFloat((new Date().getTime()-startTime)/1000);
+        currenTime = currenTime.toFixed(1);
+        var roundTime = parseInt(currenTime * 1000 / REFRESH_RATE);
+        //console.log(currenTime + "-" + roundTime);
         sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
         sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
+        if ((new Date().getTime() - startTime) > EXPERIMENT_TIME){
+            clearInterval(sendToServerVariable);
+            $("#disable").css("opacity", "0.95");
+            $("#thankBtn").show();
+            ETUDPlugin.stop();
+            checkStop = 1;
+        }
     }
     sendData = "data=" + sendData;
-    console.log(sendData);
+    //console.log(sendData);
 
     var start = new Date().getTime();
+    checkSendDone++;
     $.ajax({
         dataType: 'jsonp',
         data: sendData,
@@ -235,19 +252,27 @@ function sendToServer() {
             $("#send_status").html(result);
             console.log("Ok sending: " + result);
             var end = new Date().getTime();
+            checkSendDone--;
             sentCount++;
             console.log("Start: " + start);
             console.log("End: " + end);
             console.log(end - start);
             totalDelay += (end - start);
             console.log(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount));
+            if (checkStop === 1 && checkSendDone === 0){
+                $("#thankBtn").val(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount) + " Thank you again!");
+            }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             $("#send_status").html("Failed: " + errorThrown);
             console.log("Fail to send");
+            checkSendDone--;
+            if (checkStop === 1 && checkSendDone === 0){
+                $("#thankBtn").val(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount) + " ^_^ Done, Thank you again!");
+            }            
         }
     });
-
+    
     count = 0;
     sendData = "";
 }
@@ -260,8 +285,8 @@ function sendToServer() {
  */
 function addData(s) {
     sendData = sendData + s;
-    count = count + 1;
-    console.log(count);
+    //count = count + 1;
+    //console.log(count);
 }
 
 function GetURLParameter(sParam){
@@ -294,6 +319,7 @@ setInterval(updatePosition, 2000);
 if (documentWidth() > $("#web_page").width()){
     $("#web_page").css("left", (documentWidth()-$("#web_page").width())/2);
     $("#info").css("left", (documentWidth()-$("#web_page").width())/2);
+    $("#disable").css("left", (documentWidth()-$("#web_page").width())/2);
     $("#overlay").css("left", (documentWidth()-$("#web_page").width())/2);
 }
 
@@ -312,4 +338,10 @@ $("#web_position").html(
 $(".info_div").hide();
 $("#info").click(function (){
     $(".info_div").toggle();
+    if(!$('.info_div').is(':visible')){
+        $("#etudPlugin_panel").css("opacity", "0");
+    }else{
+        $("#etudPlugin_panel").css("opacity", "1");
+    }
 });
+$("#thankBtn").hide();
