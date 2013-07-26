@@ -1,12 +1,15 @@
 package fi.eyecloud.utils;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import fi.eyecloud.conf.Constants;
 
 public class ServerFile extends Thread {
 	public static final int PORT = 3332;
@@ -44,7 +47,15 @@ public class ServerFile extends Thread {
 		Object o = ois.readObject();
 
 		if (o instanceof String) {
-			fos = new FileOutputStream("./" + o.toString());
+			String split[] = o.toString().split(Constants.PARAMETER_SPLIT);
+			File file = new File("./" + split[0]);
+			if (!file.exists()) {
+				if (file.mkdir()) {
+					System.out.println("Directory " + split[0] + " is created!");
+				}
+			}
+		 
+			fos = new FileOutputStream("./" + split[0] + "/" + split[1]);
 		} else {
 			throwException("Something is wrong");
 		}

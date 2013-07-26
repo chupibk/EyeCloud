@@ -206,7 +206,7 @@ public class YoutubeRendering {
 				collector.emit(new Values(id, "Generated Ok"));
 				Colorization color = new Colorization(data, width, height);
 				try {
-					new ClientFile(color.getImage(), Integer.toString(timeId));
+					new ClientFile(color.getImage(), Integer.toString(timeId), "test");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
