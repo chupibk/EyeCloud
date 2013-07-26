@@ -81,21 +81,21 @@ function ETUDPlugin_init()
 		fontFamily = "Arial";
 	}
 	
-	var btnShowOptions = document.createElement("input");
+	var btnShowOptions = document.getElementsByName("option")[0];
 	btnShowOptions.id = "etudPlugin_showOptions";
 	btnShowOptions.type = "button";
 	btnShowOptions.value = "Options...";
 	btnShowOptions.disabled = true;
 	ETUDPlugin_addEvent(btnShowOptions, "click", ETUDPlugin_showOptions);
 
-	var btnCalibrate = document.createElement("input");
+	var btnCalibrate = document.getElementsByName("calibrate")[0];
 	btnCalibrate.id = "etudPlugin_calibrate";
 	btnCalibrate.type = "button";
 	btnCalibrate.value = "Calibrate";
 	btnCalibrate.disabled = true;
 	ETUDPlugin_addEvent(btnCalibrate, "click", ETUDPlugin_calibrate);
 
-	var btnStartStop = document.createElement("input");
+	var btnStartStop = document.getElementsByName("start")[0];
 	btnStartStop.id = "etudPlugin_startStop";
 	btnStartStop.type = "button";
 	btnStartStop.value = "Start";
@@ -108,9 +108,9 @@ function ETUDPlugin_init()
 	controlPanel.appendChild(etudPluginContainer);
 	controlPanel.appendChild(etudPluginInfo);
 	controlPanel.appendChild(etudPluginDevice);
-	controlPanel.appendChild(btnShowOptions);
-	controlPanel.appendChild(btnCalibrate);
-	controlPanel.appendChild(btnStartStop);
+	//controlPanel.appendChild(btnShowOptions);
+	//controlPanel.appendChild(btnCalibrate);
+	//controlPanel.appendChild(btnStartStop);
 	controlPanel.appendChild(log);
 
 	document.body.insertBefore(controlPanel, document.body.firstChild);
@@ -120,6 +120,8 @@ function ETUDPlugin_init()
 	if(!ETUDPlugin_isInstalled()) {
 		log.style.display = "none";
 	}
+        
+        $("#etudPlugin_panel").css("opacity", "0");
 }
 		
 function ETUDPlugin_free()
@@ -140,13 +142,20 @@ function ETUDPlugin_calibrate()
 {
 	if(ETUDPlugin && ETUDPlugin.Ready) ETUDPlugin.calibrate();
 }
-		
+
+/**
+ * Called when start button is clicked
+ * @returns {undefined}
+ */
 function ETUDPlugin_startStop()
 {
 	if(ETUDPlugin && ETUDPlugin.Calibrated)
 	{
 		ETUDPlugin.Tracking ? ETUDPlugin.stop() : ETUDPlugin.start();
 	}
+        
+        $("#overlay").hide();
+        startTracking();
 }
 		
 function ETUDPlugin_loaded() 

@@ -6,7 +6,14 @@ body {
 
 #info{
     float: left;
-    margin-top: 20px;
+    top:920px;
+    position: absolute;
+}
+
+#info #button{
+    float: left;
+    margin: 0 10px;
+    width: 100px;
 }
 
 #info .info_div{
@@ -17,14 +24,14 @@ body {
 #wrap{ 
     width: 100%;
     position: absolute;
-    top: 90px; 
+    top: 10px; 
     left: 0px;
     bottom: 0;
 }
 
 #web_page{ 
-    width: 1100px;
-    height: 500px;
+    width: 1200px;
+    height: 800px;
     top:0px;
     left:0px;
     position: absolute;
@@ -39,9 +46,88 @@ body {
 }
 
 #overlay{
-    width: 1100px;
-    height: 500px;    
+    width: 1200px;
+    height: 800px;    
     position: absolute;
     top:0px;
     left:0px;
+    background-color:#000000;
+    opacity:0.95;
+    text-align: center;
+}
+
+#disable{
+    width: 1200px;
+    height: 800px;    
+    position: absolute;
+    top:0px;
+    left:0px;
+    background-color:#000000;
+    opacity:0;
+    text-align: center;
+}
+
+#overlay input{
+    margin-top: 350px;
+    width: 100px;
+    height:50px;
+}
+
+#disable input{
+    margin-top: 350px;
+    width: 300px;
+    height:50px;
+}
+
+/* Online CSS */
+#overlay_heatmap{
+    width: 1200px;
+    height: 800px;    
+    position: absolute;
+    top:0px;
+    left:0px;
+}
+
+#control{
+    width: 1200px;
+    height: 800px;    
+    position: absolute;
+    top:0px;
+    left:0px;
+    background-color:#000000;
+    opacity:0.95;
+    text-align: center;
+}
+
+#control input{
+    margin-top: 350px;
+    width: 100px;
+    height:50px;
+}
+
+#slide{
+    width: 1200px;
+    height: 90px;
+    top:815px;
+    left:0px;
+    position: absolute;
+    border: solid 1px;
+    float: left;
+    overflow: auto;
+}
+
+#slide .block{
+    width:100px;
+    margin: 3px 5px;
+    border: solid 1px;
+    float: left;
+}
+
+#slide .block img{
+    width: 100px;
+}
+
+#slide .block .text{
+    width: 100px;
+    text-align: center;
 }

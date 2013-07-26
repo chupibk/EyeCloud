@@ -8,6 +8,9 @@
  * @author chung-pi <cdao@cs.uef.fi>
  */
 public class Constants {
+    /**
+     * Host name
+     */
     public final static String HOSTNAME = "172.31.15.51";
     //public final static String  HOSTNAME = "ec2-54-229-95-189.eu-west-1.compute.amazonaws.com";
     public final static int     PORT        = 3772;

@@ -5,8 +5,19 @@
  */
 var REFRESH_RATE = parseInt(GetURLParameter('refresh')); //ms
 console.log("Refresh rate: " + REFRESH_RATE);
+/**
+ * Participants
+ * @type Number
+ */
+var NUMBER_PARTICIPANT = parseInt(GetURLParameter('np'));
+console.log("Number of participants: " + NUMBER_PARTICIPANT);
 
-var NUMBER_PARTICIPANT = 1;
+/**
+ * Experiment time
+ * @type Number
+ */
+var EXPERIMENT_TIME = parseInt(GetURLParameter('time'));
+console.log("Experiment time: " + EXPERIMENT_TIME);
 
 /**
  * Sample rate
@@ -152,18 +163,9 @@ window.onresize = function() {
 function updatePosition() {
     $("#window_position").html(posLeft() + " - " + posTop());
     $("#web_position").html(
-            $("#wrap").position().left + " - " + $("#wrap").position().top
+            $("#web_page").position().left + " - " + $("#web_page").position().top
             + " - " + $("#web_page").width());
 }
-
-/**
- * Mouse position
- * 
- */
-window.onmousemove = function(event) {
-    event = event || window.event;
-    $("#mouse_position").html(event.clientX + " - " + event.clientY);
-};
 
 /**
  * convert x,y coordinate in screen to coordinate in frame window
@@ -185,8 +187,8 @@ function convertData(x, y) {
     newY = newY - (windowHeight() - documentHeight());
 
     // Position in iFrame
-    newX = newX - $("#wrap").position().left;
-    newY = newY - $("#wrap").position().top;
+    newX = newX - $("#web_page").position().left;
+    newY = newY - $("#web_page").position().top;
 
     // Error
     if (windowWidth() - documentWidth() !== 0) {
@@ -214,6 +216,76 @@ function convertData(x, y) {
     return newX + PARAMETER_SPLIT + newY + PARAMETER_SPLIT + DURATION + PARAMETER_SPLIT;
 }
 
+var startTime;
+var sendToServerVariable = null;
+var checkSendDone;
+var checkStop;
+function startTracking(){
+    startTime = new Date().getTime();
+    checkSendDone = 0;
+    sendToServerVariable = setInterval(sendToServer, REFRESH_RATE);
+    checkStop=0;
+}
+
+function sendToServer() {
+    if (typeof YOUTUBE_STATE !== 'undefined') {
+        var currenTime = player.getCurrentTime().toFixed(1);
+        var roundTime = parseInt(currenTime * 1000 / REFRESH_YOUTUBE) + 1;
+        sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
+        sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
+    } else {
+        var currenTime = parseFloat((new Date().getTime()-startTime)/1000);
+        currenTime = currenTime.toFixed(1);
+        var roundTime = parseInt(currenTime * 1000 / REFRESH_RATE);
+        //console.log(currenTime + "-" + roundTime);
+        sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
+        sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
+        if ((new Date().getTime() - startTime) > EXPERIMENT_TIME){
+            clearInterval(sendToServerVariable);
+            $("#disable").css("opacity", "0.95");
+            $("#thankBtn").show();
+            ETUDPlugin.stop();
+            checkStop = 1;
+        }
+    }
+    sendData = "data=" + sendData;
+    //console.log(sendData);
+
+    var start = new Date().getTime();
+    checkSendDone++;
+    $.ajax({
+        dataType: 'jsonp',
+        data: sendData,
+        url: "DRPC",
+        success: function(result) {
+            $("#send_status").html(result);
+            console.log("Ok sending: " + result);
+            var end = new Date().getTime();
+            checkSendDone--;
+            sentCount++;
+            console.log("Start: " + start);
+            console.log("End: " + end);
+            console.log(end - start);
+            totalDelay += (end - start);
+            console.log(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount));
+            if (checkStop === 1 && checkSendDone === 0){
+                $("#thankBtn").val(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount) + " Thank you again!");
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#send_status").html("Failed: " + errorThrown);
+            console.log("Fail to send");
+            checkSendDone--;
+            if (checkStop === 1 && checkSendDone === 0){
+                $("#thankBtn").val(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount) + " ^_^ Done, Thank you again!");
+            }            
+        }
+    });
+    
+    count = 0;
+    sendData = "";
+}
+
 /**
  * Add data to send string, if number of small data is bigger than Packet number, data is sent
  * 
@@ -221,47 +293,9 @@ function convertData(x, y) {
  * @returns {undefined}
  */
 function addData(s) {
-    sendData = sendData + s + s + s + s;
-    count = count + 4;
-    console.log(count);
-
-    if (count >= PACKET_NUMBER) {
-        if (typeof YOUTUBE_STATE !== 'undefined'){
-            var currenTime = player.getCurrentTime().toFixed(1);
-            var roundTime = parseInt(currenTime*1000/REFRESH_YOUTUBE) + 1;
-            sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
-            sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
-        }else{
-            sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + TYPE;
-        }
-        sendData = "data=" + sendData;
-        console.log(sendData);
-        
-        var start = new Date().getTime();
-        $.ajax({
-            dataType: 'jsonp',
-            data: sendData,
-            url: "DRPC",
-            success: function(result) {
-                $("#send_status").html(result);
-                console.log("Ok sending: " + result);
-                var end = new Date().getTime();
-                sentCount++;
-                console.log("Start: " + start);
-                console.log("End: " + end);
-                console.log(end - start);
-                totalDelay += (end - start);
-                console.log(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay/sentCount));
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $("#send_status").html("Failed: " + errorThrown);
-                console.log("Fail to send");
-            }
-        });
-        
-        count = 0;
-        sendData = "";
-    }
+    sendData = sendData + s;
+    //count = count + 1;
+    //console.log(count);
 }
 
 function GetURLParameter(sParam){
@@ -276,10 +310,30 @@ function GetURLParameter(sParam){
 }
 
 /**
+ * Mouse position
+ * 
+ */
+window.onmousemove = function(event) {
+    event = event || window.event;
+    $("#mouse_position").html(event.clientX + " - " + event.clientY); 
+};
+
+/**
  * Call each 2 seconds
  * 
  */
 setInterval(updatePosition, 2000);
+
+// Move to center position
+if (documentWidth() > $("#web_page").width()){
+    $("#web_page").css("left", (documentWidth()-$("#web_page").width())/2);
+    $("#info").css("left", (documentWidth()-$("#web_page").width())/2);
+    $("#disable").css("left", (documentWidth()-$("#web_page").width())/2);
+    $("#overlay").css("left", (documentWidth()-$("#web_page").width())/2);
+}
+
+// Page setup
+
 
 // Update div elements
 $("#screen_size").html(screenWidth() + " - " + screenHeight());
@@ -288,5 +342,15 @@ $("#document_size").html(documentWidth() + " - " + documentHeight());
 $("#frame_size").html(frameWidth + " - " + frameHeight);
 $("#window_position").html(posLeft() + " - " + posTop());
 $("#web_position").html(
-        $("#wrap").position().left + " - " + $("#wrap").position().top + " - "
+        $("#web_page").position().left + " - " + $("#web_page").position().top + " - "
         + $("#web_page").width());
+$(".info_div").hide();
+$("#info").click(function (){
+    $(".info_div").toggle();
+    if(!$('.info_div').is(':visible')){
+        $("#etudPlugin_panel").css("opacity", "0");
+    }else{
+        $("#etudPlugin_panel").css("opacity", "1");
+    }
+});
+$("#thankBtn").hide();

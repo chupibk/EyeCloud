@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -45,9 +46,9 @@ public class GetImage extends HttpServlet {
         Collection collection = new ArrayList();
         
         String dir = getServletContext().getRealPath("") + Constants.UPLOAD_PATH;
-        String result = Libs.lastFileModified(dir);
+        List<String> list = Libs.getListFile(dir);
         
-        collection.add(result);
+        collection.add(list);
         
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
