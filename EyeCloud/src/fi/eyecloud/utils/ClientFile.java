@@ -11,6 +11,8 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
+import fi.eyecloud.conf.Constants;
+
 public class ClientFile {
 	public ClientFile (BufferedImage image) throws IOException{
 		String fileName = "/home/storm/storm/" + System.currentTimeMillis() + ".png";
@@ -37,7 +39,7 @@ public class ClientFile {
 		ois.close();		
 	}
 	
-	public ClientFile (BufferedImage image, String name) throws IOException{
+	public ClientFile (BufferedImage image, String name, String id) throws IOException{
 		String fileName = "/home/storm/storm/" + name + ".png";
 		File file = new File(fileName);
 		ImageIO.write(image, "png",file);
@@ -47,7 +49,7 @@ public class ClientFile {
 		ObjectOutputStream oos = new ObjectOutputStream(
 				socket.getOutputStream());
 
-		oos.writeObject(file.getName());
+		oos.writeObject(id + Constants.PARAMETER_SPLIT + file.getName());
 		FileInputStream fis = new FileInputStream(file);
 		byte[] buffer = new byte[ServerFile.BUFFER_SIZE];
 		Integer bytesRead = 0;

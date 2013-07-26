@@ -20,9 +20,9 @@ import fi.eyecloud.gui.heatmap.Colorization;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.utils.ClientFile;
- 
+
 @SuppressWarnings("deprecation")
-public class WebsiteRendering {
+public class WebsiteRenderingTMP {
 
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt {
@@ -61,12 +61,9 @@ public class WebsiteRendering {
 			int type = Integer.parseInt(data[data.length - 1]);
 
 			if (type == 1) {
-				int numberParticipant = Integer.parseInt(data[data.length - 2]);
-				int timeId = Integer.parseInt(data[data.length - 3]);
-				int height = Integer.parseInt(data[data.length - 4]);
-				int width = Integer.parseInt(data[data.length - 5]);
-				int heatmapId = Integer.parseInt(data[data.length - 6]);
-				
+				int width = Integer.parseInt(data[data.length - 3]);
+				int height = Integer.parseInt(data[data.length - 2]);
+
 				int value[] = new int[data.length - 3];
 				for (int i = 0; i < data.length - 3; i++) {
 					value[i] = Math.round(Float.parseFloat(data[i]));
@@ -101,17 +98,17 @@ public class WebsiteRendering {
 					}
 				}
 
-				collector.emit(new Values(id, type, intensity, width, height, timeId, numberParticipant, heatmapId));
+				collector.emit(new Values(id, type, intensity, width, height));
 			} else {
 				collector.emit(new Values(id, type, Constants.UNKNOWN,
-						Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
+						Constants.UNKNOWN, Constants.UNKNOWN));
 			}
 		}
 
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
 			declarer.declare(new Fields("id", "type", "intensity", "width",
-					"height", "timeid", "numberparticipant", "heatmapid"));
+					"height"));
 		}
 	}
 
@@ -121,25 +118,20 @@ public class WebsiteRendering {
 		private double intensity[][] = null;
 		private int width = 0;
 		private int height = 0;
-		private int timeId = 0;
-		private int numberParticipant = 0;
-		private int currentParticipant = 0;
-		private int heatmapId = 0;
-		
+
 		private static String INTENSITY = "intensity";
-		private static String PARTICIPANT = "participant";
 		
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void prepare(Map conf, TopologyContext context) {
 			contextData = context;
+			intensity = (double[][]) context.getTaskData(INTENSITY);
 		}
 
 		@Override
 		public void execute(Tuple tuple, BasicOutputCollector collector) {
 			Object id = tuple.getValue(0);
 			int type = tuple.getInteger(1);
-			currentParticipant = 0;
 			
 			if (type == 1) {
 				double[][] data = (double[][]) tuple.getValue(2);
@@ -147,15 +139,7 @@ public class WebsiteRendering {
 					width = tuple.getInteger(3);
 				if (height == 0)
 					height = tuple.getInteger(4);
-				timeId = tuple.getInteger(5);
-				numberParticipant = tuple.getInteger(6);
-				heatmapId = tuple.getInteger(7);
-				
-				intensity = (double[][]) contextData.getTaskData(Integer.toString(timeId) + INTENSITY);
-				if (contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT) != null)
-					currentParticipant = Integer.parseInt(contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT).toString());
-				currentParticipant++;
-				
+
 				if (intensity == null) {
 					intensity = new double[width][height];
 					for (int i = 0; i < width; i++) {
@@ -171,33 +155,16 @@ public class WebsiteRendering {
 					}
 				}
 				
-				if (numberParticipant == currentParticipant){
-					double[][] intensityPre = (double[][]) contextData.getTaskData(Integer.toString(timeId-1) + INTENSITY);
-					if (intensityPre != null){
-						for (int i = 0; i < width; i++) {
-							for (int j = 0; j < height; j++) {
-								intensity[i][j] += intensityPre[i][j];
-							}
-						}
-					}
-					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
-					contextData.setTaskData(Integer.toString(timeId-1) + INTENSITY, null);
-					contextData.setTaskData(Integer.toString(timeId-1) + PARTICIPANT, null);
-					
-					collector.emit(new Values(id, type, intensity, width, height, timeId, heatmapId));
-				}else{
-					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
-					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, currentParticipant);
-					collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
-				}
+				contextData.setTaskData(INTENSITY, intensity);
+				collector.emit(new Values(id, type, intensity, width, height));
 			}else{
-				collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
+				collector.emit(new Values(id, type, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 			}
 		}
 		
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			declarer.declare(new Fields("id", "type", "intensity", "width", "height", "timeid", "heatmapid"));
+			declarer.declare(new Fields("id", "type", "intensity", "width", "height"));
 		}
 	}
 
@@ -214,19 +181,18 @@ public class WebsiteRendering {
 				double[][] data = (double[][]) tuple.getValue(2);
 				int	width = tuple.getInteger(3);
 				int	height = tuple.getInteger(4);
-				int timeId = tuple.getInteger(5);
-				int heatmapId = tuple.getInteger(6);
-				
-				collector.emit(new Values(id, "Generated Ok"));
+			
+				collector.emit(new Values(id, "Ok"));
 				Colorization color = new Colorization(data, width, height);
+				//UploadData.upload(Constants.UPLOAD_HOST, color.getImage());	
 				try {
-					new ClientFile(color.getImage(), Integer.toString(timeId), Integer.toString(heatmapId));
+					new ClientFile(color.getImage());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}else{
-				collector.emit(new Values(id, "Stored  Ok"));
+				collector.emit(new Values(id, "Nothing"));
 			}
 		}
 
