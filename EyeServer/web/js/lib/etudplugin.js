@@ -219,6 +219,6 @@ function ETUDPlugin_updateControlPanel(state)
 	document.getElementById("etudPlugin_startStop").value = state == 2 ? "Stop" : "Start";
 }
 
-ETUDPlugin_addEvent(window, "load", ETUDPlugin_init);
-ETUDPlugin_addEvent(window, "unload", ETUDPlugin_free);
+//ETUDPlugin_addEvent(window, "load", ETUDPlugin_init);
+//ETUDPlugin_addEvent(window, "unload", ETUDPlugin_free);
 }

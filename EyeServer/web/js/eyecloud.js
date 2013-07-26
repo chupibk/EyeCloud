@@ -260,6 +260,9 @@ function sendToServer() {
             clearInterval(sendToServerVariable);
             $("#disable").css("opacity", "0.95");
             $("#thankBtn").show();
+            if (WEBSITE === "exp/dinosaur.html"){
+                alert("Answer: 10 differences :P");
+            }
             ETUDPlugin.stop();
             checkStop = 1;
         }
