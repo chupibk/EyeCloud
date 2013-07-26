@@ -21,6 +21,7 @@ public class Constants {
     // Tag
     public final static String TAG_DATA = "data";
     public final static String TAG_CALLBACK = "callback";
+    public final static String TAG_HEATMAP_ID = "heatmapid";
     
     /* Servlet */
     public static final String UPLOAD_NAME  = "UploadServlet";
