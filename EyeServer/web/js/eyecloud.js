@@ -5,8 +5,19 @@
  */
 var REFRESH_RATE = parseInt(GetURLParameter('refresh')); //ms
 console.log("Refresh rate: " + REFRESH_RATE);
+/**
+ * Participants
+ * @type Number
+ */
+var NUMBER_PARTICIPANT = parseInt(GetURLParameter('np'));
+console.log("Number of participants: " + NUMBER_PARTICIPANT);
 
-var NUMBER_PARTICIPANT = 1;
+/**
+ * Experiment time
+ * @type Number
+ */
+var EXPERIMENT_TIME = parseInt(GetURLParameter('time'));
+console.log("Experiment time: " + EXPERIMENT_TIME);
 
 /**
  * Sample rate
@@ -38,8 +49,6 @@ var NUMBER_PART = 1;
  * @type Number
  */
 var TYPE = 1;
-
-var EXPERIMENT_TIME = 1000;
 
 /**
  * Control error for each screen in aspect of x,y axis

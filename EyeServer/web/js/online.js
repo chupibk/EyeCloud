@@ -3,10 +3,18 @@ var REFRESH_ONLINE = parseInt(GetURLParameter('refresh')); //ms
 console.log("Refresh online: " + REFRESH_ONLINE);
 
 /**
- * Experience time
+ * Participants
  * @type Number
  */
-var EXPERIMENT_TIME = 4000;
+var NUMBER_PARTICIPANT = parseInt(GetURLParameter('np'));
+console.log("Number of participants: " + NUMBER_PARTICIPANT);
+
+/**
+ * Experiment time
+ * @type Number
+ */
+var EXPERIMENT_TIME = parseInt(GetURLParameter('time'));
+console.log("Experiment time: " + EXPERIMENT_TIME);
 
 /**
  * Screen Width
@@ -180,7 +188,13 @@ function getOnlineHeatmap() {
                     countHeatmap++;
                     totalDelayTime += currentTime - baseTimeHeatmap[id];
                     console.log(countHeatmap + " - " + totalDelayTime + " - " + totalDelayTime/countHeatmap);
-                    $("#slide").append('<img src="upload/' + (id + 1) + '.png" alt="' + (id + 1) + '">');
+                    $("#slide").append('<div class="block"> <a id="img_' + (id+1) + '" name="' + 
+                                        (id+1) +'.png" href="javascript:void(0);"><img src="upload/' + (id + 1) + '.png" alt="' + (id + 1) + 
+                                        '"></a> <div class="text">' + ((id+1)*REFRESH_ONLINE) + ' ms</div></div>');
+                    $("#img_" + (id+1)).click(function(){
+                        $("#overlay_heatmap").fadeOut("slow").attr("src", "upload/" + $(this).attr('name')).fadeIn("slow");
+                    });
+                    $("#overlay_heatmap").fadeOut("fast").attr("src", "upload/" + (id + 1) + '.png').fadeIn("fast");
                 }
             }
         },
@@ -193,6 +207,7 @@ function getOnlineHeatmap() {
     if (countHeatmap === EXPERIMENT_TIME/REFRESH_ONLINE){
         clearInterval(getOnlineHeatmapVariable);
         console.log(countHeatmap + " - " + totalDelayTime + " - " + totalDelayTime/countHeatmap);
+        $("#result_status").html(countHeatmap + " - " + totalDelayTime + " - " + totalDelayTime/countHeatmap);
     }
 }
 

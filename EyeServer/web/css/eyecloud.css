@@ -107,18 +107,27 @@ body {
 
 #slide{
     width: 1200px;
-    height: 80px;
+    height: 90px;
     top:815px;
     left:0px;
     position: absolute;
     border: solid 1px;
     float: left;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
+    overflow: auto;
 }
 
-#slide img{
+#slide .block{
+    width:100px;
+    margin: 3px 5px;
+    border: solid 1px;
+    float: left;
+}
+
+#slide .block img{
     width: 100px;
-    margin: 1px 5px;
+}
+
+#slide .block .text{
+    width: 100px;
+    text-align: center;
 }
