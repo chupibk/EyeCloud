@@ -20,6 +20,20 @@ var EXPERIMENT_TIME = parseInt(GetURLParameter('time'));
 console.log("Experiment time: " + EXPERIMENT_TIME);
 
 /**
+ * Website name
+ * @type type
+ */
+var WEBSITE = GetURLParameter('site');
+console.log("Website: " + WEBSITE);
+
+/**
+ * Generating ID
+ * @type type
+ */
+var HEATMAP_ID = parseInt(GetURLParameter('id'));
+console.log("Heatmap ID: " + HEATMAP_ID);
+
+/**
  * Sample rate
  * 
  * @type Number
@@ -231,6 +245,7 @@ function sendToServer() {
     if (typeof YOUTUBE_STATE !== 'undefined') {
         var currenTime = player.getCurrentTime().toFixed(1);
         var roundTime = parseInt(currenTime * 1000 / REFRESH_YOUTUBE) + 1;
+        sendData = sendData + HEATMAP_ID + PARAMETER_SPLIT;
         sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
         sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
     } else {
@@ -238,12 +253,16 @@ function sendToServer() {
         currenTime = currenTime.toFixed(1);
         var roundTime = parseInt(currenTime * 1000 / REFRESH_RATE);
         //console.log(currenTime + "-" + roundTime);
+        sendData = sendData + HEATMAP_ID + PARAMETER_SPLIT;
         sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
         sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
         if ((new Date().getTime() - startTime) > EXPERIMENT_TIME){
             clearInterval(sendToServerVariable);
             $("#disable").css("opacity", "0.95");
             $("#thankBtn").show();
+            if (WEBSITE === "exp/dinosaur.html"){
+                alert("Answer: 10 differences :P");
+            }
             ETUDPlugin.stop();
             checkStop = 1;
         }
@@ -354,3 +373,4 @@ $("#info").click(function (){
     }
 });
 $("#thankBtn").hide();
+$("#web_page").attr("src", WEBSITE);

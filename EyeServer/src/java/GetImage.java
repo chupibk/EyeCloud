@@ -43,9 +43,10 @@ public class GetImage extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         String callback = request.getParameter(Constants.TAG_CALLBACK) == null ? "" : request.getParameter(Constants.TAG_CALLBACK);
+        String heatmapId = request.getParameter(Constants.TAG_HEATMAP_ID) == null ? "" : request.getParameter(Constants.TAG_HEATMAP_ID);
         Collection collection = new ArrayList();
         
-        String dir = getServletContext().getRealPath("") + Constants.UPLOAD_PATH;
+        String dir = getServletContext().getRealPath("") + Constants.UPLOAD_PATH + "/" + heatmapId;
         List<String> list = Libs.getListFile(dir);
         
         collection.add(list);
