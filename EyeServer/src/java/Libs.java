@@ -47,4 +47,9 @@ public class Libs {
         }
         return results;
     }
+    
+    public static int checkFile(String file){
+        File f = new File(file);
+        return f.exists() ? 1:0;
+    }
 }

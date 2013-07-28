@@ -22,6 +22,7 @@ public class Constants {
     public final static String TAG_DATA = "data";
     public final static String TAG_CALLBACK = "callback";
     public final static String TAG_HEATMAP_ID = "heatmapid";
+    public final static String TAG_FRAME_ID = "frameid";
     
     /* Servlet */
     public static final String UPLOAD_NAME  = "UploadServlet";
@@ -30,4 +31,5 @@ public class Constants {
     public static final int maxFileSize     = 10 * 1024 * 1024;
     public static final int maxMemSize      = 100 * 1024 * 1024;
     public static final String TEMP         = "/tmp/";
+    public static final String FRAME_TYPE   = ".png";
 }
