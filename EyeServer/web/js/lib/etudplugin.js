@@ -1,3 +1,6 @@
+/*
+ * This file is modified based on ETUD Plugin (Oleg Špakov) example: http://www.sis.uta.fi/~csolsp/downloads.php
+ */
 if(this.ETUDPlugin === undefined)
 {
 
@@ -62,8 +65,9 @@ function ETUDPlugin_init()
 	var etudPluginContainer = document.createElement("span");
 	etudPluginContainer.innerHTML = "<object id='etudPlugin' type='application/x-etudplugin' width='1' height='1'><param name='onload' value='ETUDPlugin_loaded' /></object>";
 		
-	var etudPluginInfo = document.createElement("span");
-	etudPluginInfo.id = "etudPlugin_logo";
+	var etudPluginInfo = document.getElementsByClassName("logo")[0];
+        etudPluginInfo.id = "etudPlugin_logo";
+        /*
 	with(etudPluginInfo.style)
 	{
 		paddingLeft = "20px";
@@ -71,16 +75,17 @@ function ETUDPlugin_init()
 		fontWeight = "bold";
 		fontFamily = "Arial";
 	}
-	
-	var etudPluginDevice = document.createElement("span");
+	*/
+	var etudPluginDevice = document.getElementsByClassName("device")[0];
 	etudPluginDevice.id = "etudPlugin_device";
+        /*
 	with(etudPluginDevice.style)
 	{
 		padding = "0px 20px 0px 20px";
 		color = "#600000";
 		fontFamily = "Arial";
 	}
-	
+	*/
 	var btnShowOptions = document.getElementsByName("option")[0];
 	btnShowOptions.id = "etudPlugin_showOptions";
 	btnShowOptions.type = "button";
@@ -106,8 +111,8 @@ function ETUDPlugin_init()
 	log.id = "etudPlugin_log";
 	
 	controlPanel.appendChild(etudPluginContainer);
-	controlPanel.appendChild(etudPluginInfo);
-	controlPanel.appendChild(etudPluginDevice);
+	//controlPanel.appendChild(etudPluginInfo);
+	//controlPanel.appendChild(etudPluginDevice);
 	//controlPanel.appendChild(btnShowOptions);
 	//controlPanel.appendChild(btnCalibrate);
 	//controlPanel.appendChild(btnStartStop);
@@ -115,7 +120,7 @@ function ETUDPlugin_init()
 
 	document.body.insertBefore(controlPanel, document.body.firstChild);
 	
-	etudPluginInfo.innerHTML = ETUDPlugin_isInstalled() ? "ETUDPlugin" : "<a href='http://www.sis.uta.fi/~csolsp/downloads.php?id=ETUDPlugin'>ETUDPlugin</a> is not installed";
+	etudPluginInfo.innerHTML = ETUDPlugin_isInstalled() ? "" : "<a href='files/ETUDPlugin.exe'>ETUDPlugin</a> is not installed";
 	etudPluginDevice.innerHTML = ETUDPlugin_isInstalled() ? "<span style='font: 8pt monospace; color: #666'>loading...</span>" : "";
 	if(!ETUDPlugin_isInstalled()) {
 		log.style.display = "none";
@@ -177,9 +182,9 @@ function ETUDPlugin_loaded()
 	else
 	{
 		if(!ETUDPlugin || ETUDPlugin.Device === undefined)
-			document.getElementById("etudPlugin_logo").innerHTML = "<a href='http://www.cs.uta.fi/~oleg'>ETUDPlugin</a> is not intalled";
+			document.getElementById("etudPlugin_logo").innerHTML = "<a href='files/ETUDPlugin.exe'>ETUDPlugin</a> is not intalled";
 		else
-			document.getElementById("etudPlugin_logo").innerHTML = "ETUDPlugin: <a href='http://www.cs.uta.fi/~oleg'>ETU-Driver</a> is not intalled";
+			document.getElementById("etudPlugin_logo").innerHTML = "ETUDPlugin: <a href='files/ETUDriver.exe'>ETU-Driver</a> is not intalled";
 		document.getElementById("etudPlugin_panel").style.backgroundColor = "#FFE0E0";
 	}
 
@@ -219,6 +224,6 @@ function ETUDPlugin_updateControlPanel(state)
 	document.getElementById("etudPlugin_startStop").value = state == 2 ? "Stop" : "Start";
 }
 
-//ETUDPlugin_addEvent(window, "load", ETUDPlugin_init);
-//ETUDPlugin_addEvent(window, "unload", ETUDPlugin_free);
+ETUDPlugin_addEvent(window, "load", ETUDPlugin_init);
+ETUDPlugin_addEvent(window, "unload", ETUDPlugin_free);
 }
