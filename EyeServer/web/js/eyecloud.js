@@ -20,6 +20,20 @@ var EXPERIMENT_TIME = parseInt(GetURLParameter('time'));
 console.log("Experiment time: " + EXPERIMENT_TIME);
 
 /**
+ * Website name
+ * @type type
+ */
+var WEBSITE = GetURLParameter('site');
+console.log("Website: " + WEBSITE);
+
+/**
+ * Generating ID
+ * @type type
+ */
+var HEATMAP_ID = parseInt(GetURLParameter('id'));
+console.log("Heatmap ID: " + HEATMAP_ID);
+
+/**
  * Sample rate
  * 
  * @type Number
@@ -45,6 +59,8 @@ var NUMBER_PART = 1;
 
 /**
  * Type of data
+ * 1: send normal packets
+ * 2: send the last packet
  * 
  * @type Number
  */
@@ -228,25 +244,43 @@ function startTracking(){
 }
 
 function sendToServer() {
+    // Set type of data
+    TYPE = 1;
+    
     if (typeof YOUTUBE_STATE !== 'undefined') {
         var currenTime = player.getCurrentTime().toFixed(1);
         var roundTime = parseInt(currenTime * 1000 / REFRESH_YOUTUBE) + 1;
+        sendData = sendData + HEATMAP_ID + PARAMETER_SPLIT;
         sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
         sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
     } else {
-        var currenTime = parseFloat((new Date().getTime()-startTime)/1000);
-        currenTime = currenTime.toFixed(1);
-        var roundTime = parseInt(currenTime * 1000 / REFRESH_RATE);
-        //console.log(currenTime + "-" + roundTime);
-        sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
-        sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
-        if ((new Date().getTime() - startTime) > EXPERIMENT_TIME){
+        var currenTime = new Date().getTime()-startTime;
+        if (currenTime > EXPERIMENT_TIME){
+            // Set the last packet
+            TYPE = 2;
             clearInterval(sendToServerVariable);
             $("#disable").css("opacity", "0.95");
             $("#thankBtn").show();
+            if (WEBSITE === "exp/dinosaur.html"){
+                alert("Answer: 10 differences :P");
+            }
+            if (WEBSITE === "exp/chromecast.html"){
+                alert("Answer: 35$ probably :P");
+            }
+            if (WEBSITE === "exp/map.html"){
+                alert("Answer: 27 countries supposed :P");
+            }
             ETUDPlugin.stop();
             checkStop = 1;
         }
+        
+        currenTime = parseFloat(currenTime/1000);
+        currenTime = currenTime.toFixed(1);
+        var roundTime = parseInt(currenTime * 1000 / REFRESH_RATE);
+        //console.log(currenTime + "-" + roundTime);
+        sendData = sendData + HEATMAP_ID + PARAMETER_SPLIT;
+        sendData = sendData + frameWidth + PARAMETER_SPLIT + frameHeight + PARAMETER_SPLIT + roundTime;
+        sendData = sendData + PARAMETER_SPLIT + NUMBER_PARTICIPANT + PARAMETER_SPLIT + TYPE;
     }
     sendData = "data=" + sendData;
     //console.log(sendData);
@@ -354,3 +388,4 @@ $("#info").click(function (){
     }
 });
 $("#thankBtn").hide();
+$("#web_page").attr("src", WEBSITE);

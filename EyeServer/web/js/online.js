@@ -17,6 +17,20 @@ var EXPERIMENT_TIME = parseInt(GetURLParameter('time'));
 console.log("Experiment time: " + EXPERIMENT_TIME);
 
 /**
+ * Website name
+ * @type type
+ */
+var WEBSITE = GetURLParameter('site');
+console.log("Website: " + WEBSITE);
+
+/**
+ * Generating ID
+ * @type type
+ */
+var HEATMAP_ID = parseInt(GetURLParameter('id'));
+console.log("Heatmap ID: " + HEATMAP_ID);
+
+/**
  * Screen Width
  * 
  * @returns
@@ -172,9 +186,10 @@ function startGet() {
  * @returns {undefined}
  */
 function getOnlineHeatmap() {
+    var data = "heatmapid=" + HEATMAP_ID;
     $.ajax({
         dataType: 'jsonp',
-        data: "",
+        data: data,
         url: "GetImage",
         success: function(result) {
             $("#send_status").html("Getting list successfully");
@@ -189,12 +204,12 @@ function getOnlineHeatmap() {
                     totalDelayTime += currentTime - baseTimeHeatmap[id];
                     console.log(countHeatmap + " - " + totalDelayTime + " - " + totalDelayTime/countHeatmap);
                     $("#slide").append('<div class="block"> <a id="img_' + (id+1) + '" name="' + 
-                                        (id+1) +'.png" href="javascript:void(0);"><img src="upload/' + (id + 1) + '.png" alt="' + (id + 1) + 
+                                        (id+1) +'.png" href="javascript:void(0);"><img src="upload/' + HEATMAP_ID + '/' + (id + 1) + '.png" alt="' + (id + 1) + 
                                         '"></a> <div class="text">' + ((id+1)*REFRESH_ONLINE) + ' ms</div></div>');
                     $("#img_" + (id+1)).click(function(){
-                        $("#overlay_heatmap").fadeOut("slow").attr("src", "upload/" + $(this).attr('name')).fadeIn("slow");
+                        $("#overlay_heatmap").fadeOut("slow").attr("src", "upload/" + HEATMAP_ID + '/' + $(this).attr('name')).fadeIn("slow");
                     });
-                    $("#overlay_heatmap").fadeOut("fast").attr("src", "upload/" + (id + 1) + '.png').fadeIn("fast");
+                    $("#overlay_heatmap").fadeOut("fast").attr("src", "upload/" + HEATMAP_ID + '/' + (id + 1) + '.png').fadeIn("fast");
                 }
             }
         },
@@ -239,3 +254,5 @@ $("#startBtn").click(function(){
     $("#overlay_heatmap").show();
     startGet();
 });
+
+$("#web_page").attr("src", WEBSITE);

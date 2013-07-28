@@ -36,6 +36,7 @@ public class Libs {
     public static List<String> getListFile(String dir) {
         List<String> results = new ArrayList<String>();
         File[] files = new File(dir).listFiles();
+        if (files == null) return results;
         for (File file : files) {
             if (file.isFile()) {
                 String split[] = file.getName().split("\\.");
