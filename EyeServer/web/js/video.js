@@ -273,7 +273,7 @@ function sendToServer() {
     
     sendData = "data=" + sendData;
     //console.log(sendData);
-    /*
+    
     var start = new Date().getTime();
     checkSendDone++;
     $.ajax({
@@ -304,7 +304,7 @@ function sendToServer() {
             }
         }
     });
-    */
+    
     count = 0;
     sendData = "";
 }

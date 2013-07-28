@@ -167,6 +167,7 @@ var checkHeatmap = new Array();
 var baseTimeHeatmap = new Array();
 var totalDelayTime = 0;
 var countHeatmap = 0;
+var flag = 5;
 
 /**
  * Start getting data
@@ -207,11 +208,17 @@ function getOnlineHeatmap() {
                     $("#overlay_heatmap").fadeOut("slow").attr("src", "upload/" + HEATMAP_ID + '/' + $(this).attr('name')).fadeIn("slow");
                 });
                 $("#overlay_heatmap").fadeOut("fast").attr("src", "upload/" + HEATMAP_ID + '/' + roundTime + '.png').fadeIn("fast");
-                if (player.getPlayerState === YT.PlayerState.PAUSED) {
+                if (player.getPlayerState() === YT.PlayerState.PAUSED) {
+                    flag = 5;
                     player.playVideo();
                 }
             } else {
                 player.pauseVideo();
+                flag--;
+                if (flag === 0){
+                    flag = 5;
+                    player.playVideo();
+                }
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
