@@ -65,7 +65,8 @@ public class YoutubeRendering {
 				int timeId = Integer.parseInt(data[data.length - 3]);
 				int height = Integer.parseInt(data[data.length - 4]);
 				int width = Integer.parseInt(data[data.length - 5]);
-
+				int heatmapId = Integer.parseInt(data[data.length - 6]);
+				
 				int value[] = new int[data.length - 3];
 				for (int i = 0; i < data.length - 3; i++) {
 					value[i] = Math.round(Float.parseFloat(data[i]));
@@ -100,17 +101,17 @@ public class YoutubeRendering {
 					}
 				}
 
-				collector.emit(new Values(id, type, intensity, width, height, timeId, numberParticipant));
+				collector.emit(new Values(id, type, intensity, width, height, timeId, numberParticipant, heatmapId));
 			} else {
 				collector.emit(new Values(id, type, Constants.UNKNOWN,
-						Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
+						Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 			}
 		}
 
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
 			declarer.declare(new Fields("id", "type", "intensity", "width",
-					"height", "timeid", "numberparticipant"));
+					"height", "timeid", "numberparticipant", "heatmapid"));
 		}
 	}
 
@@ -123,6 +124,7 @@ public class YoutubeRendering {
 		private int timeId = 0;
 		private int numberParticipant = 0;
 		private int currentParticipant = 0;
+		private int heatmapId = 0;
 		
 		private static String INTENSITY = "intensity";
 		private static String PARTICIPANT = "participant";
@@ -147,6 +149,7 @@ public class YoutubeRendering {
 					height = tuple.getInteger(4);
 				timeId = tuple.getInteger(5);
 				numberParticipant = tuple.getInteger(6);
+				heatmapId = tuple.getInteger(7);
 				
 				intensity = (double[][]) contextData.getTaskData(Integer.toString(timeId) + INTENSITY);
 				if (contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT) != null)
@@ -171,20 +174,20 @@ public class YoutubeRendering {
 				if (numberParticipant == currentParticipant){
 					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, null);
 					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, null);					
-					collector.emit(new Values(id, type, intensity, width, height, timeId));
+					collector.emit(new Values(id, type, intensity, width, height, timeId, heatmapId));
 				}else{
 					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
 					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, currentParticipant);
-					collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
+					collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 				}
 			}else{
-				collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
+				collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 			}
 		}
 		
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			declarer.declare(new Fields("id", "type", "intensity", "width", "height", "timeid"));
+			declarer.declare(new Fields("id", "type", "intensity", "width", "height", "timeid", "heatmapid"));
 		}
 	}
 
@@ -202,11 +205,12 @@ public class YoutubeRendering {
 				int	width = tuple.getInteger(3);
 				int	height = tuple.getInteger(4);
 				int timeId = tuple.getInteger(5);
+				int heatmapId = tuple.getInteger(6);
 				
 				collector.emit(new Values(id, "Generated Ok"));
 				Colorization color = new Colorization(data, width, height);
 				try {
-					new ClientFile(color.getImage(), Integer.toString(timeId), "test");
+					new ClientFile(color.getImage(), Integer.toString(timeId), Integer.toString(heatmapId));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -228,13 +232,13 @@ public class YoutubeRendering {
 		LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder(
 				"website_rendering");
 		builder.addBolt(new ProcessData(), numberProcess);
-		builder.addBolt(new AggregatorData(), numberAggregator).shuffleGrouping();
+		builder.addBolt(new AggregatorData(), numberAggregator).fieldsGrouping(new Fields("timeid"));
 		builder.addBolt(new ReturnData(), numberReturn).shuffleGrouping();
 		return builder;
 	}
 
 	public static void main(String[] args) throws Exception {
-		LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]) + 1, 1, Integer.parseInt(args[1]));
+		LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
 		//LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
 		Config conf = new Config();
 
@@ -269,7 +273,7 @@ public class YoutubeRendering {
 			cluster.shutdown();
 			drpc.shutdown();
 		} else {
-			conf.setNumWorkers(Integer.parseInt(args[1])*2 + 2);
+			conf.setNumWorkers(Integer.parseInt(args[1]) + Integer.parseInt(args[2]) + Integer.parseInt(args[3]));
 			StormSubmitter.submitTopology(args[0], conf,
 					builder.createRemoteTopology());
 		}
