@@ -3,7 +3,11 @@
     <servlet>
         <servlet-name>LoadData</servlet-name>
         <servlet-class>com.Controller.LoadData</servlet-class>
-        
+    </servlet>
+    
+    <servlet>
+         <servlet-name>HbaseServlet</servlet-name>
+        <servlet-class>com.Controller.HbaseServlet</servlet-class>
     </servlet>
     
     
