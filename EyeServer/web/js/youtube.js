@@ -35,7 +35,7 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('web_page', {
         height: '1100',
         width: '500',
-        videoId: 'K0-ucWKiTps',
+        videoId: WEBSITE,
         events: {
             'onStateChange': onPlayerStateChange
         }
@@ -55,7 +55,7 @@ function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
         YOUTUBE_STATE = 1;
         if (UPDATE_FUNCTION_CALL === 0){
-            setInterval(updateYoutubeTime, REFRESH_YOUTUBE);
+            sendToServerVariable = setInterval(sendToServer, REFRESH_RATE);
             UPDATE_FUNCTION_CALL = 1;
         }
     }else{

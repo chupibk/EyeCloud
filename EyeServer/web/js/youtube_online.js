@@ -6,6 +6,8 @@
 var REFRESH_YOUTUBE = parseInt(GetURLParameter('refresh')); //ms
 console.log("Refresh Youtube: " + REFRESH_YOUTUBE);
 
+var UPDATE_FUNCTION_CALL = 0;
+
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
@@ -20,7 +22,7 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('web_page', {
         height: '1100',
         width: '500',
-        videoId: 'K0-ucWKiTps',
+        videoId: WEBSITE,
         events: {
             'onStateChange': onPlayerStateChange
         }
@@ -38,8 +40,15 @@ function onPlayerReady(event) {
 var done = false;
 function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
-        $("#wrap").append("<img id=\"overlay\" src=\"images/noimage.png\" />");
-        setInterval(updateYoutubeTime, REFRESH_YOUTUBE);
+        if (UPDATE_FUNCTION_CALL === 0) {
+            startTime = new Date().getTime();
+            for (var i = 0; i < EXPERIMENT_TIME / REFRESH_ONLINE; i++) {
+                checkHeatmap[i] = 0;
+                baseTimeHeatmap[i] = startTime + (i + 1) * REFRESH_ONLINE;
+            }
+            getOnlineHeatmapVariable = setInterval(getOnlineHeatmap, REFRESH_ONLINE);
+            UPDATE_FUNCTION_CALL = 1;
+        }
     }
 }
 function stopVideo() {
@@ -50,44 +59,24 @@ function stopVideo() {
 var sentOnline = 0;
 var totalOnline = 0;
 
+/**
+ * This function is temporarily used
+ * @returns {undefined}
+ */
 function updateYoutubeTime() {
     $("#youtube_time").html(player.getCurrentTime());
     var start = new Date().getTime();
-    /*
-    $.ajax({
-        dataType: 'jsonp',
-        data: "",
-        url: "GetImage",
-        success: function(result) {
-            $("#send_status").html("Ok");
-            $("#overlay").fadeOut("fast").attr("src", "upload/" + result).fadeIn("fast");
-
-            console.log("Ok sending");
-            var end = new Date().getTime();
-            sentOnline++;
-            console.log("Start: " + start);
-            console.log("End: " + end);
-            console.log(end - start);
-            totalOnline += (end - start);
-            console.log(totalOnline + " - " + sentOnline + " - " + parseFloat(totalOnline / sentOnline));
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            $("#send_status").html("Failed: " + errorThrown);
-            console.log("Fail to send");
-        }
-    });
-    */
-   var currenTime = player.getCurrentTime().toFixed(1);
-   var roundTime = parseInt(currenTime*1000/REFRESH_YOUTUBE) + 1;
-   $("#overlay").fadeOut("fast").attr("src", "upload/" + roundTime + ".png").fadeIn("fast");
-   var end = new Date().getTime();
-   sentOnline++;
-   console.log("Start: " + start);
-   console.log("End: " + end);
-   console.log(end - start);
-   console.log("upload/" + roundTime + ".png");
-   totalOnline += (end - start);
-   console.log(totalOnline + " - " + sentOnline + " - " + parseFloat(totalOnline / sentOnline));   
+    var currenTime = player.getCurrentTime().toFixed(1);
+    var roundTime = parseInt(currenTime * 1000 / REFRESH_YOUTUBE) + 1;
+    $("#overlay").fadeOut("fast").attr("src", "upload/" + roundTime + ".png").fadeIn("fast");
+    var end = new Date().getTime();
+    sentOnline++;
+    console.log("Start: " + start);
+    console.log("End: " + end);
+    console.log(end - start);
+    console.log("upload/" + roundTime + ".png");
+    totalOnline += (end - start);
+    console.log(totalOnline + " - " + sentOnline + " - " + parseFloat(totalOnline / sentOnline));
 }
 
 

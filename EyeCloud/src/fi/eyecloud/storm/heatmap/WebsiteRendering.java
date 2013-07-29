@@ -60,7 +60,7 @@ public class WebsiteRendering {
 			String data[] = tmp.split(Constants.PARAMETER_SPLIT);
 			int type = Integer.parseInt(data[data.length - 1]);
 
-			if (type == 1) {
+			if (type == 1 || type == 2) {
 				int numberParticipant = Integer.parseInt(data[data.length - 2]);
 				int timeId = Integer.parseInt(data[data.length - 3]);
 				int height = Integer.parseInt(data[data.length - 4]);
@@ -141,7 +141,7 @@ public class WebsiteRendering {
 			int type = tuple.getInteger(1);
 			currentParticipant = 0;
 			
-			if (type == 1) {
+			if (type == 1 || type == 2) {
 				double[][] data = (double[][]) tuple.getValue(2);
 				if (width == 0)
 					width = tuple.getInteger(3);
@@ -172,7 +172,15 @@ public class WebsiteRendering {
 				}
 				
 				if (numberParticipant == currentParticipant){
-					double[][] intensityPre = (double[][]) contextData.getTaskData(Integer.toString(timeId-1) + INTENSITY);
+					// Find the previous intensity
+					int pre = 0;
+					for (int k=timeId-1; k > 0; k--){
+						if (contextData.getTaskData(Integer.toString(k) + INTENSITY) != null){
+							pre = k;
+							break;
+						}
+					}
+					double[][] intensityPre = (double[][]) contextData.getTaskData(Integer.toString(pre) + INTENSITY);
 					if (intensityPre != null){
 						for (int i = 0; i < width; i++) {
 							for (int j = 0; j < height; j++) {
@@ -181,8 +189,14 @@ public class WebsiteRendering {
 						}
 					}
 					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
-					contextData.setTaskData(Integer.toString(timeId-1) + INTENSITY, null);
-					contextData.setTaskData(Integer.toString(timeId-1) + PARTICIPANT, null);
+					contextData.setTaskData(Integer.toString(pre) + INTENSITY, null);
+					contextData.setTaskData(Integer.toString(pre) + PARTICIPANT, null);
+					
+					// Reset data in topology when receiving the last packet signal
+					if (type == 2){
+						contextData.setTaskData(Integer.toString(timeId) + INTENSITY, null);
+						contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, null);						
+					}
 					
 					collector.emit(new Values(id, type, intensity, width, height, timeId, heatmapId));
 				}else{
@@ -210,7 +224,7 @@ public class WebsiteRendering {
 			Object id = tuple.getValue(0);
 			int type = tuple.getInteger(1);
 			
-			if (type == 1){
+			if (type == 1 || type == 2){
 				double[][] data = (double[][]) tuple.getValue(2);
 				int	width = tuple.getInteger(3);
 				int	height = tuple.getInteger(4);

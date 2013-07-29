@@ -56,6 +56,16 @@ body {
     text-align: center;
 }
 
+#overlay .logo{
+    margin-top: 300px;
+    color: white;
+}
+
+#overlay .device{
+    margin-top: 10px;
+    color: white;
+}
+
 #disable{
     width: 1200px;
     height: 800px;    
@@ -68,7 +78,7 @@ body {
 }
 
 #overlay input{
-    margin-top: 350px;
+    margin-top: 10px;
     width: 100px;
     height:50px;
 }
@@ -133,6 +143,11 @@ body {
 }
 
 /* Experiment */
+#question{
+    text-align: left;
+    margin-left: 400px;
+}
+
 #control h3{
     color: white;
 }
@@ -146,7 +161,7 @@ body {
 }
 
 #control a{
-    color: red;
+    color: white;
 }
 
 #dinasaur{
@@ -155,4 +170,12 @@ body {
 
 #dinasaur img{
     width: 1100px;
+}
+
+#map{
+    margin: 0px 0px;
+}
+
+#map img{
+    width: 1185px;
 }
