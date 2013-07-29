@@ -349,7 +349,7 @@
                             * Resolution x: <input type="text" name="txtxresol" size="5" value="1024" style="margin-bottom: 10px" /> y: <input type="text" name="txtyresol" value="768" size="5" style="margin-bottom: 10px" /> 
                             <br/><br/><br/><br/><br/><br/><br/><br/>
                             <input type="button" name="btnloadsavedfiles" value="Load" style="margin-bottom: 10px" /> <br/>
-                            <input type="button" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></td>
+                            <input type="submit" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></td>
                     </tr>
                     </tbody>
                 </table>

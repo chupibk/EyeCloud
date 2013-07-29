@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -56,6 +57,8 @@ public class LoadData extends HttpServlet {
     MultiHashMap partarrlsvalue = new MultiHashMap();
     LinkedHashMap<String, String> lblarrls = new LinkedHashMap<String, String>();
     ArrayList<String> strholdexcel = new ArrayList<String>();
+    // StringBuffer largeStr= new StringBuffer();
+    String largeStr;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
@@ -67,6 +70,7 @@ public class LoadData extends HttpServlet {
 
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
+
         try {
             List<FileItem> fields = upload.parseRequest(request);
             for (FileItem fielditem : fields) {
@@ -101,23 +105,45 @@ public class LoadData extends HttpServlet {
                             FileItem fileItem = it.next();
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
+
+//                                  System.out.println(System.getProperty("user.dir"));
+//                                  System.out.println("<td>file form field</td><td>FIELD NAME: " + fileItem.getFieldName() +
+//							"<br/>STRING: " + fileItem.getString() +
+//							"<br/>NAME: " + fileItem.getName() +
+//							"<br/>CONTENT TYPE: " + fileItem.getContentType() +
+//							"<br/>SIZE (BYTES): " + fileItem.getSize() +
+//							"<br/>TO STRING: " + fileItem.toString()+
+//                                          "<br/>TO STRING: " + fileItem.get()
+//							);
+//					System.out.println("</td>");
+                                int holdloop = 0;
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
-                                String str;
+                                String str, strLine;
                                 LineNumberReader ln = new LineNumberReader(br);
-                                while (ln.getLineNumber() == 0) {
-                                    str = ln.readLine();
-                                    if (str != null) {
-                                        String[] strArr = str.split("	");
-                                        for (int a = 0; a <= strArr.length - 1; a++) {
-                                            // out.println(strArr[a] + "<br/>");
-                                            // arrls.put("Select", "Select");
-                                            arrls.put(strArr[a], strArr[a]);
-                                            request.setAttribute("fileload", "0");
+                                while ((strLine = br.readLine()) != null) {
+                                    //  while (ln.getLineNumber() == 0) {
+                                    if (holdloop == 0) {
+                                        //  str = ln.readLine();
+                                        if (strLine != null) {
+                                            String[] strArr = strLine.split("	");
+                                            for (int a = 0; a <= strArr.length - 1; a++) {
+                                                // out.println(strArr[a] + "<br/>");
+                                                // arrls.put("Select", "Select");
+                                                arrls.put(strArr[a], strArr[a]);
+                                                request.setAttribute("fileload", "0");
+                                            }
+                                        } else {
+                                            request.setAttribute("fileload", "1");
+                                            break;
                                         }
                                     } else {
-                                        request.setAttribute("fileload", "1");
+                                        //rs.updates
+                                        //  largeStr.append(fileItem.getString());
+                                        largeStr = fileItem.getString();
+                                        System.out.println(largeStr);
                                         break;
                                     }
+                                    holdloop++;
                                 }
                                 br.close();
                             }
@@ -126,7 +152,7 @@ public class LoadData extends HttpServlet {
 
                     } else if ("btnpart".equals(fielditem.getFieldName())) {
                         Iterator<FileItem> it = fields.iterator();
-                        partcountrow=0;
+                        partcountrow = 0;
                         while (it.hasNext()) {
                             FileItem fileItem = it.next();
                             System.out.println(fileItem.getName());
@@ -260,11 +286,19 @@ public class LoadData extends HttpServlet {
 
                         }
                         break;
+
+                    } else if ("btnsave".equals(fielditem.getFieldName())) {
+                        //System.out.println(fielditem.getString());
+                        String[] str = largeStr.split(" ");
+                        for (int a = 0; a <= str.length - 1; a++) {
+                            // out.println(strArr[a] + "<br/>");
+                            // arrls.put("Select", "Select");
+                            System.out.println(str[a]);
+                            
+                        }
+
+                        break;
                     }
-//                    } else if ("".equals(fielditem.getFieldName())) {
-//                        System.out.println(fielditem.getString());
-//                        break;
-//                    }
                     if ("hdntimestamp".equals(fielditem.getFieldName())) {
                         hdntimestamp = fielditem.getString();
                     } else if ("hdnxleft".equals(fielditem.getFieldName())) {
