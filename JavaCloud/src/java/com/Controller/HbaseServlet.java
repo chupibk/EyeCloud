@@ -95,6 +95,8 @@ public class HbaseServlet extends HttpServlet {
           
            Put put = new Put(Bytes.toBytes(rowkey));
            put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+           put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+           
             table.put(put);
 
             System.out.println("insert record " + rowkey + " to table " + tablename + " ok.");
