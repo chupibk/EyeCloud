@@ -226,6 +226,7 @@ function getOnlineHeatmap() {
                 }
             }
             $("#overlay_heatmap").attr("src", "upload/" + HEATMAP_ID + '/' + (id + 1) + '.png').fadeIn("slow");
+            clearInterval(getOnlineHeatmapVariable);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             $("#send_status").html("Failed: " + errorThrown);
