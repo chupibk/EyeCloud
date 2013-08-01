@@ -277,7 +277,7 @@
                                         <table border="1">
                                             <c:forEach items="${hdnfilename}" var="hdnfilename">
                                                 <tr>
-                                                    <td style="font-size:12px;"> '${hdnfilename}'</td>
+                                                    <td style="font-size:12px;"> ${hdnfilename}</td>
                                                 </tr>    
 
                                             </c:forEach>
@@ -306,7 +306,7 @@
                                         <table border="1">
                                             <c:forEach items="${hdnlblfilename}" var="hdnlblfilename">
                                                 <tr>
-                                                    <td style="font-size:12px;"> '${hdnlblfilename}'</td>
+                                                    <td style="font-size:12px;"> ${hdnlblfilename}</td>
                                                 </tr>    
                                             </c:forEach>
                                         </table>

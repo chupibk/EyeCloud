@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.NavigableMap;
 import javax.print.DocFlavor;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -62,7 +63,7 @@ import org.apache.hadoop.hbase.util.Bytes;
  */
 @WebServlet(name = "LoadData", urlPatterns = {"/LoadData"})
 public class LoadData extends HttpServlet {
-    
+
     private static final long serialVersionUID = 1L;
     static String hdnlblfilename = "", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
             hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null,
@@ -73,24 +74,28 @@ public class LoadData extends HttpServlet {
     MultiHashMap partarrlsvalue = new MultiHashMap();
     LinkedHashMap<String, String> lblarrls = new LinkedHashMap<String, String>();
     ArrayList<String> strholdexcel = new ArrayList<String>();
+    ArrayList<String> Alrd_value = new ArrayList<String>();
+    ArrayList<String> Alrd_column = new ArrayList<String>();
+    ArrayList<String> Alrd_lbl_value = new ArrayList<String>();
+    ArrayList<String> Alrd_lbl_column = new ArrayList<String>();
     // StringBuffer largeStr= new StringBuffer();
     String largeStr = null, largeStr_lbl = null;
     private static Configuration conf = null;
-    
+
     static {
         conf = HBaseConfiguration.create();
     }
-    
+
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
-    
+
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-        
+
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
-        
+
         try {
             List<FileItem> fields = upload.parseRequest(request);
             for (FileItem fielditem : fields) {
@@ -119,7 +124,7 @@ public class LoadData extends HttpServlet {
                         if (lblarrls.size() != 0) {
                             lblarrls.clear();
                         }
-                        
+
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
                             FileItem fileItem = it.next();
@@ -128,7 +133,7 @@ public class LoadData extends HttpServlet {
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
                                 String str;
                                 LineNumberReader ln = new LineNumberReader(br);
-                                
+
                                 while (ln.getLineNumber() == 0) {
                                     str = ln.readLine();
                                     if (str != null) {
@@ -149,9 +154,9 @@ public class LoadData extends HttpServlet {
                                 }
                                 br.close();
                             }
-                            
+
                         }
-                        
+
                     } else if ("btnpart".equals(fielditem.getFieldName())) {
                         Iterator<FileItem> it = fields.iterator();
                         partcountrow = 0;
@@ -182,7 +187,7 @@ public class LoadData extends HttpServlet {
                                                 partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
                                                 strholdexcel.add(cell.getStringCellValue());
                                             } else {
-                                                
+
                                                 switch (cell.getCellType()) {
 //                                                case Cell.CELL_TYPE_BOOLEAN:
 //                                                    System.out.print(cell.getBooleanCellValue() + "\t\t");
@@ -194,15 +199,15 @@ public class LoadData extends HttpServlet {
                                                     case Cell.CELL_TYPE_STRING:
                                                         partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
                                                         break;
-                                                    
+
                                                 }
                                                 partcountcell++;
                                             }
-                                            
+
                                         }
                                         partcountcell = 0;
                                         partcountrow++;
-                                        
+
                                     }
                                 } else {
                                     HSSFWorkbook workbook = new HSSFWorkbook(fileItem.getInputStream());
@@ -222,7 +227,7 @@ public class LoadData extends HttpServlet {
                                                 strholdexcel.add(cell.getStringCellValue());
                                                 //    hold  =(String) strholdexcel.get(0);
                                             } else {
-                                                
+
                                                 switch (cell.getCellType()) {
 //                                                case Cell.CELL_TYPE_BOOLEAN:
 //                                                    System.out.print(cell.getBooleanCellValue() + "\t\t");
@@ -234,11 +239,11 @@ public class LoadData extends HttpServlet {
                                                     case Cell.CELL_TYPE_STRING:
                                                         partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
                                                         break;
-                                                    
+
                                                 }
                                                 partcountcell++;
                                             }
-                                            
+
                                         }
                                         partcountcell = 0;
                                         partcountrow++;
@@ -248,19 +253,19 @@ public class LoadData extends HttpServlet {
                                 }
                             }
                         }
-                        
-                        
+
+
                     } else if ("btnlblfiles".equals(fielditem.getFieldName())) {
                         Iterator<FileItem> it = fields.iterator();
                         lblarrls.put("Select", "Select");
                         while (it.hasNext()) {
-                            
+
                             FileItem fileItem = it.next();
                             // System.out.println(fileItem.getName());
 
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
-                                
+
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
                                 String str;
                                 LineNumberReader ln = new LineNumberReader(br);
@@ -280,15 +285,22 @@ public class LoadData extends HttpServlet {
                                 }
                                 br.close();
                             }
-                            
+
                         }
                         break;
-                        
+
                     } else if ("btnsave".equals(fielditem.getFieldName())) {
                         //System.out.println(fielditem.getString());
                         // Read_addrawData();
                         //  Read_addLabelrawData();
-                        get_RawData("RawData");
+                        Alrd_column.clear();Alrd_value.clear();
+                        Alrd_lbl_column.clear();Alrd_lbl_value.clear();
+                        get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
+                        get_RawData("RawData_lbl", hdnlblfilename, Alrd_lbl_column, Alrd_lbl_value);
+                        request.setAttribute("Alrd_column", Alrd_column);
+                        request.setAttribute("Alrd_value", Alrd_value);
+                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
+                        request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);
                         RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp");
                         rd.forward(request, response);
                         break;
@@ -326,10 +338,10 @@ public class LoadData extends HttpServlet {
                     } else if ("hdnlblstlname".equals(fielditem.getFieldName())) {
                         hdnlblstlname = fielditem.getString();
                     }
-                    
+
                 }
             }
-            
+
             List lstpart = null;
             if (hdnpart != null && !hdnpart.isEmpty()) {
                 request.setAttribute("selectedpart", hdnpart);
@@ -346,7 +358,7 @@ public class LoadData extends HttpServlet {
                 String[] holdpath = hdnlblfilename.split("[\\\\]");
                 hdnlblfilename = holdpath[2];
             }
-            
+
             request.setAttribute("lstpart", lstpart);
             request.setAttribute("arrls", arrls);
             request.setAttribute("lblarrls", lblarrls);
@@ -363,7 +375,7 @@ public class LoadData extends HttpServlet {
             request.setAttribute("hdnvleft", hdnvleft);
             request.setAttribute("hdnvright", hdnvright);
             request.setAttribute("hdnstname", hdnstname);
-            
+
             RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp");
             rd.forward(request, response);
             //	out.println("</tr>");
@@ -371,12 +383,12 @@ public class LoadData extends HttpServlet {
         } catch (FileUploadException e) {
             e.printStackTrace();
         }
-        
+
     }
-    
+
     public void Read_addrawData() {
         try {
-            
+
             if (largeStr != null && !largeStr.isEmpty()) {
                 int countcoulmn = 0;
                 long countrow = 0;
@@ -398,7 +410,7 @@ public class LoadData extends HttpServlet {
                                 table.put(put);
                                 put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
                             }
-                            
+
                         } else {
                             b++;
                             countcoulmn = b;
@@ -412,7 +424,7 @@ public class LoadData extends HttpServlet {
             e.printStackTrace();
         }
     }
-    
+
     public void Read_addLabelrawData() {
         try {
             if (largeStr_lbl != null && !largeStr_lbl.isEmpty()) {
@@ -437,7 +449,7 @@ public class LoadData extends HttpServlet {
                                 table.put(put);
                                 put = new Put(Bytes.toBytes(hdnlblfilename + ":" + countrow));
                             }
-                            
+
                         } else {
                             b++;
                             countcoulmn = b;
@@ -453,58 +465,77 @@ public class LoadData extends HttpServlet {
             e.printStackTrace();
         }
     }
-    
+
     public String get_MapFile(String rowkey) {
         String holdvalue = null;
         try {
-            
+
             HTable table = new HTable(conf, "MapFile");
             Get get = new Get(rowkey.getBytes());
             Result rs = table.get(get);
             for (KeyValue kv : rs.raw()) {
                 holdvalue = new String(kv.getValue());
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return holdvalue;
-        
+
     }
-    
-    public void get_RawData(String tablename) {
+
+    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) {
         HTable table = null;
         try {
-          //  String NosRow = get_MapFile(hdnfilename);
+            String NosRow = get_MapFile(rowkey);
+            long loopruner = 0;
+            if (rowkey.equals(hdnfilename)) {
+                loopruner = 9;
+            } else {
+                loopruner = Integer.valueOf(NosRow);
+            }
             table = new HTable(conf, tablename);
             List<Get> Rowlist = new ArrayList<Get>();
-          //  for (long a = 0; a <= Long.valueOf(NosRow); a++) {
-              for (long a = 0; a <= 300; a++) {
-                Rowlist.add(new Get(Bytes.toBytes(hdnfilename + ":" + a)));
+            for (long a = 0; a <= loopruner; a++) {
+                Rowlist.add(new Get(Bytes.toBytes(rowkey + ":" + a)));
             }
-            Result[] result=table.get(Rowlist);
-            for(Result r:result){
-                System.out.println(new String(r.value()));
+            int hold_a = 0, hold_b = 0;
+            Result[] result = table.get(Rowlist);
+            for (Result r : result) {
+                for (KeyValue kv : r.raw()) {
+                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
+                        ArrayRD_Column.add(new String(kv.getQualifier()));
+                        hold_a++;
+                    } else if (hold_b == 0) {
+                        ArrayRD_Value.add("/");
+                        hold_b = 1;
+                    } else {
+                        if (hold_a == hold_b) {
+                            ArrayRD_Value.add("/");
+                            hold_b = 0;
+                        }
+                        hold_b++;
+                    }
+                    ArrayRD_Value.add(new String(kv.getValue()));
+                }
             }
-            
-            
         } catch (IOException e) {
             e.printStackTrace();
-        }        
+        }
     }
-    
+
     public void InsertRecord(String tablename, String rowkey, String CF, String qualifier, String value) {
-        
+
         try {
             HTable table = new HTable(conf, tablename);
             Put put = new Put(Bytes.toBytes(rowkey));
             put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value));
             table.put(put);
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
