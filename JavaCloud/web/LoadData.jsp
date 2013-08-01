@@ -144,6 +144,7 @@
     <body>  
 
         <% String fileload = (String) request.getAttribute("fileload");%>
+        <% String filelabel = (String) request.getAttribute("filelabel");%>
         <form name="form1" action="./LoadData" method="POST" enctype="multipart/form-data" >
             <center>
                 <table>
@@ -276,7 +277,7 @@
                                         <table border="1">
                                             <c:forEach items="${hdnfilename}" var="hdnfilename">
                                                 <tr>
-                                                    <td style="font-size:12px;"> '${hdnfilename}'</td>
+                                                    <td style="font-size:12px;"> ${hdnfilename}</td>
                                                 </tr>    
 
                                             </c:forEach>
@@ -305,7 +306,7 @@
                                         <table border="1">
                                             <c:forEach items="${hdnlblfilename}" var="hdnlblfilename">
                                                 <tr>
-                                                    <td style="font-size:12px;"> '${hdnlblfilename}'</td>
+                                                    <td style="font-size:12px;"> ${hdnlblfilename}</td>
                                                 </tr>    
                                             </c:forEach>
                                         </table>
@@ -350,6 +351,13 @@
                             <br/><br/><br/><br/><br/><br/><br/><br/>
                             <input type="button" name="btnloadsavedfiles" value="Load" style="margin-bottom: 10px" /> <br/>
                             <input type="submit" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></td>
+                            <td style="vertical-align: top "><% if (filelabel == "1") {
+                            out.print("Please Select File to Load");
+
+                        } else {
+                            out.print("");
+
+                        }%> </td>
                     </tr>
                     </tbody>
                 </table>

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.NavigableMap;
 import javax.print.DocFlavor;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -39,6 +40,22 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.commons.collections.MultiHashMap;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.KeyValue;
+import org.apache.hadoop.hbase.MasterNotRunningException;
+import org.apache.hadoop.hbase.ZooKeeperConnectionException;
+import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  *
@@ -57,8 +74,17 @@ public class LoadData extends HttpServlet {
     MultiHashMap partarrlsvalue = new MultiHashMap();
     LinkedHashMap<String, String> lblarrls = new LinkedHashMap<String, String>();
     ArrayList<String> strholdexcel = new ArrayList<String>();
+    ArrayList<String> Alrd_value = new ArrayList<String>();
+    ArrayList<String> Alrd_column = new ArrayList<String>();
+    ArrayList<String> Alrd_lbl_value = new ArrayList<String>();
+    ArrayList<String> Alrd_lbl_column = new ArrayList<String>();
     // StringBuffer largeStr= new StringBuffer();
-    String largeStr;
+    String largeStr = null, largeStr_lbl = null;
+    private static Configuration conf = null;
+
+    static {
+        conf = HBaseConfiguration.create();
+    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
@@ -66,7 +92,6 @@ public class LoadData extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-
 
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
@@ -105,45 +130,27 @@ public class LoadData extends HttpServlet {
                             FileItem fileItem = it.next();
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
-
-//                                  System.out.println(System.getProperty("user.dir"));
-//                                  System.out.println("<td>file form field</td><td>FIELD NAME: " + fileItem.getFieldName() +
-//							"<br/>STRING: " + fileItem.getString() +
-//							"<br/>NAME: " + fileItem.getName() +
-//							"<br/>CONTENT TYPE: " + fileItem.getContentType() +
-//							"<br/>SIZE (BYTES): " + fileItem.getSize() +
-//							"<br/>TO STRING: " + fileItem.toString()+
-//                                          "<br/>TO STRING: " + fileItem.get()
-//							);
-//					System.out.println("</td>");
-                                int holdloop = 0;
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
-                                String str, strLine;
+                                String str;
                                 LineNumberReader ln = new LineNumberReader(br);
-                                while ((strLine = br.readLine()) != null) {
-                                    //  while (ln.getLineNumber() == 0) {
-                                    if (holdloop == 0) {
-                                        //  str = ln.readLine();
-                                        if (strLine != null) {
-                                            String[] strArr = strLine.split("	");
-                                            for (int a = 0; a <= strArr.length - 1; a++) {
-                                                // out.println(strArr[a] + "<br/>");
-                                                // arrls.put("Select", "Select");
-                                                arrls.put(strArr[a], strArr[a]);
-                                                request.setAttribute("fileload", "0");
-                                            }
-                                        } else {
-                                            request.setAttribute("fileload", "1");
-                                            break;
+
+                                while (ln.getLineNumber() == 0) {
+                                    str = ln.readLine();
+                                    if (str != null) {
+                                        largeStr = fileItem.getString();
+                                        String[] strArr = str.split("	");
+                                        for (int a = 0; a <= strArr.length - 1; a++) {
+                                            // out.println(strArr[a] + "<br/>");
+                                            // arrls.put("Select", "Select");
+
+                                            arrls.put(strArr[a], strArr[a]);
+                                            request.setAttribute("fileload", "0");
                                         }
                                     } else {
-                                        //rs.updates
-                                        //  largeStr.append(fileItem.getString());
-                                        largeStr = fileItem.getString();
-                                        System.out.println(largeStr);
+                                        request.setAttribute("fileload", "1");
                                         break;
                                     }
-                                    holdloop++;
+                                    //holdloop++;
                                 }
                                 br.close();
                             }
@@ -254,30 +261,25 @@ public class LoadData extends HttpServlet {
                         while (it.hasNext()) {
 
                             FileItem fileItem = it.next();
-                            System.out.println(fileItem.getName());
+                            // System.out.println(fileItem.getName());
+
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
 
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
                                 String str;
-                                // System.out.println(br.);
                                 LineNumberReader ln = new LineNumberReader(br);
-                                // while((str=br.readLine())!=null){
-                                //arrls.clear();
-
                                 while (ln.getLineNumber() == 0) {
                                     str = ln.readLine();
                                     if (str != null) {
-
+                                        largeStr_lbl = fileItem.getString();
                                         String[] strArr = str.split("	");
                                         for (int a = 0; a <= strArr.length - 1; a++) {
-                                            // out.println(strArr[a] + "<br/>");
-                                            // arrls.put("Select", "Select");
                                             lblarrls.put(strArr[a], strArr[a]);
-                                            request.setAttribute("fileload", "0");
+                                            request.setAttribute("filelabel", "0");
                                         }
                                     } else {
-                                        request.setAttribute("fileload", "1");
+                                        request.setAttribute("filelabel", "1");
                                         break;
                                     }
                                 }
@@ -289,14 +291,18 @@ public class LoadData extends HttpServlet {
 
                     } else if ("btnsave".equals(fielditem.getFieldName())) {
                         //System.out.println(fielditem.getString());
-                        String[] str = largeStr.split(" ");
-                        for (int a = 0; a <= str.length - 1; a++) {
-                            // out.println(strArr[a] + "<br/>");
-                            // arrls.put("Select", "Select");
-                            System.out.println(str[a]);
-                            
-                        }
-
+                        // Read_addrawData();
+                        //  Read_addLabelrawData();
+                        Alrd_column.clear();Alrd_value.clear();
+                        Alrd_lbl_column.clear();Alrd_lbl_value.clear();
+                        get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
+                        get_RawData("RawData_lbl", hdnlblfilename, Alrd_lbl_column, Alrd_lbl_value);
+                        request.setAttribute("Alrd_column", Alrd_column);
+                        request.setAttribute("Alrd_value", Alrd_value);
+                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
+                        request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);
+                        RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp");
+                        rd.forward(request, response);
                         break;
                     }
                     if ("hdntimestamp".equals(fielditem.getFieldName())) {
@@ -375,6 +381,158 @@ public class LoadData extends HttpServlet {
             //	out.println("</tr>");
             //out.println("</table>");
         } catch (FileUploadException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void Read_addrawData() {
+        try {
+
+            if (largeStr != null && !largeStr.isEmpty()) {
+                int countcoulmn = 0;
+                long countrow = 0;
+                largeStr = largeStr.replaceAll("\\r\\n", "	");
+                String[] strArr = largeStr.split("	");
+                ArrayList<String> list = new ArrayList<String>(arrls.values());
+                HTable table = new HTable(conf, "RawData");
+                Put put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
+                for (int a = 0; a <= strArr.length - 1; a++) {
+                    for (int b = countcoulmn; b <= list.size() - 1; b++) {
+                        if (list.get(b).equals(strArr[a])) {
+                        } else {
+                            put.add(Bytes.toBytes("r"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
+                        }
+                        if ((countcoulmn + 1) == list.size()) {
+                            countcoulmn = 0;
+                            if (put.size() != 0) {
+                                countrow++;
+                                table.put(put);
+                                put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
+                            }
+
+                        } else {
+                            b++;
+                            countcoulmn = b;
+                        }
+                        break;
+                    }
+                }
+                InsertRecord("MapFile", hdnfilename, "m", "1", String.valueOf(countrow));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void Read_addLabelrawData() {
+        try {
+            if (largeStr_lbl != null && !largeStr_lbl.isEmpty()) {
+                int countcoulmn = 0;
+                long countrow = 0;
+                largeStr_lbl = largeStr_lbl.replaceAll("\\r\\n", "	");
+                String[] strArr = largeStr_lbl.split("	");
+                ArrayList<String> list = new ArrayList<String>(lblarrls.values());
+                list.remove("Select");
+                HTable table = new HTable(conf, "RawData_lbl");
+                Put put = new Put(Bytes.toBytes(hdnlblfilename + ":" + countrow));
+                for (int a = 0; a <= strArr.length - 1; a++) {
+                    for (int b = countcoulmn; b <= list.size() - 1; b++) {
+                        if (list.get(b).equals(strArr[a])) {
+                        } else {
+                            put.add(Bytes.toBytes("l"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
+                        }
+                        if ((countcoulmn + 1) == list.size()) {
+                            countcoulmn = 0;
+                            if (put.size() != 0) {
+                                countrow++;
+                                table.put(put);
+                                put = new Put(Bytes.toBytes(hdnlblfilename + ":" + countrow));
+                            }
+
+                        } else {
+                            b++;
+                            countcoulmn = b;
+                        }
+                        break;
+                    }
+                }
+                InsertRecord("RawData_lbl", hdnfilename, "l", "1", hdnlblfilename); //Insert RawData file name in RawData_lbl 
+                InsertRecord("MapFile", hdnlblfilename, "m", "1", String.valueOf(countrow)); // Insert In MapFile
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String get_MapFile(String rowkey) {
+        String holdvalue = null;
+        try {
+
+            HTable table = new HTable(conf, "MapFile");
+            Get get = new Get(rowkey.getBytes());
+            Result rs = table.get(get);
+            for (KeyValue kv : rs.raw()) {
+                holdvalue = new String(kv.getValue());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return holdvalue;
+
+    }
+
+    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) {
+        HTable table = null;
+        try {
+            String NosRow = get_MapFile(rowkey);
+            long loopruner = 0;
+            if (rowkey.equals(hdnfilename)) {
+                loopruner = 9;
+            } else {
+                loopruner = Integer.valueOf(NosRow);
+            }
+            table = new HTable(conf, tablename);
+            List<Get> Rowlist = new ArrayList<Get>();
+            for (long a = 0; a <= loopruner; a++) {
+                Rowlist.add(new Get(Bytes.toBytes(rowkey + ":" + a)));
+            }
+            int hold_a = 0, hold_b = 0;
+            Result[] result = table.get(Rowlist);
+            for (Result r : result) {
+                for (KeyValue kv : r.raw()) {
+                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
+                        ArrayRD_Column.add(new String(kv.getQualifier()));
+                        hold_a++;
+                    } else if (hold_b == 0) {
+                        ArrayRD_Value.add("/");
+                        hold_b = 1;
+                    } else {
+                        if (hold_a == hold_b) {
+                            ArrayRD_Value.add("/");
+                            hold_b = 0;
+                        }
+                        hold_b++;
+                    }
+                    ArrayRD_Value.add(new String(kv.getValue()));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void InsertRecord(String tablename, String rowkey, String CF, String qualifier, String value) {
+
+        try {
+            HTable table = new HTable(conf, tablename);
+            Put put = new Put(Bytes.toBytes(rowkey));
+            put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+            table.put(put);
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
