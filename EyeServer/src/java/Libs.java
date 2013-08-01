@@ -48,6 +48,20 @@ public class Libs {
         return results;
     }
     
+    public static int getMaximumId(String dir) {
+        int result = 0;
+        File[] files = new File(dir).listFiles();
+        if (files == null) return result;
+        for (File file : files) {
+            if (file.isDirectory()) {
+                if (Integer.parseInt(file.getName()) > result){
+                    result = Integer.parseInt(file.getName());
+                }
+            }
+        }
+        return result;
+    }
+    
     public static int checkFile(String file){
         File f = new File(file);
         return f.exists() ? 1:0;
