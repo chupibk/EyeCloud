@@ -54,8 +54,9 @@
                                 <option value="5">5</option>
                             </select>
                             Available ID:
-                            <select name="id-s">
-                            </select>        
+                            <select name="id-s" disabled="true">
+                            </select>       
+                            <br/>
                             Refresh rate:
                             <select name="refresh-s">
                                 <option value="40">40 seconds</option>
@@ -72,14 +73,17 @@
                                 <option value="300000">5 minutes</option>
                                 <option value="600000">10 minutes</option>
                             </select>
+                            Offline ID:
+                            <select name="off-s">
+                            </select> 
                             <br/><br/>
                             <input id='clientBtn-s' type="button" value="Participant Screen">
-                            <input id='onlineBtn-s' type="button" value="Online heatmap">
-                            <input id='offlineBtn-s' type="button" value="Offline review">
+                            <input id='onlineBtn-s' type="button" value="Online Heatmap Screen">
+                            <input id='offlineBtn-s' class="offline" type="button" value="Offline review">
                         </div>
                         <div id='video'>
                             Youtube video heatmap rendering <br/>
-                            ID: <input type="text" value="K0-ucWKiTps" name="site-v">
+                            Youtube ID: <input type="text" value="K0-ucWKiTps" name="site-v">
                             Participants:
                             <select name="np-v">
                                 <option value="1">1</option>
@@ -89,8 +93,9 @@
                                 <option value="5">5</option>
                             </select>
                             Available ID:
-                            <select name="id-v">
-                            </select>        
+                            <select name="id-v" disabled="true">
+                            </select>      
+                            <br/>
                             Refresh rate:
                             <select name="refresh-v">
                                 <option value="40">40 seconds</option>
@@ -107,9 +112,13 @@
                                 <option value="300000">5 minutes</option>
                                 <option value="600000">10 minutes</option>
                             </select>
+                            Offline ID:
+                            <select name="off-v">
+                            </select>                             
                             <br/><br/>
                             <input id='clientBtn-v' type="button" value="Participant Screen">
-                            <input id='onlineBtn-v' type="button" value="Online heatmap">                        
+                            <input id='onlineBtn-v' type="button" value="Online Heatmap Screen">
+                            <input id='offlineBtn-v' class="offline" type="button" value="Offline review">
                         </div>
                     </div>
                 </div>
@@ -133,7 +142,7 @@
                     <div class='apptitle'>
                         Fixation computation
                     </div>
-                   
+
                     <div class='upload'>
                         Select a file to upload: <br />
                         <form action="UploadServlet" method="post"

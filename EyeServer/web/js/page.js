@@ -30,7 +30,7 @@ $("#offlineBtn-s").click(function() {
     var np = $('select[name="np-s"]').val();
     var time = $('select[name="time-s"]').val();
     var site = $('input[name="site-s"]').val();
-    var id = $('select[name="id-s"]').val();
+    var id = $('select[name="off-s"]').val();
 
     var data = "static_view.html?refresh=" + refresh + "&np=" + np + "&time=" + time + "&site=" + site + "&id=" + id;
     window.open(data);
@@ -58,6 +58,17 @@ $("#onlineBtn-v").click(function() {
     window.open(data);
 });
 
+$("#offlineBtn-v").click(function() {
+    var refresh = $('select[name="refresh-v"]').val();
+    var np = $('select[name="np-v"]').val();
+    var time = $('select[name="time-v"]').val();
+    var site = $('input[name="site-v"]').val();
+    var id = $('select[name="off-v"]').val();
+
+    var data = "youtube_online.html?refresh=" + refresh + "&np=" + np + "&time=" + time + "&site=" + site + "&id=" + id;
+    window.open(data);
+});
+
 // Set max ID
 $.ajax({
     dataType: 'jsonp',
@@ -65,9 +76,12 @@ $.ajax({
     url: "GetAvailableID",
     success: function(result) {
         var start = parseInt(result) + 1;
-        for (var i=start; i < start+10; i++){
-            $('select[name="id-s"]').append('<option value="' + i +'">' + i + '</option>');
-            $('select[name="id-v"]').append('<option value="' + (i+10) +'">' + (i+10) + '</option>');
+        $('select[name="id-s"]').append('<option value="' + start +'">' + start + '</option>');
+        $('select[name="id-v"]').append('<option value="' + (start+1) +'">' + (start+1) + '</option>');
+
+        for (var i=start - 1; i > 0; i--){
+            $('select[name="off-s"]').append('<option value="' + i +'">' + i + '</option>');
+            $('select[name="off-v"]').append('<option value="' + i +'">' + i + '</option>');
         }
     },
     error: function(jqXHR, textStatus, errorThrown) {
