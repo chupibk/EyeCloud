@@ -14,66 +14,9 @@
     </head>
     <body>
         <h2>Raw Data!</h2>
-        <% ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("Alrd_column");
-            ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("Alrd_value");
-
-            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
-            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
-            //out.print(Alrd_lbl_column +" " +  );
-%>
-        <table><tr><td>
-                    <div style="overflow: scroll; height: 500px; width: 620px; background: White">
-                        <table border="1">
-                            <tr>
-                                <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>
-                                <td> <%=Alrd_column.get(a)%>  </td>
-                                <%
-                                    }
-                                %>
-                            </tr>
-                            <tr>
-                                <% for (int a = 0; a <= Alrd_value.size() - 1; a++) {%>
-                                <% if (Alrd_value.get(a).contains("/")) {%>
-                            </tr>
-                            <tr>
-                                <% } else {%> 
-                                <td> <%= Alrd_value.get(a)%> </td>
-                                <%
-                                        }
-                                    }
-                                %>
-                            </tr>
-
-                        </table>        
-                    </div>
-                </td>
-                <td>
-                    <div style="overflow: scroll; height: 500px; width: 620px; background: White">
-                        <table border="1">
-                            <tr>
-                                <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
-                                <td> <%=Alrd_lbl_column.get(a)%>  </td>
-                                <%
-                                    }
-                                %>
-                            </tr>
-                            <tr>
-                                <% for (int a = 0; a <= Alrd_lbl_value.size() - 1; a++) {%>
-                                <% if (Alrd_lbl_value.get(a).contains("/")) {%>
-                            </tr>
-                            <tr>
-                                <% } else {%> 
-                                <td> <%= Alrd_lbl_value.get(a)%> </td>
-                                <%
-                                        }
-                                    }
-                                %>
-                            </tr>
-
-                        </table>        
-                    </div>
-                </td>
-            </tr></table>
-
+        
+        <form id="form1" method="POST" action="./ValidateData">
+            <input id="btnvalidate" type="submit" value="Start Validating.."/>
+        </form>
     </body>
 </html>

@@ -293,13 +293,15 @@ public class LoadData extends HttpServlet {
                         //System.out.println(fielditem.getString());
                         // Read_addrawData();
                         //  Read_addLabelrawData();
-                        Alrd_column.clear();Alrd_value.clear();
-                        Alrd_lbl_column.clear();Alrd_lbl_value.clear();
+                        Alrd_column.clear();
+                        Alrd_value.clear();
+                        Alrd_lbl_column.clear();
+                        Alrd_lbl_value.clear();
                         get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
                         get_RawData("RawData_lbl", hdnlblfilename, Alrd_lbl_column, Alrd_lbl_value);
                         request.setAttribute("Alrd_column", Alrd_column);
                         request.setAttribute("Alrd_value", Alrd_value);
-                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
+                        request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
                         request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);
                         RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp");
                         rd.forward(request, response);
@@ -402,6 +404,7 @@ public class LoadData extends HttpServlet {
                         if (list.get(b).equals(strArr[a])) {
                         } else {
                             put.add(Bytes.toBytes("r"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
+
                         }
                         if ((countcoulmn + 1) == list.size()) {
                             countcoulmn = 0;
@@ -472,6 +475,7 @@ public class LoadData extends HttpServlet {
 
             HTable table = new HTable(conf, "MapFile");
             Get get = new Get(rowkey.getBytes());
+
             Result rs = table.get(get);
             for (KeyValue kv : rs.raw()) {
                 holdvalue = new String(kv.getValue());
@@ -484,13 +488,13 @@ public class LoadData extends HttpServlet {
 
     }
 
-    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) {
+    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException{
         HTable table = null;
         try {
             String NosRow = get_MapFile(rowkey);
             long loopruner = 0;
             if (rowkey.equals(hdnfilename)) {
-                loopruner = 9;
+                loopruner = 1000;//Integer.valueOf(NosRow);
             } else {
                 loopruner = Integer.valueOf(NosRow);
             }
@@ -522,6 +526,12 @@ public class LoadData extends HttpServlet {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        finally {
+            if (table != null) {
+                table.close();
+            }
+        }
+
     }
 
     public void InsertRecord(String tablename, String rowkey, String CF, String qualifier, String value) {
