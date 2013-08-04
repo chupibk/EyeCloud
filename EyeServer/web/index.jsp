@@ -10,7 +10,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" type="text/css" href="css/page.css">
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
         <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <title>Eye Cloud</title>
     </head>
     <body>
@@ -45,7 +47,7 @@
                             system and cognitive process. It is time for eye tracking technology to escape from laboratory
                             environment and applied widely in the wild. However, eye tracking is suffering from slow local
                             computation and huge eye data collected and analyzed that are preventing it from online processing. 
-                            Cloud computing and storage that means everything can be accessed and controlled via the global
+                            Cloud computing and storage that means everything can be accessed, controlled, and processed via the global
                             Internet is becoming increasingly popular. Many research fields such as video, image, and speech
                             processing as well as machine learning and human-robot interaction are testing its feasibility and
                             benefiting from cloud solutions. Eye tracking is not an exception to follow that mainstream. We
@@ -58,7 +60,7 @@
                             which real-time eye tracking applications can be deployed.
                             We base on <a href="http://hadoop.apache.org/">Hadoop</a> framework to build EyeCloud and applications developed 
                             with <a href="http://storm-project.net/">Storm</a> and
-                            MapReduce models can run on EyeCloud. There are 3 applications deployed successfully on EyeCloud.
+                            MapReduce models can run on EyeCloud. Beneath are 3 applications deployed successfully on EyeCloud.
                         </span>
                     </blockquote>
                 </div>
@@ -67,7 +69,7 @@
                         Multi-source gaze visualization with real-time heatmap
                     </div>
                     <iframe src="//www.youtube.com/embed/Sxd6rMHAfiE" frameborder="0" allowfullscreen></iframe>
-                    <div id="description">
+                    <div class="description">
                         <blockquote class="style2">
                             <span>
                                 "Based on a problem of how to aggregate and visualize gaze data from many sources of eye trackers which
@@ -78,81 +80,123 @@
                             </span>
                         </blockquote>
                     </div>
-                    <div id="appbody">
+                    <div class="appbody">
                         <div id='static'>
-                            <h4>Static content heatmap rendering </h4>
-                            Link: <input type="text" value="http://www.bloomberg.com/" name="site-s">
-                            Participants:
-                            <select name="np-s">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                            Experiment ID:
-                            <select name="id-s" disabled="true">
-                            </select>       
+                            <h4>Static content heatmap rendering (<a href="http://localhost:8080/EyeServer/exp/website.html">Example</a>)</h4>
+                            <table>
+                                <tr>
+                                    <td>Link: <input type="text" value="http://www.bloomberg.com/" name="site-s" size="30"></td>
+                                    <td>
+                                        Participants:
+                                        <select name="np-s">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Time segment:
+                                        <select name="refresh-s">
+                                            <option value="40">40 milliseconds</option>
+                                            <option value="100">100 milliseconds</option>
+                                            <option value="500" selected>500 milliseconds</option>
+                                            <option value="1000">1 second</option>
+                                            <option value="2000">2 seconds</option>
+                                        </select>       
+                                    </td>
+                                    <td>
+                                        Testing time:
+                                        <select name="time-s">
+                                            <option value="15000">15 seconds</option>
+                                            <option value="30000" selected>30 seconds</option>
+                                            <option value="60000">1 minute</option>
+                                            <option value="120000">2 minutes</option>
+                                            <option value="300000">5 minutes</option>
+                                            <option value="600000">10 minutes</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Your experiment ID:
+                                        <select name="id-s" disabled="true">
+                                        </select>     
+                                    </td>
+                                    <td>
+                                        <div id="offlineDlg-s" title="Offline review">
+                                            Your experiment ID:
+                                            <select name="off-s">
+                                            </select> 
+                                            <input type="button" value="View" id="viewBtn-s">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                             <br/>
-                            Gaze segment:
-                            <select name="refresh-s">
-                                <option value="40">40 seconds</option>
-                                <option value="100">100 seconds</option>
-                                <option value="500">500 seconds</option>
-                                <option value="1000">1000 seconds</option>
-                                <option value="2000">2000 seconds</option>
-                            </select>       
-                            Testing time:
-                            <select name="time-s">
-                                <option value="30000">30 seconds</option>
-                                <option value="60000">1 minute</option>
-                                <option value="120000">2 minutes</option>
-                                <option value="300000">5 minutes</option>
-                                <option value="600000">10 minutes</option>
-                            </select>
-                            Offline ID:
-                            <select name="off-s">
-                            </select> 
-                            <br/><br/>
                             <input id='clientBtn-s' type="button" value="Participant Screen">
                             <input id='onlineBtn-s' type="button" value="Online Heatmap Screen">
                             <input id='offlineBtn-s' class="offline" type="button" value="Offline review">
                         </div>
+
                         <div id='video'>
                             <h4>Youtube video heatmap rendering</h4>
-                            Youtube ID: <input type="text" value="K0-ucWKiTps" name="site-v">
-                            Participants:
-                            <select name="np-v">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                            Experiment ID:
-                            <select name="id-v" disabled="true">
-                            </select>      
+                            <table>
+                                <tr>
+                                    <td>Youtube Link: <input type="text" value="K0-ucWKiTps" name="site-v" size="30"></td>
+                                    <td>Participants:
+                                        <select name="np-v">
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>     
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Time segment:
+                                        <select name="refresh-v">
+                                            <option value="40">40 milliseconds</option>
+                                            <option value="100">100 milliseconds</option>
+                                            <option value="500" selected>500 milliseconds</option>
+                                            <option value="1000">1 second</option>
+                                            <option value="2000">2 seconds</option>
+                                        </select>     
+                                    </td>
+                                    <td>
+                                        Testing time:
+                                        <select name="time-v">
+                                            <option value="15000">15 seconds</option>
+                                            <option value="30000" selected>30 seconds</option>
+                                            <option value="60000">1 minute</option>
+                                            <option value="120000">2 minutes</option>
+                                            <option value="300000">5 minutes</option>
+                                            <option value="600000">10 minutes</option>
+                                        </select>  
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Your experiment ID:
+                                        <select name="id-v" disabled="true">
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div id="offlineDlg-v" title="Offline review">
+                                            Your experiment ID:
+                                            <select name="off-v">
+                                            </select> 
+                                            <input type="button" value="View" id="viewBtn-v">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                             <br/>
-                            Gaze segment:
-                            <select name="refresh-v">
-                                <option value="40">40 seconds</option>
-                                <option value="100">100 seconds</option>
-                                <option value="500">500 seconds</option>
-                                <option value="1000">1000 seconds</option>
-                                <option value="2000">2000 seconds</option>
-                            </select>       
-                            Testing time:
-                            <select name="time-v">
-                                <option value="30000">30 seconds</option>
-                                <option value="60000">1 minute</option>
-                                <option value="120000">2 minutes</option>
-                                <option value="300000">5 minutes</option>
-                                <option value="600000">10 minutes</option>
-                            </select>
-                            Offline ID:
-                            <select name="off-v">
-                            </select>                             
-                            <br/><br/>
                             <input id='clientBtn-v' type="button" value="Participant Screen">
                             <input id='onlineBtn-v' type="button" value="Online Heatmap Screen">
                             <input id='offlineBtn-v' class="offline" type="button" value="Offline review">
@@ -160,53 +204,144 @@
                         <div id="note1">
                             Note:
                             <br/>
-                            - Link: The address of content that you want to conduct experiment.
+                            - Link: the address of content that you want to conduct experiment.
                             <br/>
-                            - Participants: Number of participants of your experiment.
+                            - Participants: number of participants of your experiment.
                             <br/>
-                            - Gaze segment: Time segment of heatmap results.
+                            - Time segment: time segment of heatmap results, 500ms is recommended.
+                            <br/>
+                            - Testing time: that is duration of your experiment. 
                         </div>
                         <div id="note2">
                             <br/>
-                            - Testing time: That is duration of your experiment.
+                            - Experiment ID: id of your current experiment.
                             <br/>
-                            - Offline ID: ID of the experiment that you want to review again.
+                            - Participant screen: click here to open experiment screen on participants' PC.
                             <br/>
-                            - Experiment ID: ID of your current experiment.
+                            - Online heatmap screen: click here to view online heatmaps rendered.
+                            <br/>
+                            - Offline review: click here to review again experiments that you did.                            
                         </div>                        
                     </div>
                 </div>
 
-                <div id='app2'>
-                    <div class='apptitle'>
-                        Offline heatmap rendering
-                    </div>   
-                    <div class='upload'>
-                        Select a file to upload: <br />
-                        <form action="UploadServlet" method="post"
-                              enctype="multipart/form-data">
-                            <input type="file" name="gaze-h" size="50" />
-                            <br />
-                            <input type="submit" value="Upload File" />
-                        </form>
-                    </div>
-                    <div class='result'></div>
-                </div>
-                <div id='app3'>
+                <div class='app2'>
                     <div class='apptitle'>
                         Fixation computation
+                    </div>   
+                    <div class="description2">
+                        <blockquote class="style2">
+                            <span>
+                                "Fixation is the most important classification of eye tracking analysis and fast fixation
+                                detection improves analysis efficiency. We implemented I-VT algorithm on EyeCloud and it shows
+                                fast detection, slow uploading gaze data to EyeCloud is a problem."
+                            </span>
+                        </blockquote>
+                    </div>
+                    <div class="demo">
+                        <table>
+                            <tr>
+                                <td><img src="images/raw_fixation.png"/></td>
+                                <td><img src="images/fixation.png"/></td>
+                            </tr>
+                            <tr>
+                                <td> Raw gaze data</td>
+                                <td> Fixations</td>
+                            </tr>
+                        </table>
                     </div>
 
-                    <div class='upload'>
-                        Select a file to upload: <br />
-                        <form action="UploadServlet" method="post"
-                              enctype="multipart/form-data">
-                            <input type="file" name="gaze-f" size="50" />
-                            <br />
-                            <input type="submit" value="Upload File" />
-                        </form>
+                    <div class="appbody">
+                        <div class='upload'>
+                            <form action="UploadServlet" method="post"
+                                  enctype="multipart/form-data">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            Select gaze data:
+                                        </td>
+                                        <td>
+                                            <input type="file" name="gaze-data-f" size="50" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Select media file (image):
+                                        </td>
+                                        <td>
+                                            <input type="file" name="media-data-f" size="50" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <input type="submit" value="Upload and Detection" />
+                            </form>
+                        </div>
+                        <div class='status'>
+                            Upload...
+                            <br/>
+                            Processing...
+                        </div>
                     </div>
-                    <div class='result'></div>                    
+                </div>
+
+                <div class='app2'>
+                    <div class='apptitle'>
+                        Offline heatmap renderinig
+                    </div>   
+                    <div class="description2">
+                        <blockquote class="style2">
+                            <span>
+                                "Heatmap is a useful visualization tool that gives us which parts of a stimulus that are paid attention much
+                                or many viewers were looking at. Normally, heatmap rendering with Gaussian point spread function runs slowly
+                                on a local PC. EyeCloud can speed up such rendering by distributed computing on a cloud cluster. 10~20 times faster
+                                than local PCs can be feasible."
+                            </span>
+                        </blockquote>
+                    </div>
+                    <div class="demo2">
+                        <table>
+                            <tr>
+                                <td><img src="images/raw_heat.png"/></td>
+                                <td><img src="images/heatmap.png"/></td>
+                            </tr>
+                            <tr>
+                                <td> Raw gaze data</td>
+                                <td> Heatmap</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="appbody">
+                        <div class='upload'>
+                            <form action="UploadServlet" method="post"
+                                  enctype="multipart/form-data">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            Select gaze data:
+                                        </td>
+                                        <td>
+                                            <input type="file" name="gaze-data-h" size="50" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Select media file (image):
+                                        </td>
+                                        <td>
+                                            <input type="file" name="media-data-h" size="50" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <input type="submit" value="Upload and Render" />
+                            </form>
+                        </div>
+                        <div class='status'>
+                            Upload...
+                            <br/>
+                            Processing...
+                        </div>
+                    </div>
                 </div>
 
             </div>

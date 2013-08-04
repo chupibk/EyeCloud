@@ -26,6 +26,10 @@ $("#onlineBtn-s").click(function() {
 });
 
 $("#offlineBtn-s").click(function() {
+    $("#offlineDlg-s").dialog("open");
+});
+
+$("#viewBtn-s").click(function() {
     var refresh = $('select[name="refresh-s"]').val();
     var np = $('select[name="np-s"]').val();
     var time = $('select[name="time-s"]').val();
@@ -34,6 +38,7 @@ $("#offlineBtn-s").click(function() {
 
     var data = "static_view.html?refresh=" + refresh + "&np=" + np + "&time=" + time + "&site=" + site + "&id=" + id;
     window.open(data);
+    $("#offlineDlg-s").dialog("close");
 });
 
 $("#clientBtn-v").click(function() {
@@ -59,6 +64,10 @@ $("#onlineBtn-v").click(function() {
 });
 
 $("#offlineBtn-v").click(function() {
+    $("#offlineDlg-v").dialog("open");
+});
+
+$("#viewBtn-v").click(function() {
     var refresh = $('select[name="refresh-v"]').val();
     var np = $('select[name="np-v"]').val();
     var time = $('select[name="time-v"]').val();
@@ -67,6 +76,7 @@ $("#offlineBtn-v").click(function() {
 
     var data = "youtube_online.html?refresh=" + refresh + "&np=" + np + "&time=" + time + "&site=" + site + "&id=" + id;
     window.open(data);
+    $("#offlineDlg-v").dialog("close");
 });
 
 // Set max ID
@@ -76,12 +86,12 @@ $.ajax({
     url: "GetAvailableID",
     success: function(result) {
         var start = parseInt(result) + 1;
-        $('select[name="id-s"]').append('<option value="' + start +'">' + start + '</option>');
-        $('select[name="id-v"]').append('<option value="' + (start+1) +'">' + (start+1) + '</option>');
+        $('select[name="id-s"]').append('<option value="' + start + '">' + start + '</option>');
+        $('select[name="id-v"]').append('<option value="' + (start + 1) + '">' + (start + 1) + '</option>');
 
-        for (var i=start - 1; i > 0; i--){
-            $('select[name="off-s"]').append('<option value="' + i +'">' + i + '</option>');
-            $('select[name="off-v"]').append('<option value="' + i +'">' + i + '</option>');
+        for (var i = start - 1; i > 0; i--) {
+            $('select[name="off-s"]').append('<option value="' + i + '">' + i + '</option>');
+            $('select[name="off-v"]').append('<option value="' + i + '">' + i + '</option>');
         }
     },
     error: function(jqXHR, textStatus, errorThrown) {
@@ -89,23 +99,10 @@ $.ajax({
     }
 });
 
-/* View JS */
-/**
- * Document Width
- * 
- * @returns
- */
-function documentWidth() {
-    var e = window, a = 'inner';
-    if (!('innerWidth' in window)) {
-        a = 'client';
-        e = document.documentElement || document.body;
-    }
-    return e[a + 'Width'];
-}
+$("#offlineDlg-s").dialog({
+    autoOpen: false
+});
 
-// Move to center position
-if (documentWidth() > $("#web_page").width()) {
-    $("#web_page").css("left", (documentWidth() - $("#web_page").width()) / 2);
-    $("#control").css("left", (documentWidth() - $("#web_page").width()) / 2);
-}
+$("#offlineDlg-v").dialog({
+    autoOpen: false
+});

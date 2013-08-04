@@ -53,12 +53,11 @@ body {
 
 #content{
     width:1050px;
-    height: 1500px;
 }
 
 #content #intro{
     width:1070px;
-    height: 300px;
+    margin: 20px 0px;
 }
 
 blockquote.style1 {
@@ -81,12 +80,12 @@ blockquote.style1 span {
 }
 
 blockquote.style2 {
-  font: 14px/22px normal helvetica, sans-serif;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  margin-left: 70px;
-  padding-left: 15px;
-  border-left: 3px solid #ccc;
+    font: 14px/22px normal helvetica, sans-serif;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 90px;
+    padding-left: 15px;
+    border-left: 3px solid #ccc;
 } 
 
 .apptitle{
@@ -98,7 +97,6 @@ blockquote.style2 {
 
 #content #app1{
     width:1050px;
-    height: 650px;
     border: 1px solid #bec0c4;
     margin: 5px 10px;
     float: left;
@@ -108,46 +106,70 @@ blockquote.style2 {
     float: left;
     width: 500px;
     height: 350px; 
+    margin-left: 5px;
 }
 
-#content #app1 #description{
-    float: left;
-    width: 450px;
-    height: 350px; 
-}
-
-#content #app1 #appbody{
+#content .demo{
     float: left;
     width: 1050px;
-    height: 250px; 
 }
 
-#appbody #static{
+#content .demo img{
+    height: 257px;
+    margin: 0px 5px;
+}
+
+#content .demo2{
+    float: left;
+    width: 1050px;
+}
+
+#content .demo2 img{
+    height: 325px;
+    margin: 0px 5px;
+}
+
+#content .description{
+    float: left;
+    width: 450px;
+}
+
+#content .description2{
+    float: left;
+    width: 800px;
+}
+
+#content .appbody{
+    float: left;
+    width: 1050px;
+}
+
+.appbody #static{
     float: left;
     width: 500px;
     margin: 0px 10px;
     border-right: 1px solid #bec0c4;
 }
 
-#appbody #video{
+.appbody #video{
     float: left;
     width: 500px;
     margin: 0px 10px;
 }
 
-#appbody #note1{
+.appbody #note1{
     float: left;
     width: 500px;
     margin: 10px 10px;
 }
 
-#appbody #note2{
+.appbody #note2{
     float: left;
     width: 500px;
     margin: 10px 10px;
 }
 
-#appbody .offline
+.appbody .offline
 {
     background: -webkit-linear-gradient(top, #90ce4d, #588824);
     background: -moz-linear-gradient(top, #90ce4d, #588824);
@@ -157,7 +179,7 @@ blockquote.style2 {
 }
 
 /* Hover effect*/
-#appbody .offline:hover
+.appbody .offline:hover
 {
     background: -webkit-linear-gradient(top, #70a338, #304e11);
     background: -moz-linear-gradient(top, #70a338, #304e11);
@@ -165,34 +187,37 @@ blockquote.style2 {
     background: linear-gradient(top, #70a338, #304e11);
 }
 
-#content #app2{
-    width:475px;
-    height: 315px;
+#content .app2{
+    width:1050px;
     border: 1px solid #bec0c4;
     margin: 5px 12px;
     float: left;
 }
 
-#content #app3{
-    width:475px;
-    height: 315px;
-    border: 1px solid #bec0c4;
-    margin: 5px 0;
-    float: right;
+#content .app2 .demo table tr{
+    text-align: center;
 }
 
-.upload{
-    margin: 3px 3px;
+#content .app2 .demo2 table tr{
+    text-align: center;
 }
 
-.result{
-    height: 200px;
-    border: 1px solid #bec0c4;
-    margin: 7px 2px;
+.app2 .upload{
+    margin: 15px 10px;
+    float: left;
+    width:500px;
+    border-right: 1px solid #bec0c4;
+}
+
+.app2 .status{
+    margin: 15px 10px;
+    float: left;
+    width:500px;
 }
 
 #footer{
-    width:1000px;
-    border-top: 1px solid #bec0c4;
+    width:1050px;
     font-size: 12px;
+    margin-left: 10px;
+    margin-bottom: 100px;
 }
