@@ -291,8 +291,8 @@ public class LoadData extends HttpServlet {
 
                     } else if ("btnsave".equals(fielditem.getFieldName())) {
                         //System.out.println(fielditem.getString());
-                        // Read_addrawData();
-                        //  Read_addLabelrawData();
+                       // addrawData();
+                        //  addLabelrawData();
                         Alrd_column.clear();
                         Alrd_value.clear();
                         Alrd_lbl_column.clear();
@@ -388,7 +388,7 @@ public class LoadData extends HttpServlet {
 
     }
 
-    public void Read_addrawData() {
+    public void addrawData() {
         try {
 
             if (largeStr != null && !largeStr.isEmpty()) {
@@ -401,24 +401,25 @@ public class LoadData extends HttpServlet {
                 Put put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
                 for (int a = 0; a <= strArr.length - 1; a++) {
                     for (int b = countcoulmn; b <= list.size() - 1; b++) {
-                        if (list.get(b).equals(strArr[a])) {
-                        } else {
-                            put.add(Bytes.toBytes("r"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
-
-                        }
-                        if ((countcoulmn + 1) == list.size()) {
-                            countcoulmn = 0;
-                            if (put.size() != 0) {
-                                countrow++;
-                                table.put(put);
-                                put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
+                        if (strArr[a] != null && !strArr[a].isEmpty()) {
+                            if (list.get(b).equals(strArr[a])) {
+                            } else {
+                                put.add(Bytes.toBytes("r"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
                             }
+                            if ((countcoulmn + 1) == list.size()) {
+                                countcoulmn = 0;
+                                if (put.size() != 0) {
+                                    countrow++;
+                                    table.put(put);
+                                    put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
+                                }
 
-                        } else {
-                            b++;
-                            countcoulmn = b;
+                            } else {
+                                b++;
+                                countcoulmn = b;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
                 InsertRecord("MapFile", hdnfilename, "m", "1", String.valueOf(countrow));
@@ -428,7 +429,8 @@ public class LoadData extends HttpServlet {
         }
     }
 
-    public void Read_addLabelrawData() {
+
+    public void addLabelrawData() {
         try {
             if (largeStr_lbl != null && !largeStr_lbl.isEmpty()) {
                 int countcoulmn = 0;
@@ -444,6 +446,7 @@ public class LoadData extends HttpServlet {
                         if (list.get(b).equals(strArr[a])) {
                         } else {
                             put.add(Bytes.toBytes("l"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
+                            
                         }
                         if ((countcoulmn + 1) == list.size()) {
                             countcoulmn = 0;
@@ -488,15 +491,19 @@ public class LoadData extends HttpServlet {
 
     }
 
-    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException{
+    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
         try {
+           // int dummy=0;
             String NosRow = get_MapFile(rowkey);
             long loopruner = 0;
             if (rowkey.equals(hdnfilename)) {
-                loopruner = 1000;//Integer.valueOf(NosRow);
+                loopruner = 1000; //Integer.valueOf(NosRow);
+             //   dummy=146190;
+                
             } else {
                 loopruner = Integer.valueOf(NosRow);
+               // dummy=0;
             }
             table = new HTable(conf, tablename);
             List<Get> Rowlist = new ArrayList<Get>();
@@ -525,8 +532,7 @@ public class LoadData extends HttpServlet {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             if (table != null) {
                 table.close();
             }
