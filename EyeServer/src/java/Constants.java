@@ -35,4 +35,5 @@ public class Constants {
     
     /* */
     public static final String FIXATION_UPLOAD_PATH = "/files/fixation/upload/";
+    public static final String FIXATION_UPLOAD_RESULT = "/files/fixation/result/";
 }

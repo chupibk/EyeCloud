@@ -38,6 +38,9 @@ public class UploadFixation extends HttpServlet {
     public void doPost(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, java.io.IOException {
+        
+        long start = System.currentTimeMillis();
+        
         // Response
         response.setContentType("text/html;charset=UTF-8");
         response.setContentType("application/json");
@@ -74,7 +77,7 @@ public class UploadFixation extends HttpServlet {
             // Process the uploaded file items
             Iterator i = fileItems.iterator();
 
-            String image    = "";
+            String image = "";
 
             while (i.hasNext()) {
                 FileItem fi = (FileItem) i.next();
@@ -82,24 +85,26 @@ public class UploadFixation extends HttpServlet {
                     // Get the uploaded file parameters
                     String fieldName = fi.getFieldName();
                     String fileName = fi.getName();
-                    if (fieldName.equals("gaze-data-f")){
+                    if (fieldName.equals("gaze-data-f")) {
                         image = fileName;
+                        // Write the file
+                        if (fileName.lastIndexOf("\\") >= 0) {
+                            file = new File(filePath
+                                    + fileName.substring(fileName.lastIndexOf("\\")) + "_" + System.currentTimeMillis());
+                        } else {
+                            file = new File(filePath
+                                    + fileName.substring(fileName.lastIndexOf("\\") + 1) + "_" + System.currentTimeMillis());
+                        }
+                        fi.write(file);
+                        new IVTSendToStorm(getServletContext().getRealPath("") + Constants.FIXATION_UPLOAD_PATH + file.getName(), 
+                                            getServletContext().getRealPath("") + Constants.FIXATION_UPLOAD_RESULT + file.getName());
                     }
-
-                    // Write the file
-                    if (fileName.lastIndexOf("\\") >= 0) {
-                        file = new File(filePath
-                                + fileName.substring(fileName.lastIndexOf("\\")));
-                    } else {
-                        file = new File(filePath
-                                + fileName.substring(fileName.lastIndexOf("\\") + 1));
-                    }
-                    fi.write(file);
                 }
             }
 
             result.put("OK", "1");
-            result.put("message", "Upload successfully " + image);
+            result.put("message", "Upload successfully " + file.getName());
+            result.put("time", Long.toString(System.currentTimeMillis() - start));
             response.getWriter().write(new Gson().toJson(result));
             out.close();
         } catch (Exception ex) {
