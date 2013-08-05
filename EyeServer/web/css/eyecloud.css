@@ -145,7 +145,12 @@ body {
 /* Experiment */
 #question{
     text-align: left;
-    margin-left: 400px;
+    margin-left: 200px;
+}
+
+#question2{
+    text-align: left;
+    margin-left: 500px;
 }
 
 #control h3{

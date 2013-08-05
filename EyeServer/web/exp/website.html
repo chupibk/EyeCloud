@@ -15,39 +15,92 @@ and open the template in the editor.
         <div id="wrap"> 
             <iframe  id="web_page" frameBorder="0" scrolling="no" src="http://cs.joensuu.fi/pages/int/"></iframe>
             <div id="control">
-                <h3>Static content: Heatmap Rendering from Multi-Eye-Trackers</h3>
+                <h3>Static stimulus: Heatmap Rendering from Multi-Eye-Trackers</h3>
                 <div id="question">
-                    <h4>
-                        1. Refresh rate = 40 ms (<a href="../online.html?refresh=40&np=2&time=30000&site=exp/motivation.html&id=5">Online heatmap</a> - 
-                        <a href="../static_view.html?refresh=40&np=2&time=30000&site=exp/motivation.html&id=5">offline</a>)
-                    </h4>
-                    <div class="text">
-                        - Question: <a href="../heatmap.html?refresh=40&np=2&time=30000&site=exp/motivation.html&id=5"> How many times should you try? </a>
-                    </div>                   
-                    <h4>2. Refresh rate = 100 ms (<a href="../online.html?refresh=100&np=2&time=30000&site=exp/entrepreneur.html&id=6">Online heatmap</a> - 
-                        <a href="../static_view.html?refresh=100&np=2&time=30000&site=exp/entrepreneur.html&id=6">offline</a>)
-                    </h4>
-                    <div class="text">
-                        - Topic: <a href="../heatmap.html?refresh=100&np=2&time=30000&site=exp/entrepreneur.html&id=6"> Becoming an Entrepreneur!!! </a>
-                    </div>                  
-                    <h4>3. Refresh rate = 500 ms (<a href="../online.html?refresh=500&np=2&time=30000&site=exp/dinosaur.html&id=7">Online heatmap</a> - 
-                        <a href="../static_view.html?refresh=500&np=2&time=30000&site=exp/dinosaur.html&id=7">offline</a>)
-                    </h4>
-                    <div class="text">
-                        - Question: <a href="../heatmap.html?refresh=500&np=2&time=30000&site=exp/dinosaur.html&id=7"> How many differences between two pictures? </a>
-                    </div>                
-                    <h4>4. Refresh rate = 1000 ms (<a href="../online.html?refresh=1000&np=2&time=30000&site=exp/chromecast.html&id=8">Online heatmap</a> - 
-                        <a href="../static_view.html?refresh=1000&np=2&time=30000&site=exp/chromecast.html&id=8">offline</a>)
-                    </h4>
-                    <div class="text">
-                        - Question: <a href="../heatmap.html?refresh=1000&np=2&time=30000&site=exp/chromecast.html&id=8"> What is the original price of Chromecast? </a>
-                    </div>                 
-                    <h4>5. Refresh rate = 2000 ms (<a href="../online.html?refresh=2000&np=2&time=30000&site=exp/map.html&id=9">Online heatmap</a> - 
-                        <a href="../static_view.html?refresh=2000&np=2&time=30000&site=exp/map.html&id=9">offline</a>)
-                    </h4>
-                    <div class="text">
-                        - Question: <a href="../heatmap.html?refresh=2000&np=2&time=30000&site=exp/map.html&id=9"> How many countries you can see their names in the map? </a>
-                    </div>     
+                    <table>
+                        <tr>
+                            <td>
+                                <h4>
+                                    1. <a href="../online.html?refresh=40&np=2&time=30000&site=exp/motivation.html&id=5">Online heatmap</a> - 
+                                    <a href="../static_view.html?refresh=40&np=2&time=30000&site=exp/motivation.html&id=5">offline</a>
+                                </h4>
+                                <div class="text">
+                                    <ul>
+                                        <li>Link: http://localhost:8080/EyeServer/exp/motivation.html</li>
+                                        <li>Participant: 2</li>
+                                        <li>Time segment: 40ms</li>
+                                        <li>Testing time: 30 seconds</li>
+                                        <li>ID: 5</li>
+                                        <li>Question: <a href="../heatmap.html?refresh=40&np=2&time=30000&site=exp/motivation.html&id=5"> How many times should you try? </a></li>
+                                    </ul>
+                                </div>      
+                            </td>
+                            <td>
+                                <h4>2. <a href="../online.html?refresh=100&np=2&time=30000&site=exp/entrepreneur.html&id=6">Online heatmap</a> - 
+                                    <a href="../static_view.html?refresh=100&np=2&time=30000&site=exp/entrepreneur.html&id=6">offline</a>
+                                </h4>
+                                <div class="text">
+                                    <ul>
+                                        <li>Link: http://localhost:8080/EyeServer/exp/entrepreneur.html</li>
+                                        <li>Participant: 2</li>
+                                        <li>Time segment: 100ms</li>
+                                        <li>Testing time: 30 seconds</li>
+                                        <li>ID: 6</li>
+                                        <li>Topic: <a href="../heatmap.html?refresh=100&np=2&time=30000&site=exp/entrepreneur.html&id=6"> Becoming an Entrepreneur!!! </a></li>
+                                    </ul>
+                                </div>    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>3. <a href="../online.html?refresh=500&np=2&time=30000&site=exp/dinosaur.html&id=7">Online heatmap</a> - 
+                                    <a href="../static_view.html?refresh=500&np=2&time=30000&site=exp/dinosaur.html&id=7">offline</a>
+                                </h4>
+                                <div class="text">
+                                    <ul>
+                                        <li>Link: http://localhost:8080/EyeServer/exp/dinosaur.html</li>
+                                        <li>Participant: 2</li>
+                                        <li>Time segment: 500ms</li>
+                                        <li>Testing time: 30 seconds</li>
+                                        <li>ID: 7</li>
+                                        <li>Question: <a href="../heatmap.html?refresh=500&np=2&time=30000&site=exp/dinosaur.html&id=7"> How many differences between two pictures? </a></li>
+                                    </ul>
+                                </div>    
+                            </td>
+                            <td>
+                                <h4>4. <a href="../online.html?refresh=1000&np=2&time=30000&site=exp/chromecast.html&id=8">Online heatmap</a> - 
+                                    <a href="../static_view.html?refresh=1000&np=2&time=30000&site=exp/chromecast.html&id=8">offline</a>
+                                </h4>
+                                <div class="text">
+                                    <ul>
+                                        <li>Link: http://localhost:8080/EyeServer/exp/chromecast.html</li>
+                                        <li>Participant: 2</li>
+                                        <li>Time segment: 1000ms</li>
+                                        <li>Testing time: 30 seconds</li>
+                                        <li>ID: 8</li>
+                                        <li>Question: <a href="../heatmap.html?refresh=1000&np=2&time=30000&site=exp/chromecast.html&id=8"> What is the original price of Chromecast? </a></li>
+                                    </ul>
+                                </div>     
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>5. <a href="../online.html?refresh=2000&np=2&time=30000&site=exp/map.html&id=9">Online heatmap</a> - 
+                                    <a href="../static_view.html?refresh=2000&np=2&time=30000&site=exp/map.html&id=9">offline</a>
+                                </h4>
+                                <div class="text">
+                                    <ul>
+                                        <li>Link: http://localhost:8080/EyeServer/exp/map.html</li>
+                                        <li>Participant: 2</li>
+                                        <li>Time segment: 2000ms</li>
+                                        <li>Testing time: 30 seconds</li>
+                                        <li>ID: 9</li>
+                                        <li>Question: <a href="../heatmap.html?refresh=2000&np=2&time=30000&site=exp/map.html&id=9"> How many countries you can see their names in the map? </a></li>
+                                    </ul>
+                                </div>  
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>    

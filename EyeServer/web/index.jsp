@@ -76,13 +76,13 @@
                                 many scenarios might require such as in re mote conference, when we want to know participants’ point of
                                 interests in a slide show or when we want to summarize gaze data from million viewers of a website. 
                                 Multi-source gaze visualization is absolutely relevant for those cases. This application provides two kinds
-                                of experiment: one for static contents and one used for dynamic contents."
+                                of experiment: one for static stimulus like a web page or slide and one used for dynamic stimulus like video."
                             </span>
                         </blockquote>
                     </div>
                     <div class="appbody">
                         <div id='static'>
-                            <h4>Static content heatmap rendering (<a href="http://localhost:8080/EyeServer/exp/website.html">Example</a>)</h4>
+                            <h4>Static stimulus heatmap rendering (<a href="http://localhost:8080/EyeServer/exp/website.html">Example</a>)</h4>
                             <table>
                                 <tr>
                                     <td>Link: <input type="text" value="http://www.bloomberg.com/" name="site-s" size="30"></td>
@@ -143,7 +143,7 @@
                         </div>
 
                         <div id='video'>
-                            <h4>Youtube video heatmap rendering</h4>
+                            <h4>Youtube video heatmap rendering (<a href="http://localhost:8080/EyeServer/exp/youtube.html">Example</a>)</h4>
                             <table>
                                 <tr>
                                     <td>Youtube Link: <input type="text" value="K0-ucWKiTps" name="site-v" size="30"></td>
@@ -234,7 +234,7 @@
                             <span>
                                 "Fixation is the most important classification of eye tracking analysis and fast fixation
                                 detection improves analysis efficiency. We implemented I-VT algorithm on EyeCloud and it shows
-                                fast detection, slow uploading gaze data to EyeCloud is a problem."
+                                fast detection, but slow uploading gaze data to EyeCloud is a problem."
                             </span>
                         </blockquote>
                     </div>
@@ -253,7 +253,7 @@
 
                     <div class="appbody">
                         <div class='upload'>
-                            <form action="UploadServlet" method="post"
+                            <form action="UploadFixation" method="post"
                                   enctype="multipart/form-data">
                                 <table>
                                     <tr>
