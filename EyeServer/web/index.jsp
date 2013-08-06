@@ -83,7 +83,7 @@
                     </div>
                     <div class="appbody">
                         <div id='static'>
-                            <h4>Static stimulus heatmap rendering (<a href="http://localhost:8080/EyeServer/exp/website.html">Example</a>)</h4>
+                            <h4>Static stimulus heatmap rendering (<a href="exp/website.html">Example</a>)</h4>
                             <table>
                                 <tr>
                                     <td>Link: <input type="text" value="http://www.bloomberg.com/" name="site-s" size="30"></td>
@@ -144,7 +144,7 @@
                         </div>
 
                         <div id='video'>
-                            <h4>Youtube video heatmap rendering (<a href="http://localhost:8080/EyeServer/exp/youtube.html">Example</a>)</h4>
+                            <h4>Youtube video heatmap rendering (<a href="exp/youtube.html">Example</a>)</h4>
                             <table>
                                 <tr>
                                     <td>Youtube Link: <input type="text" value="K0-ucWKiTps" name="site-v" size="30"></td>
@@ -202,7 +202,7 @@
                             <input id='onlineBtn-v' type="button" value="Online Heatmap Screen">
                             <input id='offlineBtn-v' class="offline" type="button" value="Offline review">
                         </div>
-                        <div id="note1">
+                        <div class="note1">
                             Note:
                             <br/>
                             - Link: the address of content that you want to conduct experiment.
@@ -213,7 +213,7 @@
                             <br/>
                             - Testing time: that is duration of your experiment. 
                         </div>
-                        <div id="note2">
+                        <div class="note2">
                             <br/>
                             - Experiment ID: id of your current experiment.
                             <br/>
@@ -274,16 +274,67 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <input type="submit" id="fixationBtn" value="Upload and Detection" />
+                                <input type="submit" id="fixationBtn" value="Upload and Detect" />
                             </form>
                         </div>
-                        <div class='status'>
-                            Status: <a id="fixation-status" href="javascript:void(0)">none</a>
+                        <div class="process">
+                            <div class='status'>
+                                Status: <a id="fixation-status" href="javascript:void(0)">none</a>
+                            </div>
+                            <div class="result">
+                                Result: <a id="fixation-return" href="javascript:void(0)" target="_blank">empty</a>
+                            </div>
                         </div>
-                        <div class="result">
-                            Result: <a id="fixation-return" href="javascript:void(0)" target="_blank">empty</a>
+                        <div class="note1">
+                            Note: put the header of your file like below
+                            <div class="code">
+                                <table>
+                                    <tr>
+                                        <td>    RecordingTimestamp </td>	
+                                        <td>    GazePointIndex	</td>
+                                        <td>    GazePointX	</td>
+                                        <td>    GazePointY	</td>
+                                        <td>    DistanceLeft	</td>
+                                        <td>    DistanceRight	</td>
+                                    </tr>
+                                    <tr>
+                                        <td>9	</td>
+                                        <td>1	</td>
+                                        <td>850	</td>
+                                        <td>369	</td>
+                                        <td>558.48	</td>
+                                        <td>558.48	</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13	</td>
+                                        <td>2	</td>
+                                        <td>849</td>
+                                        <td>368	</td>
+                                        <td>558.42	</td>
+                                        <td>558.42	</td>
+                                    </tr>
+                                    <tr>
+                                        <td>16	</td>
+                                        <td>3	</td>
+                                        <td>852	</td>
+                                        <td>365	</td>
+                                        <td>558.43	</td>
+                                        <td>558.43</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                        <div class="note2">
+                            <br/>
+                            - Gaze data: text file of your data.
+                            <br/>
+                            - Media file: your stimulus, e.g a image (optional).
+                            <br/>
+                            - Upload and Detect: click here to start uploading and detecting.
+                            <br/>
+                            - Result: a downloadable link file returned.                        
+                        </div>      
+                    </div>                
                 </div>
 
                 <div class='app2'>
@@ -315,7 +366,7 @@
 
                     <div class="appbody">
                         <div class='upload'>
-                            <form action="UploadServlet" method="post"
+                            <form id="heatmapForm" action="UploadHeatmap" method="post"
                                   enctype="multipart/form-data">
                                 <table>
                                     <tr>
@@ -328,22 +379,75 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            Select media file (image):
+                                            Select media file (compulsory):
                                         </td>
                                         <td>
                                             <input type="file" name="media-data-h" size="50" />
                                         </td>
                                     </tr>
                                 </table>
-                                <input type="submit" value="Upload and Render" />
+                                <input type="submit" id="heatmapBtn" value="Upload and Render" />
                             </form>
                         </div>
-                        <div class='status'>
-                            Upload...
-                            <br/>
-                            Processing...
+                        <div class="process">
+                            <div class='status'>
+                                Status: <a id="heatmap-status" href="javascript:void(0)">none</a>
+                            </div>
+                            <div class="result">
+                                Result: <a id="heatmap-return" href="javascript:void(0)" target="_blank">empty</a>
+                            </div>
                         </div>
-                    </div>
+                        <div class="note1">
+                            Note: put the header of your file like below
+                            <div class="code">
+                                <table>
+                                    <tr>
+                                        <td>    RecordingTimestamp </td>	
+                                        <td>    GazePointIndex	</td>
+                                        <td>    GazePointX	</td>
+                                        <td>    GazePointY	</td>
+                                        <td>    DistanceLeft	</td>
+                                        <td>    DistanceRight	</td>
+                                    </tr>
+                                    <tr>
+                                        <td>9	</td>
+                                        <td>1	</td>
+                                        <td>850	</td>
+                                        <td>369	</td>
+                                        <td>558.48	</td>
+                                        <td>558.48	</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13	</td>
+                                        <td>2	</td>
+                                        <td>849</td>
+                                        <td>368	</td>
+                                        <td>558.42	</td>
+                                        <td>558.42	</td>
+                                    </tr>
+                                    <tr>
+                                        <td>16	</td>
+                                        <td>3	</td>
+                                        <td>852	</td>
+                                        <td>365	</td>
+                                        <td>558.43	</td>
+                                        <td>558.43</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="note2">
+                            <br/>
+                            - Gaze data: text file of your data.
+                            <br/>
+                            - Media file: your stimulus, e.g a image (compulsory).
+                            <br/>
+                            - Upload and Render: click here to start uploading and rendering.
+                            <br/>
+                            - Result: a downloadable link file returned.                        
+                        </div>      
+                    </div>                    
+                    
                 </div>
 
             </div>

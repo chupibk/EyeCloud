@@ -36,4 +36,7 @@ public class Constants {
     /* */
     public static final String FIXATION_UPLOAD_PATH = "/files/fixation/upload/";
     public static final String FIXATION_UPLOAD_RESULT = "/files/fixation/result/";
+    
+    public static final String HEATMAP_UPLOAD_PATH = "/files/heatmap/upload/";
+    public static final String HEATMAP_UPLOAD_RESULT = "/files/heatmap/result/";
 }

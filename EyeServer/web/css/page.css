@@ -157,13 +157,13 @@ blockquote.style2 {
     margin: 0px 10px;
 }
 
-.appbody #note1{
+.appbody .note1{
     float: left;
     width: 500px;
     margin: 10px 10px;
 }
 
-.appbody #note2{
+.appbody .note2{
     float: left;
     width: 500px;
     margin: 10px 10px;
@@ -202,23 +202,38 @@ blockquote.style2 {
     text-align: center;
 }
 
-.app2 .upload{
-    margin: 15px 10px;
+.appbody .upload{
+    margin: 15px 10px 5px 10px;
     float: left;
     width:500px;
     border-right: 1px solid #bec0c4;
 }
 
-.app2 .status{
-    margin: 15px 10px 0px 10px;
+.appbody .status{
+    margin: 0px 10px 20px 10px;
     float: left;
     width:500px;
 }
 
-.app2 .result{
-    margin: 15px 10px 5px 10px;
+.appbody .result{
+    margin: 0px 10px 5px 10px;
     float: left;
     width:500px;
+}
+
+.appbody .process{
+    float: left;
+    width:500px;
+    height: 88px;
+    margin: 15px 10px 5px 10px;
+}
+
+.appbody .code{
+    font-size: 12px;
+}
+
+.appbody .code table td{
+    padding-left: 5px;
 }
 
 #footer{

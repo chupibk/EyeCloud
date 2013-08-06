@@ -127,3 +127,20 @@ $('#fixationForm').ajaxForm(function(result) {
         $("#fixation-status").text(result["message"] + " Running time: " + result["time"] + "ms");
     }
 }); 
+
+/**
+ * All function of offline heatmap
+ */
+
+$("#heatmapBtn").click(function(){
+    $("#heatmap-status").text("Uploading... wait for a while");
+});
+
+$('#heatmapForm').ajaxForm(function(result) {
+    $("#heatmap-status").text(result["message"]);
+    if (result["OK"] === "1"){
+        $("#heatmap-return").attr("href", result["path"]);
+        $("#heatmap-return").text(result["filename"]);
+        $("#heatmap-status").text(result["message"] + " Running time: " + result["time"] + "ms");
+    }
+}); 
