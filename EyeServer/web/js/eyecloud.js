@@ -261,6 +261,7 @@ function sendToServer() {
             clearInterval(sendToServerVariable);
             $("#disable").css("opacity", "0.95");
             $("#thankBtn").show();
+            $("#offlineBtn").show();
             if (WEBSITE === "exp/dinosaur.html"){
                 alert("Answer: 10 differences :P");
             }
@@ -303,7 +304,7 @@ function sendToServer() {
             totalDelay += (end - start);
             console.log(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount));
             if (checkStop === 1 && checkSendDone === 0){
-                $("#thankBtn").val(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount) + " Thank you again!");
+                $("#thankBtn").val("Delay: " + parseFloat(totalDelay / sentCount) + " Thank you again!");
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -311,7 +312,7 @@ function sendToServer() {
             console.log("Fail to send");
             checkSendDone--;
             if (checkStop === 1 && checkSendDone === 0){
-                $("#thankBtn").val(totalDelay + " - " + sentCount + " - " + parseFloat(totalDelay / sentCount) + " ^_^ Done, Thank you again!");
+                $("#thankBtn").val("Delay: " + parseFloat(totalDelay / sentCount) + " ^_^ Done, Thank you again!");
             }            
         }
     });
@@ -388,4 +389,15 @@ $("#info").click(function (){
     }
 });
 $("#thankBtn").hide();
+$("#offlineBtn").hide();
+$("#offlineBtn").click(function(){
+    var refresh = REFRESH_RATE;
+    var np = NUMBER_PARTICIPANT;
+    var time = EXPERIMENT_TIME;
+    var site = WEBSITE;
+    var id = HEATMAP_ID;
+
+    var data = "static_view.html?refresh=" + refresh + "&np=" + np + "&time=" + time + "&site=" + site + "&id=" + id;
+    window.open(data);    
+});
 $("#web_page").attr("src", WEBSITE);
