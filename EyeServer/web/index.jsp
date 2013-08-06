@@ -406,32 +406,24 @@
                                         <td>    GazePointIndex	</td>
                                         <td>    GazePointX	</td>
                                         <td>    GazePointY	</td>
-                                        <td>    DistanceLeft	</td>
-                                        <td>    DistanceRight	</td>
                                     </tr>
                                     <tr>
                                         <td>9	</td>
                                         <td>1	</td>
                                         <td>850	</td>
                                         <td>369	</td>
-                                        <td>558.48	</td>
-                                        <td>558.48	</td>
                                     </tr>
                                     <tr>
                                         <td>13	</td>
                                         <td>2	</td>
                                         <td>849</td>
                                         <td>368	</td>
-                                        <td>558.42	</td>
-                                        <td>558.42	</td>
                                     </tr>
                                     <tr>
                                         <td>16	</td>
                                         <td>3	</td>
                                         <td>852	</td>
                                         <td>365	</td>
-                                        <td>558.43	</td>
-                                        <td>558.43</td>
                                     </tr>
                                 </table>
                             </div>
@@ -447,7 +439,7 @@
                             - Result: a downloadable link file returned.                        
                         </div>      
                     </div>                    
-                    
+
                 </div>
 
             </div>

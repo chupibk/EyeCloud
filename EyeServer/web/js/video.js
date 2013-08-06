@@ -385,7 +385,7 @@ $("#offlineBtn").click(function(){
     var site = WEBSITE;
     var id = HEATMAP_ID;
 
-    var data = "static_view.html?refresh=" + refresh + "&np=" + np + "&time=" + time + "&site=" + site + "&id=" + id;
+    var data = "youtube_online.html?refresh=" + refresh + "&np=" + np + "&time=" + time + "&site=" + site + "&id=" + id;
     window.open(data);    
 });
 $("#web_page").attr("src", WEBSITE);
