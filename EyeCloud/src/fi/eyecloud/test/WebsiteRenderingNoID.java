@@ -1,4 +1,4 @@
-package fi.eyecloud.storm.heatmap;
+package fi.eyecloud.test;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,7 +22,7 @@ import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.utils.ClientFile;
  
 @SuppressWarnings("deprecation")
-public class WebsiteRendering {
+public class WebsiteRenderingNoID {
 
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt {
@@ -151,9 +151,9 @@ public class WebsiteRendering {
 				numberParticipant = tuple.getInteger(6);
 				heatmapId = tuple.getInteger(7);
 				
-				intensity = (double[][]) contextData.getTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + INTENSITY);
-				if (contextData.getTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT) != null)
-					currentParticipant = Integer.parseInt(contextData.getTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT).toString());
+				intensity = (double[][]) contextData.getTaskData(Integer.toString(timeId) + INTENSITY);
+				if (contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT) != null)
+					currentParticipant = Integer.parseInt(contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT).toString());
 				currentParticipant++;
 				
 				if (intensity == null) {
@@ -175,12 +175,12 @@ public class WebsiteRendering {
 					// Find the previous intensity
 					int pre = 0;
 					for (int k=timeId-1; k > 0; k--){
-						if (contextData.getTaskData(Integer.toString(k) + "-" + Integer.toString(heatmapId) + INTENSITY) != null){
+						if (contextData.getTaskData(Integer.toString(k) + INTENSITY) != null){
 							pre = k;
 							break;
 						}
 					}
-					double[][] intensityPre = (double[][]) contextData.getTaskData(Integer.toString(pre) + "-" + Integer.toString(heatmapId) + INTENSITY);
+					double[][] intensityPre = (double[][]) contextData.getTaskData(Integer.toString(pre) + INTENSITY);
 					if (intensityPre != null){
 						for (int i = 0; i < width; i++) {
 							for (int j = 0; j < height; j++) {
@@ -188,20 +188,20 @@ public class WebsiteRendering {
 							}
 						}
 					}
-					contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + INTENSITY, intensity);
-					contextData.setTaskData(Integer.toString(pre) + "-" + Integer.toString(heatmapId) + INTENSITY, null);
-					contextData.setTaskData(Integer.toString(pre) + "-" + Integer.toString(heatmapId) + PARTICIPANT, null);
+					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
+					contextData.setTaskData(Integer.toString(pre) + INTENSITY, null);
+					contextData.setTaskData(Integer.toString(pre) + PARTICIPANT, null);
 					
 					// Reset data in topology when receiving the last packet signal
 					if (type == 2){
-						contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + INTENSITY, null);
-						contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT, null);						
+						contextData.setTaskData(Integer.toString(timeId) + INTENSITY, null);
+						contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, null);						
 					}
 					
 					collector.emit(new Values(id, type, intensity, width, height, timeId, heatmapId));
 				}else{
-					contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + INTENSITY, intensity);
-					contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT, currentParticipant);
+					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
+					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, currentParticipant);
 					collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 				}
 			}else{
@@ -262,8 +262,8 @@ public class WebsiteRendering {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]) + 1, 1, Integer.parseInt(args[1]));
-		LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
+		LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]) + 1, 1, Integer.parseInt(args[1]));
+		//LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
 		Config conf = new Config();
 
 		if (args == null || args.length == 0) {

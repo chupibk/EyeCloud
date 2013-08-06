@@ -151,9 +151,9 @@ public class YoutubeRendering {
 				numberParticipant = tuple.getInteger(6);
 				heatmapId = tuple.getInteger(7);
 				
-				intensity = (double[][]) contextData.getTaskData(Integer.toString(timeId) + INTENSITY);
-				if (contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT) != null)
-					currentParticipant = Integer.parseInt(contextData.getTaskData(Integer.toString(timeId) + PARTICIPANT).toString());
+				intensity = (double[][]) contextData.getTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + INTENSITY);
+				if (contextData.getTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT) != null)
+					currentParticipant = Integer.parseInt(contextData.getTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT).toString());
 				currentParticipant++;
 				
 				if (intensity == null) {
@@ -172,12 +172,12 @@ public class YoutubeRendering {
 				}
 				
 				if (numberParticipant == currentParticipant){
-					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, null);
-					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, null);					
+					contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + INTENSITY, null);
+					contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT, null);					
 					collector.emit(new Values(id, type, intensity, width, height, timeId, heatmapId));
 				}else{
-					contextData.setTaskData(Integer.toString(timeId) + INTENSITY, intensity);
-					contextData.setTaskData(Integer.toString(timeId) + PARTICIPANT, currentParticipant);
+					contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + INTENSITY, intensity);
+					contextData.setTaskData(Integer.toString(timeId) + "-" + Integer.toString(heatmapId) + PARTICIPANT, currentParticipant);
 					collector.emit(new Values(id, 0, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN, Constants.UNKNOWN));
 				}
 			}else{
