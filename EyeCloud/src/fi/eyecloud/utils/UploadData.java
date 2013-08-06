@@ -6,7 +6,6 @@ package fi.eyecloud.utils;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -25,7 +24,7 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
  * 
  */
 public class UploadData {
-	public static String upload(String host, BufferedImage img) {
+	public static String upload(String host, BufferedImage img, String output) {
 		HttpClient httpClient;
 		HttpPost postRequest;
 			
@@ -39,7 +38,7 @@ public class UploadData {
 			ImageIO.write(img, "png", bos);
 			byte[] data = bos.toByteArray();
 			ByteArrayBody image = new ByteArrayBody(data, "image/jpg",
-					String.valueOf(System.currentTimeMillis()) + ".jpg");
+					output + ".jpg");
 			
 			MultipartEntity reqEntity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -64,7 +63,7 @@ public class UploadData {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		BufferedImage originalImage = ImageIO.read(new File("/Users/daothanhchung/Desktop/Bull/Avatar/bull.jpg"));
-		System.out.println(UploadData.upload("http://54.229.100.28:8080/EyeServer/UploadServlet", originalImage));
+		//BufferedImage originalImage = ImageIO.read(new File("/Users/daothanhchung/Desktop/Bull/Avatar/bull.jpg"));
+		//System.out.println(UploadData.upload("http://54.229.100.28:8080/EyeServer/UploadServlet", originalImage));
 	}
 }

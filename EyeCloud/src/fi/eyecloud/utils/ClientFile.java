@@ -15,11 +15,11 @@ import fi.eyecloud.conf.Constants;
 
 public class ClientFile {
 	public ClientFile (BufferedImage image) throws IOException{
-		String fileName = "/home/storm/storm/" + System.currentTimeMillis() + ".png";
+		String fileName = "/home/eyecloud/data/tmp" + System.currentTimeMillis() + ".png";
 		File file = new File(fileName);
 		ImageIO.write(image, "png",file);
 		
-		Socket socket = new Socket("172.31.4.197", 3332);
+		Socket socket = new Socket(Constants.HOSTNAME, 3332);
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 		ObjectOutputStream oos = new ObjectOutputStream(
 				socket.getOutputStream());
@@ -40,16 +40,16 @@ public class ClientFile {
 	}
 	
 	public ClientFile (BufferedImage image, String name, String id) throws IOException{
-		String fileName = "/home/storm/storm/" + name + ".png";
+		String fileName = "/home/eyecloud/data/tmp/" + id + Constants.PARAMETER_SPLIT + name + ".png";
 		File file = new File(fileName);
 		ImageIO.write(image, "png",file);
 		
-		Socket socket = new Socket("172.31.4.197", 3332);
+		Socket socket = new Socket(Constants.HOSTNAME, 3332);
 		ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 		ObjectOutputStream oos = new ObjectOutputStream(
 				socket.getOutputStream());
 
-		oos.writeObject(id + Constants.PARAMETER_SPLIT + file.getName());
+		oos.writeObject(file.getName());
 		FileInputStream fis = new FileInputStream(file);
 		byte[] buffer = new byte[ServerFile.BUFFER_SIZE];
 		Integer bytesRead = 0;

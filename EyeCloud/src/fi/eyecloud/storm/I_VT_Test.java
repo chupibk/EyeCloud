@@ -7,8 +7,8 @@ import fi.eyecloud.input.ReadTextFile;
 public class I_VT_Test {
 
 	public static void main(String[] args) throws Exception {
-		String HOSTNAME = args[0]; //"54.229.50.244";
-		int timePeriod = Integer.parseInt(args[1]); 	//ms
+		String HOSTNAME = "192.168.40.9"; //"54.229.50.244";
+		int timePeriod = 2000; 	//ms
 		
 		DRPCClient client = new DRPCClient(HOSTNAME, 3772);
 		long totalTime = 0;
@@ -38,7 +38,7 @@ public class I_VT_Test {
 			if (timestamp - currentTime >= timePeriod){
 				//System.out.println(currentSend);
 				long start = System.currentTimeMillis();
-				client.execute("I_VT", currentSend);
+				client.execute("ivt", currentSend);
 				totalTime = totalTime + System.currentTimeMillis() - start;
 				
 				long dif = System.currentTimeMillis() - tmpTime;
@@ -49,6 +49,7 @@ public class I_VT_Test {
 				currentPacket++;
 				currentTime = timestamp;
 				currentSend = "";
+				break;
 			}
 		}
 		

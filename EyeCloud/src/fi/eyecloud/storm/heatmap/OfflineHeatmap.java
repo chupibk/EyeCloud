@@ -1,8 +1,7 @@
-package fi.eyecloud.storm;
+package fi.eyecloud.storm.heatmap;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import backtype.storm.Config;
@@ -22,14 +21,65 @@ import backtype.storm.tuple.Values;
 
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.gui.heatmap.Colorization;
-import fi.eyecloud.gui.heatmap.HeatmapFromText;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
-import fi.eyecloud.utils.ClientFile;
-import fi.eyecloud.utils.ImageUtils;
+import fi.eyecloud.utils.UploadData;
 
 @SuppressWarnings("deprecation")
-public class HeatmapRenderingStaticNoDivide {
+public class OfflineHeatmap {
+    @SuppressWarnings("serial")
+	public static class ReadData extends BaseBasicBolt {
+
+    	@Override
+        public void execute(Tuple tuple, BasicOutputCollector collector) {
+        	Object id = tuple.getValue(0);
+        	String tmp = tuple.getString(1);
+        	String data[] = tmp.split(Constants.PARAMETER_SPLIT);
+        	String outputName = data[data.length - 1];
+        	int numberPart = Integer.parseInt(data[data.length - 2]);
+        	int heightMedia = Integer.parseInt(data[data.length - 3]);
+        	int widthMedia = Integer.parseInt(data[data.length - 4]);
+        	
+        	float value[] = new float[data.length - 3];
+        	for (int i=0; i < data.length - 3; i++){
+        		value[i] = Float.parseFloat(data[i]);
+        	}
+        	
+        	numberPart = value.length/(Constants.PARAMETER_NUMBER_HEATMAP*numberPart);
+        	
+        	int count = 0;
+        	List<Integer> send = new ArrayList<Integer>();
+        	for (int i=0; i < value.length/Constants.PARAMETER_NUMBER_HEATMAP; i++){
+        		count++;
+        		send.add(Math.round(value[i*Constants.PARAMETER_NUMBER_HEATMAP]));
+        		send.add(Math.round(value[i*Constants.PARAMETER_NUMBER_HEATMAP + 1]));
+        		send.add(Math.round(value[i*Constants.PARAMETER_NUMBER_HEATMAP + 2]));
+        		if (count == numberPart){
+        			send.add(widthMedia);
+        			send.add(heightMedia);
+        			// Avoid reseting send to empty values
+        			List<Integer> tmpSend = new ArrayList<Integer>();
+        			for (int j=0; j < send.size(); j++)
+        				tmpSend.add(send.get(j));
+        			collector.emit(new Values(id, tmpSend, outputName));
+        			send.clear();
+        			count = 0;
+        		}
+        	}
+        	
+        	if (send.size() > 0){
+        		send.add(widthMedia);
+        		send.add(heightMedia);
+        		collector.emit(new Values(id, send, outputName));
+        	}
+        }
+
+        @Override
+        public void declareOutputFields(OutputFieldsDeclarer declarer) {
+            declarer.declare(new Fields("id", "data", "output"));           
+        }
+    }
+    
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt {
 		private double gaussianWindow[][];
@@ -49,18 +99,14 @@ public class HeatmapRenderingStaticNoDivide {
 			return value;
 		}
 		
+    	@SuppressWarnings("unchecked")
 		@Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
         	Object id = tuple.getValue(0);
-        	String tmp = tuple.getString(1);
-        	String data[] = tmp.split(Constants.PARAMETER_SPLIT);
-        	int width = Integer.parseInt(data[data.length - 3]);
-        	int height = Integer.parseInt(data[data.length - 2]);        	
-        	
-        	int value[] = new int[data.length - 3];
-        	for (int i=0; i < data.length - 3; i++){
-        		value[i] = Math.round(Float.parseFloat(data[i]));
-        	}
+        	List<Integer> data = (List<Integer>) tuple.getValue(1);
+        	String outputName = tuple.getString(2);
+        	int width = data.get(data.size() - 2);
+        	int height = data.get(data.size() - 1);
         	
         	double[][] intensity = new double[width][height];
         	
@@ -70,10 +116,10 @@ public class HeatmapRenderingStaticNoDivide {
     			}
     		}
     		
-    		for (int k=0; k < value.length/Constants.PARAMETER_NUMBER_HEATMAP; k++){
-    			int x = value[k*Constants.PARAMETER_NUMBER_HEATMAP]/GuiConstants.SCREEN_RATE;;
-    			int y = value[k*Constants.PARAMETER_NUMBER_HEATMAP +1]/GuiConstants.SCREEN_RATE;;
-    			int d = value[k*Constants.PARAMETER_NUMBER_HEATMAP +2];
+    		for (int k=0; k < data.size()/Constants.PARAMETER_NUMBER_HEATMAP; k++){
+    			int x = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP)/GuiConstants.SCREEN_RATE;;
+    			int y = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP + 1)/GuiConstants.SCREEN_RATE;;
+    			int d = data.get(k*Constants.PARAMETER_NUMBER_HEATMAP + 2);
     			
     			for (int i=x - GuiConstants.KERNEL_SIZE_USED; i <= x + GuiConstants.KERNEL_SIZE_USED; i++){
     				for (int j=y - GuiConstants.KERNEL_SIZE_USED; j <= y + GuiConstants.KERNEL_SIZE_USED; j++){
@@ -83,12 +129,12 @@ public class HeatmapRenderingStaticNoDivide {
     			}
     		}
     		
-        	collector.emit(new Values(id, intensity, width, height));
+        	collector.emit(new Values(id, intensity, width, height, outputName));
         }
 
         @Override
         public void declareOutputFields(OutputFieldsDeclarer declarer) {
-            declarer.declare(new Fields("id", "intensity", "width", "height"));           
+            declarer.declare(new Fields("id", "intensity", "width", "height", "output"));           
         }
     }    
      
@@ -100,6 +146,7 @@ public class HeatmapRenderingStaticNoDivide {
         int width = 0;
         int height = 0;
         TopologyContext contextData;
+        String outputName = null;
         
         @Override
         public void prepare(Map conf, TopologyContext context, BatchOutputCollector collector, Object id) {
@@ -114,6 +161,7 @@ public class HeatmapRenderingStaticNoDivide {
     		double[][] data = (double[][]) tuple.getValue(1);
     		if (width == 0) width = tuple.getInteger(2);
     		if (height == 0) height = tuple.getInteger(3);
+    		if (outputName == null) outputName = tuple.getString(4);
     		
     		if (intensity == null){
     			intensity = new double[width][height];
@@ -136,15 +184,8 @@ public class HeatmapRenderingStaticNoDivide {
         public void finishBatch() {
         	contextData.setTaskData("data", intensity);
         	Colorization color = new Colorization(intensity, width, height);
-        	try {
-				new ClientFile(color.getImage());
-				_collector.emit(new Values(_id, "Ok"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				_collector.emit(new Values(_id, "Fail"));
-			}
-        	//String result = ImageUtils.encodeToString(color.getImage(), "png");
+        	UploadData.upload(Constants.UPLOAD_HOST, color.getImage(), outputName);
+			_collector.emit(new Values(_id, "Ok"));
         }
     	
         @Override
@@ -153,16 +194,17 @@ public class HeatmapRenderingStaticNoDivide {
         }
     }	
 	
-    public static LinearDRPCTopologyBuilder construct(int numberProcess, int numberAggregator) {
-    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("heatmap_static");
-        builder.addBolt(new ProcessData(), numberProcess);
+    public static LinearDRPCTopologyBuilder construct(int numberRead, int numberProcess, int numberAggregator) {
+    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("offlineheatmap");
+    	builder.addBolt(new ReadData(), numberRead);
+        builder.addBolt(new ProcessData(), numberProcess).shuffleGrouping();
         builder.addBolt(new AggregatorData(), numberAggregator).fieldsGrouping(new Fields("id"));
         return builder;
     }
     
     public static void main(String[] args) throws Exception {
-        LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]), 1);
-    	//LinearDRPCTopologyBuilder builder = construct(3, 1);
+        LinearDRPCTopologyBuilder builder = construct(1, Integer.parseInt(args[1]), 1);
+    	//LinearDRPCTopologyBuilder builder = construct(1, 3, 1);
         Config conf = new Config();
         
         if(args==null || args.length==0) {
@@ -181,23 +223,12 @@ public class HeatmapRenderingStaticNoDivide {
             
             send = send + GuiConstants.MEDIA_WIDTH + Constants.PARAMETER_SPLIT 
             			+ GuiConstants.MEDIA_HEIGHT + Constants.PARAMETER_SPLIT
-            			+ "3";
+            			+ "3" + Constants.PARAMETER_SPLIT + "lala";
             
             // Send data
             long start = System.currentTimeMillis();
-            String imageString = drpc.execute("heatmap_static", send);
-            System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
-            
-            
-            BufferedWriter out = null;
-			FileWriter fw = new FileWriter("data/base64");
-			out = new BufferedWriter(fw);
-			out.write(imageString);
-			out.close();
-            
-            // Draw
-            new ClientFile(ImageUtils.decodeToImage(imageString));
-            new HeatmapFromText("data/17JuneMedia.png", ImageUtils.decodeToImage(imageString));
+            String result = drpc.execute("offlineheatmap", send);
+            System.out.println(result + " Running time: " + (float)(System.currentTimeMillis() - start)/1000);
             
             cluster.shutdown();
             drpc.shutdown();
