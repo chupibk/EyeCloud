@@ -3,6 +3,10 @@
  */
 
 /* Index JS */
+
+/**
+ * All functions of Multi-sourcre gaze visualization
+ */
 $("#clientBtn-s").click(function() {
     var refresh = $('select[name="refresh-s"]').val();
     var np = $('select[name="np-s"]').val();
@@ -106,3 +110,20 @@ $("#offlineDlg-s").dialog({
 $("#offlineDlg-v").dialog({
     autoOpen: false
 });
+
+/**
+ * All function of fixation computation
+ */
+
+$("#fixationBtn").click(function(){
+    $("#fixation-status").text("Uploading... wait for a while");
+});
+
+$('#fixationForm').ajaxForm(function(result) {
+    $("#fixation-status").text(result["message"]);
+    if (result["OK"] === "1"){
+        $("#fixation-return").attr("href", result["path"]);
+        $("#fixation-return").text(result["filename"]);
+        $("#fixation-status").text(result["message"] + " Running time: " + result["time"] + "ms");
+    }
+}); 

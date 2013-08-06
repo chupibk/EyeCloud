@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
         <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <script src="js/lib/ajaxForm.js"></script> 
         <title>Eye Cloud</title>
     </head>
     <body>
@@ -253,7 +254,7 @@
 
                     <div class="appbody">
                         <div class='upload'>
-                            <form action="UploadFixation" method="post"
+                            <form id="fixationForm" action="UploadFixation" method="post"
                                   enctype="multipart/form-data">
                                 <table>
                                     <tr>
@@ -266,20 +267,21 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            Select media file (image):
+                                            Select media file (optional):
                                         </td>
                                         <td>
                                             <input type="file" name="media-data-f" size="50" />
                                         </td>
                                     </tr>
                                 </table>
-                                <input type="submit" value="Upload and Detection" />
+                                <input type="submit" id="fixationBtn" value="Upload and Detection" />
                             </form>
                         </div>
                         <div class='status'>
-                            Upload...
-                            <br/>
-                            Processing...
+                            Status: <a id="fixation-status" href="javascript:void(0)">none</a>
+                        </div>
+                        <div class="result">
+                            Result: <a id="fixation-return" href="javascript:void(0)" target="_blank">empty</a>
                         </div>
                     </div>
                 </div>

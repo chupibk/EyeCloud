@@ -103,7 +103,9 @@ public class UploadFixation extends HttpServlet {
             }
 
             result.put("OK", "1");
-            result.put("message", "Upload successfully " + file.getName());
+            result.put("message", "Upload successfully!!!");
+            result.put("path", Constants.FIXATION_UPLOAD_RESULT.substring(1) + file.getName());
+            result.put("filename", file.getName());
             result.put("time", Long.toString(System.currentTimeMillis() - start));
             response.getWriter().write(new Gson().toJson(result));
             out.close();

@@ -210,7 +210,13 @@ blockquote.style2 {
 }
 
 .app2 .status{
-    margin: 15px 10px;
+    margin: 15px 10px 0px 10px;
+    float: left;
+    width:500px;
+}
+
+.app2 .result{
+    margin: 15px 10px 5px 10px;
     float: left;
     width:500px;
 }
