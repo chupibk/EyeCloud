@@ -262,8 +262,8 @@ public class WebsiteRendering {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]) + 1, 1, Integer.parseInt(args[1]));
-		LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
+		LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[1]) + 1, 1, Integer.parseInt(args[1]));
+		//LinearDRPCTopologyBuilder builder = construct(3, 1, 3);
 		Config conf = new Config();
 
 		if (args == null || args.length == 0) {
