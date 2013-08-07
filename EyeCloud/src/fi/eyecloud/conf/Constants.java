@@ -76,7 +76,7 @@ public class Constants {
 	/**
 	 * Upload host
 	 */
-	public static String UPLOAD_HOST = "http://10.1.2.4/EyeServer/UploadHeatmapFromStorm";
+	public static String UPLOAD_HOST = "http://10.1.2.4/UploadHeatmapFromStorm";
 	public static String HOSTNAME = "10.1.2.4";
 }
 

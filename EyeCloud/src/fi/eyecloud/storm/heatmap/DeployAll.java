@@ -23,7 +23,7 @@ public class DeployAll {
 		Config conf = new Config();
 		
 		conf.setNumWorkers(4);
-		LinearDRPCTopologyBuilder website = WebsiteRendering.construct(nodes/2 + 1, 1, nodes/2 + 1);
+		LinearDRPCTopologyBuilder website = WebsiteRendering.construct(nodes/2, 1, nodes/2);
 		StormSubmitter.submitTopology("website", conf, website.createRemoteTopology());		
 		
 		conf.setNumWorkers(4);
