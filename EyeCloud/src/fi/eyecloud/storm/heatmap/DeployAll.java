@@ -22,11 +22,11 @@ public class DeployAll {
 		
 		Config conf = new Config();
 		
-		conf.setNumWorkers(4);
-		LinearDRPCTopologyBuilder website = WebsiteRendering.construct(nodes/2, 1, nodes/2);
+		conf.setNumWorkers(5);
+		LinearDRPCTopologyBuilder website = WebsiteRendering.construct(3, 1, 3);
 		StormSubmitter.submitTopology("website", conf, website.createRemoteTopology());		
 		
-		conf.setNumWorkers(4);
+		conf.setNumWorkers(5);
 		LinearDRPCTopologyBuilder youtube = YoutubeRendering.construct(2, 2, 2);
 		StormSubmitter.submitTopology("youtube", conf, youtube.createRemoteTopology());	
 		
