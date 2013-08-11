@@ -11,7 +11,7 @@ body {
 }
 
 #container{
-    width: 1000px;
+    width: 1050px;
     margin: 0 auto;
 }
 
@@ -20,7 +20,7 @@ body {
     height:42px;
     background-color:#f2f2f2;
     font-family: Times, serif;
-    width:1000px;
+    width:1050px;
     margin:54px 12px 0;
     border-bottom:1px solid #bec0c4;
 }
@@ -33,7 +33,7 @@ body {
 
 #page_title{
     float: left;
-    width: 300px;
+    width: 400px;
     font-size: 20px;
     margin-top: 10px;
     padding-left: 10px;
@@ -52,20 +52,51 @@ body {
 }
 
 #content{
-    width:1000px;
-    height: 700px;
+    width:1050px;
 }
 
+#content #intro{
+    width:1070px;
+    margin: 20px 0px;
+}
+
+blockquote.style1 {
+    font: 18px/20px italic Times, serif;
+    padding: 8px;
+    background-color: #faebbc;
+    border-top: 1px solid #e1cc89;
+    border-bottom: 1px solid #e1cc89;
+    margin: 5px;
+    background-image: url(images/openquote1.gif);
+    background-position: top left;
+    background-repeat: no-repeat;
+    text-indent: 23px;
+}
+blockquote.style1 span {
+    display: block;
+    background-image: url(images/closequote1.gif);
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+blockquote.style2 {
+    font: 14px/22px normal helvetica, sans-serif;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 90px;
+    padding-left: 15px;
+    border-left: 3px solid #ccc;
+} 
+
 .apptitle{
-    margin: 2px 10px;
+    margin: 10px 10px;
     font-size: 18px;
     font-weight: bold;
     color: deeppink;
 }
 
 #content #app1{
-    width:990px;
-    height: 315px;
+    width:1050px;
     border: 1px solid #bec0c4;
     margin: 5px 10px;
     float: left;
@@ -73,53 +104,141 @@ body {
 
 #content #app1 iframe{
     float: left;
-    width: 450px;
-    height: 315px; 
+    width: 500px;
+    height: 350px; 
+    margin-left: 5px;
 }
 
-#content #app1 #appbody{
+#content .demo{
+    float: left;
+    width: 1050px;
+}
+
+#content .demo img{
+    height: 257px;
+    margin: 0px 5px;
+}
+
+#content .demo2{
+    float: left;
+    width: 1050px;
+}
+
+#content .demo2 img{
+    height: 325px;
+    margin: 0px 5px;
+}
+
+#content .description{
     float: left;
     width: 450px;
-    height: 315px; 
 }
 
-#appbody #static{
-    margin: 5px 7px;
-    height: 150px;
-    border-bottom: 1px solid #bec0c4;
+#content .description2{
+    float: left;
+    width: 800px;
 }
 
-#appbody #video{
+#content .appbody{
+    float: left;
+    width: 1050px;
 }
 
-#content #app2{
-    width:475px;
-    height: 315px;
+.appbody #static{
+    float: left;
+    width: 500px;
+    margin: 0px 10px;
+    border-right: 1px solid #bec0c4;
+}
+
+.appbody #video{
+    float: left;
+    width: 500px;
+    margin: 0px 10px;
+}
+
+.appbody .note1{
+    float: left;
+    width: 500px;
+    margin: 10px 10px;
+}
+
+.appbody .note2{
+    float: left;
+    width: 500px;
+    margin: 10px 10px;
+}
+
+.appbody .offline
+{
+    background: -webkit-linear-gradient(top, #90ce4d, #588824);
+    background: -moz-linear-gradient(top, #90ce4d, #588824);
+    background: -o-linear-gradient(top, #90ce4d, #588824);
+    background: linear-gradient(top, #90ce4d, #588824);
+    border:1px solid #538320;
+}
+
+/* Hover effect*/
+.appbody .offline:hover
+{
+    background: -webkit-linear-gradient(top, #70a338, #304e11);
+    background: -moz-linear-gradient(top, #70a338, #304e11);
+    background: -o-linear-gradient(top, #70a338, #304e11);
+    background: linear-gradient(top, #70a338, #304e11);
+}
+
+#content .app2{
+    width:1050px;
     border: 1px solid #bec0c4;
     margin: 5px 12px;
     float: left;
 }
 
-#content #app3{
-    width:475px;
-    height: 315px;
-    border: 1px solid #bec0c4;
-    margin: 5px 0;
-    float: right;
+#content .app2 .demo table tr{
+    text-align: center;
 }
 
-.upload{
-    margin: 3px 3px;
+#content .app2 .demo2 table tr{
+    text-align: center;
 }
 
-.result{
-    height: 200px;
-    border: 1px solid #bec0c4;
-    margin: 7px 2px;
+.appbody .upload{
+    margin: 15px 10px 5px 10px;
+    float: left;
+    width:500px;
+    border-right: 1px solid #bec0c4;
+}
+
+.appbody .status{
+    margin: 0px 10px 20px 10px;
+    float: left;
+    width:500px;
+}
+
+.appbody .result{
+    margin: 0px 10px 5px 10px;
+    float: left;
+    width:500px;
+}
+
+.appbody .process{
+    float: left;
+    width:500px;
+    height: 88px;
+    margin: 15px 10px 5px 10px;
+}
+
+.appbody .code{
+    font-size: 12px;
+}
+
+.appbody .code table td{
+    padding-left: 5px;
 }
 
 #footer{
-    width:1000px;
-    border-top: 1px solid #bec0c4;
+    width:1050px;
     font-size: 12px;
+    margin-left: 10px;
+    margin-bottom: 100px;
 }

@@ -11,7 +11,7 @@ public class Constants {
     /**
      * Host name
      */
-    public final static String HOSTNAME = "172.31.15.51";
+    public final static String HOSTNAME = "192.168.40.9";
     //public final static String  HOSTNAME = "ec2-54-229-95-189.eu-west-1.compute.amazonaws.com";
     public final static int     PORT        = 3772;
     
@@ -32,4 +32,11 @@ public class Constants {
     public static final int maxMemSize      = 100 * 1024 * 1024;
     public static final String TEMP         = "/tmp/";
     public static final String FRAME_TYPE   = ".png";
+    
+    /* */
+    public static final String FIXATION_UPLOAD_PATH = "/files/fixation/upload/";
+    public static final String FIXATION_UPLOAD_RESULT = "/files/fixation/result/";
+    
+    public static final String HEATMAP_UPLOAD_PATH = "/files/heatmap/upload/";
+    public static final String HEATMAP_UPLOAD_RESULT = "/files/heatmap/result/";
 }
