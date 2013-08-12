@@ -29,6 +29,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.RequestDispatcher;
 
 /**
  *
@@ -40,6 +41,10 @@ public class ValidateData extends HttpServlet {
     private static Configuration conf = null;
     ArrayList<String> arrColumn = new ArrayList<String>();
     ArrayList<String> arrValue = new ArrayList<String>();
+    ArrayList<String> arrTime = new ArrayList<String>();
+    ArrayList<String> arrColumn_lbl = new ArrayList<String>();
+    ArrayList<String> arrValue_lbl = new ArrayList<String>();
+    DataClass dc = new DataClass();
 
     static {
         conf = HBaseConfiguration.create();
@@ -54,6 +59,7 @@ public class ValidateData extends HttpServlet {
         HTable table = null;
         try {
             String filename = "01-LOE-1.txt";
+            counter = 0;
             int begin, end;
             long NosRow = 15;
             boolean breakLoop;
@@ -62,8 +68,9 @@ public class ValidateData extends HttpServlet {
                 breakLoop = false;
                 Get get = new Get(Bytes.toBytes(filename + ":" + a));
                 Result result = table.get(get);
-                arrColumn.clear();;
+                arrColumn.clear();
                 arrValue.clear();
+
                 for (KeyValue kv : result.raw()) {
                     arrColumn.add(new String(kv.getQualifier()));
                     arrValue.add(new String(kv.getValue()));
@@ -75,12 +82,11 @@ public class ValidateData extends HttpServlet {
                 {
                     breakLoop = true;
                 }
-                if(!breakLoop){
+                if (!breakLoop) {
                     addvalidData(filename, "LF", arrColumn, arrValue);
                 }
             }
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -90,6 +96,7 @@ public class ValidateData extends HttpServlet {
         HTable table = null;
         try {
             String filename = "01-01-All-Data.txt";
+            counter = 0;
             long NosRow = 146209;
             int vLindex, vRindex, dLindex, dRindex, gpXLindex, gpXRindex, gpYLindex, gpYRindex;
             Double DLeft, DRight, gpXleft, gpYleft;
@@ -183,7 +190,24 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         //out.println("System ");
-        Read_RawData_forValidation();
+        // Read_RawData_forValidation();
+        // Read_LabelData_forValdiation();
+        arrColumn.clear();
+        arrValue.clear();
+        arrTime.clear();
+        arrColumn_lbl.clear();
+        arrValue_lbl.clear();
+        dc.get_DataHbase("ok", "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+        dc.get_DataHbase_Lbl("", "1", "ValidData", "01-LOE-1.txt", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
+
+        request.setAttribute("arrColumn", arrColumn);
+        request.setAttribute("arrValue", arrValue);
+        request.setAttribute("arrTime", arrTime);
+        request.setAttribute("arrColumn_lbl", arrColumn_lbl);
+        request.setAttribute("arrValue_lbl", arrValue_lbl);
+
+        RequestDispatcher rd = request.getRequestDispatcher("/ShowValidData.jsp");
+        rd.forward(request, response);
     }
 
     /**
