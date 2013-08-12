@@ -6,7 +6,6 @@ package com.Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,18 +50,53 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
     }
 
+    public void Read_LabelData_forValdiation() {
+        HTable table = null;
+        try {
+            String filename = "01-LOE-1.txt";
+            int begin, end;
+            long NosRow = 15;
+            boolean breakLoop;
+            table = new HTable(conf, "RawData_lbl");
+            for (int a = 0; a <= NosRow - 1; a++) {
+                breakLoop = false;
+                Get get = new Get(Bytes.toBytes(filename + ":" + a));
+                Result result = table.get(get);
+                arrColumn.clear();;
+                arrValue.clear();
+                for (KeyValue kv : result.raw()) {
+                    arrColumn.add(new String(kv.getQualifier()));
+                    arrValue.add(new String(kv.getValue()));
+                }
+                begin = arrColumn.indexOf("Begin Time - msec");
+                end = arrColumn.indexOf("End Time - msec");
+
+                if ((arrValue.get(begin).equals("") && arrValue.get(end).equals(""))) // If row is blank or contains garbage
+                {
+                    breakLoop = true;
+                }
+                if(!breakLoop){
+                    addvalidData(filename, "LF", arrColumn, arrValue);
+                }
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void Read_RawData_forValidation() {
 
         HTable table = null;
         try {
             String filename = "01-01-All-Data.txt";
-            long NosRow = 146207;
+            long NosRow = 146209;
             int vLindex, vRindex, dLindex, dRindex, gpXLindex, gpXRindex, gpYLindex, gpYRindex;
             Double DLeft, DRight, gpXleft, gpYleft;
             int DLlength, DRlenght;
             boolean breakflag;
             table = new HTable(conf, "RawData");
-            for (long a = 0; a <= NosRow; a++) {
+            for (long a = 0; a <= NosRow - 1; a++) {
                 breakflag = false;
                 Get get = new Get(Bytes.toBytes(filename + ":" + a));
                 Result result = table.get(get);
