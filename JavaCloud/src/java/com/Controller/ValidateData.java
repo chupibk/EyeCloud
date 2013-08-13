@@ -45,6 +45,7 @@ public class ValidateData extends HttpServlet {
     ArrayList<String> arrColumn_lbl = new ArrayList<String>();
     ArrayList<String> arrValue_lbl = new ArrayList<String>();
     DataClass dc = new DataClass();
+    long loopStarter, looprunner = 1000;
 
     static {
         conf = HBaseConfiguration.create();
@@ -192,14 +193,23 @@ public class ValidateData extends HttpServlet {
         //out.println("System ");
         // Read_RawData_forValidation();
         // Read_LabelData_forValdiation();
+
+
         arrColumn.clear();
         arrValue.clear();
         arrTime.clear();
         arrColumn_lbl.clear();
         arrValue_lbl.clear();
-        dc.get_DataHbase("ok", "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
-        dc.get_DataHbase_Lbl("", "1", "ValidData", "01-LOE-1.txt", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
 
+        String holdNext = request.getParameter("btnNext");
+        if ("Next".equalsIgnoreCase(holdNext)) {
+            loopStarter = looprunner;
+            looprunner = looprunner + 1000;
+            dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+        } else {
+            dc.get_DataHbase(0, 1000, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+        }
+        dc.get_DataHbase_Lbl("", "1", "ValidData", "01-LOE-1.txt", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
         request.setAttribute("arrColumn", arrColumn);
         request.setAttribute("arrValue", arrValue);
         request.setAttribute("arrTime", arrTime);

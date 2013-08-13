@@ -28,24 +28,15 @@ public class DataClass {
         conf = HBaseConfiguration.create();
     }
 
-    public void get_DataHbase(String flag, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value,ArrayList<String> ArrayRD_Time ) throws IOException {
+    public void get_DataHbase(long loopStarter,long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
         HTable table = null;
         try {
-            // int dummy=0;
             String NosRow = "15"; //get_MapFile(rowkey);
-            long loopruner = 0;
-            if (flag.equals("ok")) // if its not a lable data
-            {
-                loopruner = 1000; //Integer.valueOf(NosRow);
-                //   dummy=146190;
-
-            } else {
-                loopruner = Integer.valueOf(NosRow);
-                // dummy=0;
-            }
+          //  loopruner = 1000; //Integer.valueOf(NosRow);
+            //   dummy=146190;
             table = new HTable(conf, tablename);
             List<Get> Rowlist = new ArrayList<Get>();
-            for (long a = 0; a <= loopruner; a++) {
+            for (long a = loopStarter; a <= loopruner; a++) {
                 Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
             }
             int hold_a = 0, hold_b = 0;
@@ -56,7 +47,7 @@ public class DataClass {
                             || Bytes.toString(kv.getQualifier()).equals("GazePointYLeft")
                             || Bytes.toString(kv.getQualifier()).equals("GazePointXRight")
                             || Bytes.toString(kv.getQualifier()).equals("GazePointYRight")
-                            || Bytes.toString(kv.getQualifier()).equals("StimuliID")
+                            || Bytes.toString(kv.getQualifier()).equals("StimuliName")
                             || Bytes.toString(kv.getQualifier()).equals("ValidityRight")
                             || Bytes.toString(kv.getQualifier()).equals("ValidityLeft")
                             || Bytes.toString(kv.getQualifier()).equals("DistanceLeft")) {
@@ -74,11 +65,10 @@ public class DataClass {
                             hold_b++;
                         }
                         ArrayRD_Value.add(new String(kv.getValue()));
-                    }else if(Bytes.toString(kv.getQualifier()).equals("Timestamp")
-                            ){
+                    } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
                         ArrayRD_Time.add(new String(kv.getValue()));
                     }
-                        
+
 
                 }
             }

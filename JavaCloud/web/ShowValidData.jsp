@@ -20,24 +20,25 @@
 
             ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("arrColumn_lbl");
             ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("arrValue_lbl");
-            out.print(Alrd_column.size());
-        %>
+            // out.print(Alrd_column.size());
+%>
         <form id="form1" method="POST" action="./ValidateData">
             <table><tr><td>
                         <div style="overflow: scroll; height: 500px; width: 620px; background: White">
-                            <table><tr> <td style=" vertical-align: top"> <table border="1">
-                                            <tr><td>Timestamp</td> </tr>
+                            <table ><tr> <td style=" vertical-align: top"> 
+                                        <table border="1" style='table-layout:fixed'>
+                                            <tr><td style='text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'>Timestamp</td> </tr>
                                             <tr>
                                                 <% for (int a = 0; a <= arrTime.size() - 1; a++) {%>
                                             <tr>
-                                                <td> <%= arrTime.get(a)%> </td>
+                                                <td style="width: 30%"> <%= arrTime.get(a)%> </td>
                                                 <%
                                                     }
                                                 %>
                                             </tr>
                                         </table> </td> 
                                     <td style=" vertical-align: top">
-                                        <table border="1">
+                                        <table border="1" style='table-layout:fixed'>
                                             <tr>
 
                                                 <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>
@@ -56,7 +57,7 @@
                                             <tr>
                                                 <%                                                } else {%>
 
-                                                <td> <%= Alrd_value.get(a)%> </td>
+                                                <td style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"> <%= Alrd_value.get(a)%> </td>
                                                 <%
                                                         }
                                                     }
@@ -66,6 +67,7 @@
                                         </table>        
                                     </td></tr></table>
                         </div>
+                                            <input type="submit" value="Next" name="btnNext"
                     </td>
                     <td>
                         <div style="overflow: scroll; height: 500px; width: 620px; background: White">
