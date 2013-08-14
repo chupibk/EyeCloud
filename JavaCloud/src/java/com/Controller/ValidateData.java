@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -42,6 +43,8 @@ public class ValidateData extends HttpServlet {
     ArrayList<String> arrColumn = new ArrayList<String>();
     ArrayList<String> arrValue = new ArrayList<String>();
     ArrayList<String> arrTime = new ArrayList<String>();
+    ArrayList<String> arrAvgColumn = new ArrayList<String>();
+    ArrayList<String> arrAvgValue = new ArrayList<String>();
     ArrayList<String> arrColumn_lbl = new ArrayList<String>();
     ArrayList<String> arrValue_lbl = new ArrayList<String>();
     DataClass dc = new DataClass();
@@ -56,13 +59,13 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
     }
 
-    public void Read_LabelData_forValdiation() {
+    public void Read_LabelData_forValdiation(String Efilename, String filename) {
         HTable table = null;
         try {
-            String filename = "01-LOE-1.txt";
+
             counter = 0;
             int begin, end;
-            long NosRow = 15;
+            long NosRow = Integer.valueOf(dc.get_MapFile(filename));
             boolean breakLoop;
             table = new HTable(conf, "RawData");
             for (int a = 0; a <= NosRow - 1; a++) {
@@ -87,19 +90,23 @@ public class ValidateData extends HttpServlet {
                     addvalidData(filename, "LD", arrColumn, arrValue);
                 }
             }
+            dc.InsertMapRecord("ValidData", Efilename, "LD", "1", filename); //Insert validData file name as row and Label data Filename as value 
+            dc.InsertMapRecord("ValidData", filename, "LD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into LD(Label Data) column FamIly
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void Read_RawData_forValidation() {
+    public void Read_RawData_forValidation(String filename, String gxleft, String gxright,
+            String gyleft, String gyright, String dleft, String dright) {
 
         HTable table = null;
         try {
-            String filename = "01-01-All-Data.txt";
+
             counter = 0;
-            long NosRow = 146209;
-            int vLindex, vRindex, dLindex, dRindex, gpXLindex, gpXRindex, gpYLindex, gpYRindex;
+            long NosRow = Integer.valueOf(dc.get_MapFile(filename));
+            int vLindex, vRindex, dLindex, dRindex, gpXLindex,
+                    gpXRindex, gpYLindex, gpYRindex;
             Double DLeft, DRight, gpXleft, gpYleft;
             int DLlength, DRlenght;
             boolean breakflag;
@@ -151,27 +158,68 @@ public class ValidateData extends HttpServlet {
                     if (DRlenght != 2) {
                         DRight = DRight / 10;
                     }
-                    DLeft = (DLeft + DRight) / 2;
-                    arrValue.set(dRindex, String.valueOf(Math.round(DRight)));
-                    arrValue.set(dLindex, String.valueOf(Math.round(DLeft)));
+                    addvalidData(filename, "VD", arrColumn, arrValue);
 
-                    gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
-                    gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
-                    arrValue.set(gpXLindex, String.valueOf(Math.round(gpXleft)));
-                    arrValue.set(gpYLindex, String.valueOf(Math.round(gpYleft)));
+                    arrAvgColumn.add("Timestamp");
+                    arrAvgValue.add(arrValue.get(arrColumn.indexOf("Timestamp")));
 
-                    addvalidData(filename, "RD", arrColumn, arrValue);
+                    arrAvgColumn.add("AvgDist");
+                    if (dright != null && dleft != null) {
+                        DLeft = (DLeft + DRight) / 2;
+                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
+                    } else if (dright != null) {
+                        arrAvgValue.add(String.valueOf(Math.round(DRight)));
+                    } else if (dleft != null) {
+                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
+                    }
+
+                    arrAvgColumn.add("AvgGxleft");
+                    if (gxleft != null && gxright != null) {
+                        gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
+                        arrAvgValue.add(String.valueOf(Math.round(gpXleft)));
+                    } else if (gxleft != null) {
+                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXLindex)))));
+                    } else if (gxright != null) {
+                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXRindex)))));
+                    }
+
+                    arrAvgColumn.add("AvgGyleft");
+                    if (gyleft != null && gyright != null) {
+                        gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
+                        arrAvgValue.add(String.valueOf(Math.round(gpYleft)));
+                    } else if (gyleft != null) {
+                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYLindex)))));
+                    } else if (gyright != null) {
+                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
+                    }
+
+                    addvalidData(filename, "CD", arrAvgColumn, arrAvgValue);
+//                    gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
+//                    gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
+//                    arrValue.set(gpXLindex, String.valueOf(Math.round(gpXleft)));
+//                    arrValue.set(gpYLindex, String.valueOf(Math.round(gpYleft)));
+
+
                 }
             }
-        } catch ( ArrayIndexOutOfBoundsException e ) {
-           e.printStackTrace();
-            
-        }
-        catch (IOException e1){
-            
+            dc.InsertMapRecord("ValidData", filename, "LD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into LD(Label Data) column FamIly
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+
+        } catch (IOException e1) {
         }
 
     }
+
+    public static boolean isNumeric(String str) {
+        try {
+            double d = Double.parseDouble(str);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+    
     long counter = 0;
 
     public void addvalidData(String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
@@ -183,8 +231,9 @@ public class ValidateData extends HttpServlet {
                 put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
             }
             table.put(put);
-            counter++;
-
+            if ("CD".equals(CQ)) {
+                counter++;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -194,11 +243,20 @@ public class ValidateData extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
-        //out.println("System ");
-        Read_RawData_forValidation();
-        Read_LabelData_forValdiation();
+        out.println("System ");
 
+        HttpSession session = request.getSession(false);
+        String Efilename = (String) session.getAttribute("hdnfilename");
+        String Lfilename = (String) session.getAttribute("hdnlblfilename");
+        String gxleft = (String) session.getAttribute("hdnxleft");
+        String gxright = (String) session.getAttribute("hdnxright");
+        String gyleft = (String) session.getAttribute("hdnyleft");
+        String gyright = (String) session.getAttribute("hdnyright");
+        String dleft = (String) session.getAttribute("hdndleft");
+        String dright = (String) session.getAttribute("hdndright");
 
+        Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright);
+        Read_LabelData_forValdiation(Efilename, Lfilename);
         arrColumn.clear();
         arrValue.clear();
         arrTime.clear();
@@ -209,11 +267,11 @@ public class ValidateData extends HttpServlet {
         if ("Next".equalsIgnoreCase(holdNext)) {
             loopStarter = looprunner;
             looprunner = looprunner + 1000;
-            dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+            dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         } else {
-            dc.get_DataHbase(0, 1000, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+            dc.get_DataHbase(0, 1000, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         }
-        dc.get_DataHbase_common(0, 0, "", "1", "ValidData", "01-LOE-1.txt", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
+        dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
         request.setAttribute("arrColumn", arrColumn);
         request.setAttribute("arrValue", arrValue);
         request.setAttribute("arrTime", arrTime);

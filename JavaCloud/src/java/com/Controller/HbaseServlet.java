@@ -104,6 +104,9 @@ public class HbaseServlet extends HttpServlet {
             e.printStackTrace();
         } 
     }
+     static {
+        conf = HBaseConfiguration.create();
+    }
     
     public static void creatTable(String tableName, String[] familys)
             throws Exception {
@@ -122,19 +125,28 @@ public class HbaseServlet extends HttpServlet {
         }
     }
     
-
-    public void main(String[] args) {
+     public static String get_MapFile(String rowkey) {
+        String holdvalue = null;
         try {
-            String tablename = "data";
-            String[] familys = {"grade", "course"};
-            creatTable(tablename, familys);
+            HTable table = new HTable(conf, "RawData");
+            Get get = new Get(rowkey.getBytes());
 
-            addRecord(tablename, "zkb", "grade", "", "5");
-            addRecord(tablename, "zkb", "course", "", "90");
-            addRecord(tablename, "zkb", "course", "math", "97");
-            addRecord(tablename, "zkb", "course", "art", "87");
-            addRecord(tablename, "baoniu", "grade", "", "4");
-            addRecord(tablename, "baoniu", "course", "math", "89");
+            Result rs = table.get(get);
+            for (KeyValue kv : rs.raw()) {
+                holdvalue = new String(kv.getValue());
+                System.out.println(holdvalue);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return holdvalue;
+
+    }
+
+    public static void main(String[] args) {
+        try {
+             System.out.println(get_MapFile("01-01-All-Data.txt"));
 
 //            System.out.println("=========get one record========");
 //            HbaseTest.getonerecord(tablename, "baoniu");

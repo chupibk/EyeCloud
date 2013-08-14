@@ -314,7 +314,8 @@ public class LoadData extends HttpServlet {
                         session.setAttribute("hdnyright", hdnyright);
                         session.setAttribute("hdndleft", hdndleft);
                         session.setAttribute("hdndright", hdndright);
-                        // session.setAttribute("hdnyleft", hdnyleft);
+                        session.setAttribute("hdnfilename", hdnfilename);
+                        session.setAttribute("hdnlblfilename", hdnlblfilename);
 
                         RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp");
                         rd.forward(request, response);
@@ -434,7 +435,7 @@ public class LoadData extends HttpServlet {
                         break;
                     }
                 }
-                InsertRecord("RawData", hdnfilename, "MF", "1", String.valueOf(countrow)); // 1  is userID
+                dc.InsertMapRecord("RawData", hdnfilename, "MF", "1", String.valueOf(countrow)); // 1  is userID
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -474,74 +475,13 @@ public class LoadData extends HttpServlet {
                         break;
                     }
                 }
-                InsertRecord("RawData", hdnfilename, "LF", "1", hdnlblfilename); //Insert RawData file name in RawData 
-                InsertRecord("RawData", hdnlblfilename, "MF", "1", String.valueOf(countrow)); // Insert nos of records in RawData
+                dc.InsertMapRecord("RawData", hdnfilename, "LF", "1", hdnlblfilename); //Insert RawData file name in RawData 
+                dc.InsertMapRecord("RawData", hdnlblfilename, "MF", "1", String.valueOf(countrow)); // Insert nos of records in RawData
 
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-//    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
-//        HTable table = null;
-//        try {
-//            // int dummy=0;
-//            // String NosRow = get_MapFile(rowkey);
-//            long loopruner = 0;
-//            if (rowkey.equals(hdnfilename)) {
-//                loopruner = 1000; //Integer.valueOf(NosRow);
-//                //   dummy=146190;
-//
-//            } else {
-//                // loopruner = Integer.valueOf(NosRow);
-//                // dummy=0;
-//            }
-//            table = new HTable(conf, tablename);
-//            List<Get> Rowlist = new ArrayList<Get>();
-//            for (long a = 0; a <= loopruner; a++) {
-//                Rowlist.add(new Get(Bytes.toBytes(rowkey + ":" + a)));
-//            }
-//            int hold_a = 0, hold_b = 0;
-//            Result[] result = table.get(Rowlist);
-//            for (Result r : result) {
-//                for (KeyValue kv : r.raw()) {
-//                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
-//                        ArrayRD_Column.add(new String(kv.getQualifier()));
-//                        hold_a++;
-//                    } else if (hold_b == 0) {
-//                        ArrayRD_Value.add("/");
-//                        hold_b = 1;
-//                    } else {
-//                        if (hold_a == hold_b) {
-//                            ArrayRD_Value.add("/");
-//                            hold_b = 0;
-//                        }
-//                        hold_b++;
-//                    }
-//                    ArrayRD_Value.add(new String(kv.getValue()));
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (table != null) {
-//                table.close();
-//            }
-//        }
-//    }
-    public void InsertRecord(String tablename, String rowkey, String CF, String qualifier, String value) {
-
-        try {
-            HTable table = new HTable(conf, tablename);
-            Put put = new Put(Bytes.toBytes(rowkey));
-            put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value));
-            table.put(put);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

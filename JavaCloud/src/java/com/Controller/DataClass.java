@@ -12,6 +12,7 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -66,8 +67,6 @@ public class DataClass {
                     } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
                         ArrayRD_Time.add(new String(kv.getValue()));
                     }
-
-
                 }
             }
         } catch (IOException e) {
@@ -83,7 +82,6 @@ public class DataClass {
     public String get_MapFile(String rowkey) {
         String holdvalue = null;
         try {
-
             HTable table = new HTable(conf, "RawData");
             Get get = new Get(rowkey.getBytes());
 
@@ -96,6 +94,20 @@ public class DataClass {
             e.printStackTrace();
         }
         return holdvalue;
+
+    }
+
+    public void InsertMapRecord(String tablename, String rowkey, String CF, String qualifier, String value) {
+
+        try {
+            HTable table = new HTable(conf, tablename);
+            Put put = new Put(Bytes.toBytes(rowkey));
+            put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+            table.put(put);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -146,4 +158,5 @@ public class DataClass {
         }
 
     }
+
 }
