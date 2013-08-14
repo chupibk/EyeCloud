@@ -28,15 +28,13 @@ public class DataClass {
         conf = HBaseConfiguration.create();
     }
 
-    public void get_DataHbase(long loopStarter,long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
+    public void get_DataHbase(long loopStarter, long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
         HTable table = null;
         try {
-            String NosRow = "15"; //get_MapFile(rowkey);
-          //  loopruner = 1000; //Integer.valueOf(NosRow);
-            //   dummy=146190;
+
             table = new HTable(conf, tablename);
             List<Get> Rowlist = new ArrayList<Get>();
-            for (long a = loopStarter; a <= loopruner; a++) {
+            for (long a = loopStarter; a <= loopruner - 1; a++) {
                 Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
             }
             int hold_a = 0, hold_b = 0;
@@ -82,24 +80,38 @@ public class DataClass {
 
     }
 
-    public void get_DataHbase_Lbl(String flag, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
+    public String get_MapFile(String rowkey) {
+        String holdvalue = null;
+        try {
+
+            HTable table = new HTable(conf, "RawData");
+            Get get = new Get(rowkey.getBytes());
+
+            Result rs = table.get(get);
+            for (KeyValue kv : rs.raw()) {
+                holdvalue = new String(kv.getValue());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return holdvalue;
+
+    }
+
+    public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
         try {
-            // int dummy=0;
-            String NosRow = "15"; //get_MapFile(rowkey);
-            long loopruner = 0;
             if (flag.equals("ok")) // if its not a lable data
             {
-                loopruner = 9; //Integer.valueOf(NosRow);
-                //   dummy=146190;
-
             } else {
+                loopStarter = 0;
+                String NosRow = get_MapFile(rowkey);
                 loopruner = Integer.valueOf(NosRow);
-                // dummy=0;
             }
             table = new HTable(conf, tablename);
             List<Get> Rowlist = new ArrayList<Get>();
-            for (long a = 0; a <= loopruner; a++) {
+            for (long a = loopStarter; a <= loopruner - 1; a++) {
                 Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
             }
             int hold_a = 0, hold_b = 0;

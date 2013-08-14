@@ -64,10 +64,10 @@ public class ValidateData extends HttpServlet {
             int begin, end;
             long NosRow = 15;
             boolean breakLoop;
-            table = new HTable(conf, "RawData_lbl");
+            table = new HTable(conf, "RawData");
             for (int a = 0; a <= NosRow - 1; a++) {
                 breakLoop = false;
-                Get get = new Get(Bytes.toBytes(filename + ":" + a));
+                Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a));
                 Result result = table.get(get);
                 arrColumn.clear();
                 arrValue.clear();
@@ -84,7 +84,7 @@ public class ValidateData extends HttpServlet {
                     breakLoop = true;
                 }
                 if (!breakLoop) {
-                    addvalidData(filename, "LF", arrColumn, arrValue);
+                    addvalidData(filename, "LD", arrColumn, arrValue);
                 }
             }
         } catch (IOException e) {
@@ -106,7 +106,7 @@ public class ValidateData extends HttpServlet {
             table = new HTable(conf, "RawData");
             for (long a = 0; a <= NosRow - 1; a++) {
                 breakflag = false;
-                Get get = new Get(Bytes.toBytes(filename + ":" + a));
+                Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a));
                 Result result = table.get(get);
                 arrColumn.clear();
                 arrValue.clear();
@@ -163,8 +163,12 @@ public class ValidateData extends HttpServlet {
                     addvalidData(filename, "RD", arrColumn, arrValue);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch ( ArrayIndexOutOfBoundsException e ) {
+           e.printStackTrace();
+            
+        }
+        catch (IOException e1){
+            
         }
 
     }
@@ -191,8 +195,8 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         //out.println("System ");
-        // Read_RawData_forValidation();
-        // Read_LabelData_forValdiation();
+        Read_RawData_forValidation();
+        Read_LabelData_forValdiation();
 
 
         arrColumn.clear();
@@ -209,7 +213,7 @@ public class ValidateData extends HttpServlet {
         } else {
             dc.get_DataHbase(0, 1000, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         }
-        dc.get_DataHbase_Lbl("", "1", "ValidData", "01-LOE-1.txt", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
+        dc.get_DataHbase_common(0, 0, "", "1", "ValidData", "01-LOE-1.txt", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
         request.setAttribute("arrColumn", arrColumn);
         request.setAttribute("arrValue", arrValue);
         request.setAttribute("arrTime", arrTime);

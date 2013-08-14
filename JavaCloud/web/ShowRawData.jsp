@@ -14,8 +14,10 @@
     </head>
     <body>
         <h2>Raw Data!</h2>
-        
+       
         <form id="form1" method="POST" action="./ValidateData">
+            
+           
             <input id="btnvalidate" type="submit" value="Start Validating.."/>
         </form>
     </body>

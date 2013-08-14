@@ -31,6 +31,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import javax.servlet.*;
+import javax.servlet.http.HttpSession;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -80,6 +81,7 @@ public class LoadData extends HttpServlet {
     ArrayList<String> Alrd_lbl_column = new ArrayList<String>();
     // StringBuffer largeStr= new StringBuffer();
     String largeStr = null, largeStr_lbl = null;
+    DataClass dc = new DataClass();
     private static Configuration conf = null;
 
     static {
@@ -291,18 +293,29 @@ public class LoadData extends HttpServlet {
 
                     } else if ("btnsave".equals(fielditem.getFieldName())) {
                         //System.out.println(fielditem.getString());
-                       // addrawData();
-                        //  addLabelrawData();
+                        addrawData();
+                        addLabelrawData();
                         Alrd_column.clear();
                         Alrd_value.clear();
                         Alrd_lbl_column.clear();
                         Alrd_lbl_value.clear();
-                        get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
-                        get_RawData("RawData_lbl", hdnlblfilename, Alrd_lbl_column, Alrd_lbl_value);
+                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, Alrd_column, Alrd_value);
+                        // get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
+                        dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, Alrd_lbl_column, Alrd_lbl_value);
                         request.setAttribute("Alrd_column", Alrd_column);
                         request.setAttribute("Alrd_value", Alrd_value);
                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
                         request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);
+
+                        HttpSession session = request.getSession(false);
+                        session.setAttribute("hdnxleft", hdnxleft);
+                        session.setAttribute("hdnyleft", hdnyleft);
+                        session.setAttribute("hdnxright", hdnxright);
+                        session.setAttribute("hdnyright", hdnyright);
+                        session.setAttribute("hdndleft", hdndleft);
+                        session.setAttribute("hdndright", hdndright);
+                        // session.setAttribute("hdnyleft", hdnyleft);
+
                         RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp");
                         rd.forward(request, response);
                         break;
@@ -343,7 +356,6 @@ public class LoadData extends HttpServlet {
 
                 }
             }
-
             List lstpart = null;
             if (hdnpart != null && !hdnpart.isEmpty()) {
                 request.setAttribute("selectedpart", hdnpart);
@@ -394,41 +406,40 @@ public class LoadData extends HttpServlet {
             if (largeStr != null && !largeStr.isEmpty()) {
                 int countcoulmn = 0;
                 long countrow = 0;
+
                 largeStr = largeStr.replaceAll("\\r\\n", "	");
+
                 String[] strArr = largeStr.split("	");
                 ArrayList<String> list = new ArrayList<String>(arrls.values());
                 HTable table = new HTable(conf, "RawData");
-                Put put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
+                Put put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); // userID + FIleName + RowNumber
                 for (int a = 0; a <= strArr.length - 1; a++) {
                     for (int b = countcoulmn; b <= list.size() - 1; b++) {
-                        if (strArr[a] != null && !strArr[a].isEmpty()) {
-                            if (list.get(b).equals(strArr[a])) {
-                            } else {
-                                put.add(Bytes.toBytes("r"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
-                            }
-                            if ((countcoulmn + 1) == list.size()) {
-                                countcoulmn = 0;
-                                if (put.size() != 0) {
-                                    countrow++;
-                                    table.put(put);
-                                    put = new Put(Bytes.toBytes(hdnfilename + ":" + countrow));
-                                }
-
-                            } else {
-                                b++;
-                                countcoulmn = b;
-                            }
-                            break;
+                        if (list.get(b).equals(strArr[a])) {
+                        } else {
+                            put.add(Bytes.toBytes("EF"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a])); // Column family  is EF(EyeTracker File)
                         }
+                        if ((countcoulmn + 1) == list.size()) {
+                            countcoulmn = 0;
+                            if (put.size() != 0) {
+                                countrow++;
+                                table.put(put);
+                                put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); // userID + FIleName + RowNumber
+                            }
+
+                        } else {
+                            b++;
+                            countcoulmn = b;
+                        }
+                        break;
                     }
                 }
-                InsertRecord("MapFile", hdnfilename, "m", "1", String.valueOf(countrow));
+                InsertRecord("RawData", hdnfilename, "MF", "1", String.valueOf(countrow)); // 1  is userID
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 
     public void addLabelrawData() {
         try {
@@ -439,21 +450,21 @@ public class LoadData extends HttpServlet {
                 String[] strArr = largeStr_lbl.split("	");
                 ArrayList<String> list = new ArrayList<String>(lblarrls.values());
                 list.remove("Select");
-                HTable table = new HTable(conf, "RawData_lbl");
-                Put put = new Put(Bytes.toBytes(hdnlblfilename + ":" + countrow));
+                HTable table = new HTable(conf, "RawData");
+                Put put = new Put(Bytes.toBytes("1" + ":" + hdnlblfilename + ":" + countrow)); // userID + FIleName + RowNumber
                 for (int a = 0; a <= strArr.length - 1; a++) {
                     for (int b = countcoulmn; b <= list.size() - 1; b++) {
                         if (list.get(b).equals(strArr[a])) {
                         } else {
-                            put.add(Bytes.toBytes("l"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a]));
-                            
+                            put.add(Bytes.toBytes("LF"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a])); //LF stands for label file
+
                         }
                         if ((countcoulmn + 1) == list.size()) {
                             countcoulmn = 0;
                             if (put.size() != 0) {
                                 countrow++;
                                 table.put(put);
-                                put = new Put(Bytes.toBytes(hdnlblfilename + ":" + countrow));
+                                put = new Put(Bytes.toBytes("1" + ":" + hdnlblfilename + ":" + countrow)); // userID + FIleName + RowNumber
                             }
 
                         } else {
@@ -463,8 +474,8 @@ public class LoadData extends HttpServlet {
                         break;
                     }
                 }
-                InsertRecord("RawData_lbl", hdnfilename, "l", "1", hdnlblfilename); //Insert RawData file name in RawData_lbl 
-                InsertRecord("MapFile", hdnlblfilename, "m", "1", String.valueOf(countrow)); // Insert In MapFile
+                InsertRecord("RawData", hdnfilename, "LF", "1", hdnlblfilename); //Insert RawData file name in RawData 
+                InsertRecord("RawData", hdnlblfilename, "MF", "1", String.valueOf(countrow)); // Insert nos of records in RawData
 
             }
         } catch (IOException e) {
@@ -472,74 +483,53 @@ public class LoadData extends HttpServlet {
         }
     }
 
-    public String get_MapFile(String rowkey) {
-        String holdvalue = null;
-        try {
-
-            HTable table = new HTable(conf, "MapFile");
-            Get get = new Get(rowkey.getBytes());
-
-            Result rs = table.get(get);
-            for (KeyValue kv : rs.raw()) {
-                holdvalue = new String(kv.getValue());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return holdvalue;
-
-    }
-
-    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
-        HTable table = null;
-        try {
-           // int dummy=0;
-            String NosRow = get_MapFile(rowkey);
-            long loopruner = 0;
-            if (rowkey.equals(hdnfilename)) {
-                loopruner = 1000; //Integer.valueOf(NosRow);
-             //   dummy=146190;
-                
-            } else {
-                loopruner = Integer.valueOf(NosRow);
-               // dummy=0;
-            }
-            table = new HTable(conf, tablename);
-            List<Get> Rowlist = new ArrayList<Get>();
-            for (long a = 0; a <= loopruner; a++) {
-                Rowlist.add(new Get(Bytes.toBytes(rowkey + ":" + a)));
-            }
-            int hold_a = 0, hold_b = 0;
-            Result[] result = table.get(Rowlist);
-            for (Result r : result) {
-                for (KeyValue kv : r.raw()) {
-                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
-                        ArrayRD_Column.add(new String(kv.getQualifier()));
-                        hold_a++;
-                    } else if (hold_b == 0) {
-                        ArrayRD_Value.add("/");
-                        hold_b = 1;
-                    } else {
-                        if (hold_a == hold_b) {
-                            ArrayRD_Value.add("/");
-                            hold_b = 0;
-                        }
-                        hold_b++;
-                    }
-                    ArrayRD_Value.add(new String(kv.getValue()));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (table != null) {
-                table.close();
-            }
-        }
-
-    }
-
+//    public void get_RawData(String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
+//        HTable table = null;
+//        try {
+//            // int dummy=0;
+//            // String NosRow = get_MapFile(rowkey);
+//            long loopruner = 0;
+//            if (rowkey.equals(hdnfilename)) {
+//                loopruner = 1000; //Integer.valueOf(NosRow);
+//                //   dummy=146190;
+//
+//            } else {
+//                // loopruner = Integer.valueOf(NosRow);
+//                // dummy=0;
+//            }
+//            table = new HTable(conf, tablename);
+//            List<Get> Rowlist = new ArrayList<Get>();
+//            for (long a = 0; a <= loopruner; a++) {
+//                Rowlist.add(new Get(Bytes.toBytes(rowkey + ":" + a)));
+//            }
+//            int hold_a = 0, hold_b = 0;
+//            Result[] result = table.get(Rowlist);
+//            for (Result r : result) {
+//                for (KeyValue kv : r.raw()) {
+//                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
+//                        ArrayRD_Column.add(new String(kv.getQualifier()));
+//                        hold_a++;
+//                    } else if (hold_b == 0) {
+//                        ArrayRD_Value.add("/");
+//                        hold_b = 1;
+//                    } else {
+//                        if (hold_a == hold_b) {
+//                            ArrayRD_Value.add("/");
+//                            hold_b = 0;
+//                        }
+//                        hold_b++;
+//                    }
+//                    ArrayRD_Value.add(new String(kv.getValue()));
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (table != null) {
+//                table.close();
+//            }
+//        }
+//    }
     public void InsertRecord(String tablename, String rowkey, String CF, String qualifier, String value) {
 
         try {

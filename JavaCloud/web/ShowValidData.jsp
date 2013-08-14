@@ -20,7 +20,10 @@
 
             ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("arrColumn_lbl");
             ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("arrValue_lbl");
-            // out.print(Alrd_column.size());
+            
+             //out.println(session.getAttribute("hdnxleft"));
+             
+              
 %>
         <form id="form1" method="POST" action="./ValidateData">
             <table><tr><td>
