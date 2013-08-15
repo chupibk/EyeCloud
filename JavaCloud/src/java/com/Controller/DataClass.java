@@ -33,12 +33,11 @@ public class DataClass {
     // RawData column family structure
     // hbase(main):006:0> create 'ValidData','VD','LD','CD'
     // ValidData column family structure
-    
     public void get_DataHbase(long loopStarter, long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
-        HTable table = null;
+
         try {
 
-            table = new HTable(conf, tablename);
+            HTable table = new HTable(conf, tablename);
             List<Get> Rowlist = new ArrayList<Get>();
             for (long a = loopStarter; a <= loopruner - 1; a++) {
                 Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
@@ -77,10 +76,6 @@ public class DataClass {
             table.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (table != null) {
-                table.close();
-            }
         }
 
     }
@@ -130,7 +125,7 @@ public class DataClass {
                 loopruner = Integer.valueOf(NosRow);
             }
             table = new HTable(conf, tablename);
-        
+
             List<Get> Rowlist = new ArrayList<Get>();
             for (long a = loopStarter; a <= loopruner - 1; a++) {
                 Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));

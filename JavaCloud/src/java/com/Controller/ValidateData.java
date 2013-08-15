@@ -161,39 +161,39 @@ public class ValidateData extends HttpServlet {
                     }
                     addvalidData(filename, "VD", arrColumn, arrValue);
 
-                    arrAvgColumn.add("Timestamp");
-                    arrAvgValue.add(arrValue.get(arrColumn.indexOf("Timestamp")));
-
-                    arrAvgColumn.add("AvgDist");
-                    if (dright != null && dleft != null) {
-                        DLeft = (DLeft + DRight) / 2;
-                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
-                    } else if (dright != null) {
-                        arrAvgValue.add(String.valueOf(Math.round(DRight)));
-                    } else if (dleft != null) {
-                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
-                    }
-
-                    arrAvgColumn.add("AvgGxleft");
-                    if (gxleft != null && gxright != null) {
-                        gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
-                        arrAvgValue.add(String.valueOf(Math.round(gpXleft)));
-                    } else if (gxleft != null) {
-                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXLindex)))));
-                    } else if (gxright != null) {
-                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXRindex)))));
-                    }
-
-                    arrAvgColumn.add("AvgGyleft");
-                    if (gyleft != null && gyright != null) {
-                        gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
-                        arrAvgValue.add(String.valueOf(Math.round(gpYleft)));
-                    } else if (gyleft != null) {
-                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYLindex)))));
-                    } else if (gyright != null) {
-                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
-                    }
-                    addvalidData(filename, "CD", arrAvgColumn, arrAvgValue);
+//                    arrAvgColumn.add("Timestamp");
+//                    arrAvgValue.add(arrValue.get(arrColumn.indexOf("Timestamp")));
+//
+//                    arrAvgColumn.add("AvgDist");
+//                    if (dright != null && dleft != null) {
+//                        DLeft = (DLeft + DRight) / 2;
+//                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
+//                    } else if (dright != null) {
+//                        arrAvgValue.add(String.valueOf(Math.round(DRight)));
+//                    } else if (dleft != null) {
+//                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
+//                    }
+//
+//                    arrAvgColumn.add("AvgGxleft");
+//                    if (gxleft != null && gxright != null) {
+//                        gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
+//                        arrAvgValue.add(String.valueOf(Math.round(gpXleft)));
+//                    } else if (gxleft != null) {
+//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXLindex)))));
+//                    } else if (gxright != null) {
+//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXRindex)))));
+//                    }
+//
+//                    arrAvgColumn.add("AvgGyleft");
+//                    if (gyleft != null && gyright != null) {
+//                        gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
+//                        arrAvgValue.add(String.valueOf(Math.round(gpYleft)));
+//                    } else if (gyleft != null) {
+//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYLindex)))));
+//                    } else if (gyright != null) {
+//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
+//                    }
+//                    addvalidData(filename, "CD", arrAvgColumn, arrAvgValue);
 
                 }
             }
@@ -219,7 +219,8 @@ public class ValidateData extends HttpServlet {
                 put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
             }
             table.put(put);
-            if ("CD".equals(CQ)) {
+            // if ("CD".equals(CQ))
+            {
                 counter++;
             }
             table.flushCommits();
@@ -234,7 +235,6 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         //out.println("System ");
-
         HttpSession session = request.getSession(false);
         String Efilename = (String) session.getAttribute("hdnfilename");
         String Lfilename = (String) session.getAttribute("hdnlblfilename");
@@ -245,13 +245,9 @@ public class ValidateData extends HttpServlet {
         String dleft = (String) session.getAttribute("hdndleft");
         String dright = (String) session.getAttribute("hdndright");
 
-        Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright);
-        Read_LabelData_forValdiation(Efilename, Lfilename);
         arrColumn.clear();
         arrValue.clear();
         arrTime.clear();
-        arrColumn_lbl.clear();
-        arrValue_lbl.clear();
 
         String holdNext = request.getParameter("btnNext");
         if ("Next".equalsIgnoreCase(holdNext)) {
@@ -259,9 +255,17 @@ public class ValidateData extends HttpServlet {
             looprunner = looprunner + 1000;
             dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         } else {
+            Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright);
+            Read_LabelData_forValdiation(Efilename, Lfilename);
+            arrColumn.clear();
+            arrValue.clear();
+            arrTime.clear();
+            arrColumn_lbl.clear();
+            arrValue_lbl.clear();
             dc.get_DataHbase(0, 1000, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+            dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, "LD", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
         }
-        dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename,"LD", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
+
         request.setAttribute("arrColumn", arrColumn);
         request.setAttribute("arrValue", arrValue);
         request.setAttribute("arrTime", arrTime);
