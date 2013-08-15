@@ -92,7 +92,7 @@ public class ValidateData extends HttpServlet {
             }
             table.close();
             dc.InsertMapRecord("ValidData", Efilename, "LD", "1", filename); //Insert validData file name as row and Label data Filename as value 
-            dc.InsertMapRecord("ValidData", filename, "LD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into LD(Label Data) column FamIly
+            dc.InsertMapRecord("ValidData", filename, "MD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into LD(Label Data) column FamIly
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,46 +159,47 @@ public class ValidateData extends HttpServlet {
                     if (DRlenght != 2) {
                         DRight = DRight / 10;
                     }
-                    addvalidData(filename, "VD", arrColumn, arrValue);
 
-//                    arrAvgColumn.add("Timestamp");
-//                    arrAvgValue.add(arrValue.get(arrColumn.indexOf("Timestamp")));
-//
-//                    arrAvgColumn.add("AvgDist");
-//                    if (dright != null && dleft != null) {
-//                        DLeft = (DLeft + DRight) / 2;
-//                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
-//                    } else if (dright != null) {
-//                        arrAvgValue.add(String.valueOf(Math.round(DRight)));
-//                    } else if (dleft != null) {
-//                        arrAvgValue.add(String.valueOf(Math.round(DLeft)));
-//                    }
-//
-//                    arrAvgColumn.add("AvgGxleft");
-//                    if (gxleft != null && gxright != null) {
-//                        gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
-//                        arrAvgValue.add(String.valueOf(Math.round(gpXleft)));
-//                    } else if (gxleft != null) {
-//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXLindex)))));
-//                    } else if (gxright != null) {
-//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXRindex)))));
-//                    }
-//
-//                    arrAvgColumn.add("AvgGyleft");
-//                    if (gyleft != null && gyright != null) {
-//                        gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
-//                        arrAvgValue.add(String.valueOf(Math.round(gpYleft)));
-//                    } else if (gyleft != null) {
-//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYLindex)))));
-//                    } else if (gyright != null) {
-//                        arrAvgValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
-//                    }
-//                    addvalidData(filename, "CD", arrAvgColumn, arrAvgValue);
+                    arrValue.set(dLindex, String.valueOf(Math.round(DLeft)));
+                    arrValue.set(dRindex, String.valueOf(Math.round(DRight)));
+                    //arrAvgColumn.add("Timestamp");
+                    // arrAvgValue.add(arrValue.get(arrColumn.indexOf("Timestamp")));
+
+                    arrColumn.add("AvgDist");
+                    if ((dright != null && !dright.equals("")) && (dleft != null && !dleft.equals(""))) {
+                        DLeft = (DLeft + DRight) / 2;
+                        arrValue.add(String.valueOf(Math.round(DLeft)));
+                    } else if (dright != null && !dright.equals("")) {
+                        arrValue.add(String.valueOf(Math.round(DRight)));
+                    } else if (dleft != null && !dleft.equals("")) {
+                        arrValue.add(String.valueOf(Math.round(DLeft)));
+                    }
+
+                    arrColumn.add("AvgGxleft");
+                    if ((gxleft != null && !gxleft.equals("")) && (gxright != null && !gxright.equals(""))) {
+                        gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
+                        arrValue.add(String.valueOf(Math.round(gpXleft)));
+                    } else if (gxleft != null && !gxleft.equals("")) {
+                        arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXLindex)))));
+                    } else if (gxright != null && !gxright.equals("")) {
+                        arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXRindex)))));
+                    }
+
+                    arrColumn.add("AvgGyleft");
+                    if ((gyleft != null && !gyleft.equals("")) && (gyright != null && !gyright.equals(""))) {
+                        gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
+                        arrValue.add(String.valueOf(Math.round(gpYleft)));
+                    } else if (gyleft != null && !gyleft.equals("")) {
+                        arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYLindex)))));
+                    } else if (gyright != null && !gyright.equals("")) {
+                        arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
+                    }
+                    addvalidData(filename, "VD", arrColumn, arrValue);
 
                 }
             }
             table.close();
-            dc.InsertMapRecord("ValidData", filename, "LD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into LD(Label Data) column FamIly
+            dc.InsertMapRecord("ValidData", filename, "MD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into MD(Map Data) column FamIly
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
 
@@ -263,7 +264,7 @@ public class ValidateData extends HttpServlet {
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
             dc.get_DataHbase(0, 1000, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
-            dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, "LD", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
+            dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
         }
 
         request.setAttribute("arrColumn", arrColumn);
