@@ -299,9 +299,9 @@ public class LoadData extends HttpServlet {
                         Alrd_value.clear();
                         Alrd_lbl_column.clear();
                         Alrd_lbl_value.clear();
-                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, Alrd_column, Alrd_value);
+                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename,"MF", Alrd_column, Alrd_value);
                         // get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
-                        dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, Alrd_lbl_column, Alrd_lbl_value);
+                        dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename,"MF", Alrd_lbl_column, Alrd_lbl_value);
                         request.setAttribute("Alrd_column", Alrd_column);
                         request.setAttribute("Alrd_value", Alrd_value);
                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
@@ -407,12 +407,12 @@ public class LoadData extends HttpServlet {
             if (largeStr != null && !largeStr.isEmpty()) {
                 int countcoulmn = 0;
                 long countrow = 0;
-
                 largeStr = largeStr.replaceAll("\\r\\n", "	");
-
                 String[] strArr = largeStr.split("	");
                 ArrayList<String> list = new ArrayList<String>(arrls.values());
                 HTable table = new HTable(conf, "RawData");
+                table.setAutoFlush(false);
+                table.setWriteBufferSize(1024 * 1024 * 12);
                 Put put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); // userID + FIleName + RowNumber
                 for (int a = 0; a <= strArr.length - 1; a++) {
                     for (int b = countcoulmn; b <= list.size() - 1; b++) {
@@ -435,6 +435,8 @@ public class LoadData extends HttpServlet {
                         break;
                     }
                 }
+                table.flushCommits();
+                table.close();
                 dc.InsertMapRecord("RawData", hdnfilename, "MF", "1", String.valueOf(countrow)); // 1  is userID
             }
         } catch (IOException e) {
@@ -452,6 +454,8 @@ public class LoadData extends HttpServlet {
                 ArrayList<String> list = new ArrayList<String>(lblarrls.values());
                 list.remove("Select");
                 HTable table = new HTable(conf, "RawData");
+                table.setAutoFlush(false);
+                table.setWriteBufferSize(1024 * 1024 * 12);
                 Put put = new Put(Bytes.toBytes("1" + ":" + hdnlblfilename + ":" + countrow)); // userID + FIleName + RowNumber
                 for (int a = 0; a <= strArr.length - 1; a++) {
                     for (int b = countcoulmn; b <= list.size() - 1; b++) {
@@ -475,6 +479,8 @@ public class LoadData extends HttpServlet {
                         break;
                     }
                 }
+                table.flushCommits();
+                table.close();
                 dc.InsertMapRecord("RawData", hdnfilename, "LF", "1", hdnlblfilename); //Insert RawData file name in RawData 
                 dc.InsertMapRecord("RawData", hdnlblfilename, "MF", "1", String.valueOf(countrow)); // Insert nos of records in RawData
 

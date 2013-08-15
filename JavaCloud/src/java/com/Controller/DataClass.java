@@ -29,6 +29,11 @@ public class DataClass {
         conf = HBaseConfiguration.create();
     }
 
+    // hbase(main):005:0> create 'RawData','EF','LF','MF' 
+    // RawData column family structure
+    // hbase(main):006:0> create 'ValidData','VD','LD','CD'
+    // ValidData column family structure
+    
     public void get_DataHbase(long loopStarter, long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
         HTable table = null;
         try {
@@ -69,6 +74,7 @@ public class DataClass {
                     }
                 }
             }
+            table.close();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -79,16 +85,17 @@ public class DataClass {
 
     }
 
-    public String get_MapFile(String rowkey) {
+    public String get_MapFile(String tablename, String rowkey, String CF) {
         String holdvalue = null;
         try {
-            HTable table = new HTable(conf, "RawData");
+            HTable table = new HTable(conf, tablename);
             Get get = new Get(rowkey.getBytes());
-
+            get.addFamily(CF.getBytes());
             Result rs = table.get(get);
             for (KeyValue kv : rs.raw()) {
                 holdvalue = new String(kv.getValue());
             }
+            table.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,6 +111,7 @@ public class DataClass {
             Put put = new Put(Bytes.toBytes(rowkey));
             put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value));
             table.put(put);
+            table.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,17 +119,18 @@ public class DataClass {
 
     }
 
-    public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
+    public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
         try {
             if (flag.equals("ok")) // if its not a lable data
             {
             } else {
                 loopStarter = 0;
-                String NosRow = get_MapFile(rowkey);
+                String NosRow = get_MapFile(tablename, rowkey, Columnfly);// LD for label data
                 loopruner = Integer.valueOf(NosRow);
             }
             table = new HTable(conf, tablename);
+        
             List<Get> Rowlist = new ArrayList<Get>();
             for (long a = loopStarter; a <= loopruner - 1; a++) {
                 Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
@@ -146,17 +155,11 @@ public class DataClass {
                     }
                     ArrayRD_Value.add(new String(kv.getValue()));
                 }
-
-
             }
+            table.close();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (table != null) {
-                table.close();
-            }
         }
 
     }
-
 }
