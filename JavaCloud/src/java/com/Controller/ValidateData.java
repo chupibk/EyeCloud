@@ -74,14 +74,12 @@ public class ValidateData extends HttpServlet {
                 Result result = table.get(get);
                 arrColumn.clear();
                 arrValue.clear();
-
                 for (KeyValue kv : result.raw()) {
                     arrColumn.add(new String(kv.getQualifier()));
                     arrValue.add(new String(kv.getValue()));
                 }
                 begin = arrColumn.indexOf("Begin Time - msec");
                 end = arrColumn.indexOf("End Time - msec");
-
                 if ((arrValue.get(begin).equals("") && arrValue.get(end).equals(""))) // If row is blank or contains garbage
                 {
                     breakLoop = true;
@@ -97,7 +95,38 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
-
+    
+    ArrayList<String> ArrAvg=new ArrayList<String>();
+    
+    public void FixAlgorithm(String Efilename) throws IOException{
+        long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", "01-01-All-Data.txt", "MD"));
+        HTable table = new HTable(conf, "ValidData");
+        int count=0;
+        for(long a=0; a<=NosRow-1; a++){
+            Get get=new Get(Bytes.toBytes("1" + ":" + "01-01-All-Data.txt" + ":" + a));
+            Result result=table.get(get);
+            for(KeyValue kv: result.raw()){
+                if(Bytes.toString(kv.getQualifier()).equals("AvgDist")){
+                    ArrAvg.add(new String(kv.getValue()));
+                    
+                } else if(Bytes.toString(kv.getQualifier()).equals("AvgGxleft")){
+                    ArrAvg.add(new String(kv.getValue()));
+                }else if(Bytes.toString(kv.getQualifier()).equals("AvgGyleft")){
+                    ArrAvg.add(new String(kv.getValue()));
+                }else if(Bytes.toString(kv.getQualifier()).equals("Timestamp")){
+                    ArrAvg.add(new String(kv.getValue()));
+                    count++;
+                    if(count==2){
+                        
+                    }
+                }
+                
+            }
+            
+        }
+        
+        
+    }
     public void Read_RawData_forValidation(String filename, String gxleft, String gxright,
             String gyleft, String gyright, String dleft, String dright) {
 
@@ -194,6 +223,7 @@ public class ValidateData extends HttpServlet {
                     } else if (gyright != null && !gyright.equals("")) {
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
                     }
+                    
                     addvalidData(filename, "VD", arrColumn, arrValue);
 
                 }
@@ -208,7 +238,6 @@ public class ValidateData extends HttpServlet {
 
     }
     long counter = 0;
-
     public void addvalidData(String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
 
         try {
@@ -230,7 +259,6 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -276,6 +304,7 @@ public class ValidateData extends HttpServlet {
         RequestDispatcher rd = request.getRequestDispatcher("/ShowValidData.jsp");
         rd.forward(request, response);
     }
+    
 
     /**
      * Returns a short description of the servlet.

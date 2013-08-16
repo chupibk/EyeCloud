@@ -47,9 +47,7 @@ public class HbaseServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-   private static  Configuration conf = null;
-   
+    private static Configuration conf = null;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,55 +61,55 @@ public class HbaseServlet extends HttpServlet {
         String value = request.getParameter("value");
 
         if ("Add".equalsIgnoreCase(actIon)) {
-        try{
-            //creatTable(tablename, familys);
-            addRecord(tablename, row, famIly, qualifier, value);
-        }
-        catch(Exception e){
-        e.printStackTrace();
-        }
+            try {
+                //creatTable(tablename, familys);
+                addRecord(tablename, row, famIly, qualifier, value);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 //            addRecord(tablename, row, famIly, qualifier, value);
 //            out.println(row + " " + famIly + " " + qualifier + " " + value);
 //        return;    
-    return;
+            return;
         } else {
             out.println(actIon);
         }
         out.close();
 
         request.getRequestDispatcher("newjsp_1.jsp").forward(request, response);
-        
+
 
     }
 
     public static void addRecord(String tablename, String rowkey, String family,
             String qualifier, String value) throws ZooKeeperConnectionException, MasterNotRunningException, IOException {
         try {
-         
-          // HBaseAdmin admin = new HBaseAdmin(conf);
-           conf=HBaseConfiguration.create();
-           
-           HTable table = new HTable(conf, tablename);
-          
-           Put put = new Put(Bytes.toBytes(rowkey));
-           put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
-           put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
-           
+
+            // HBaseAdmin admin = new HBaseAdmin(conf);
+            conf = HBaseConfiguration.create();
+
+            HTable table = new HTable(conf, tablename);
+
+            Put put = new Put(Bytes.toBytes(rowkey));
+            put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+            put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+
             table.put(put);
 
             System.out.println("insert record " + rowkey + " to table " + tablename + " ok.");
         } catch (Exception e) {
             e.printStackTrace();
-        } 
+        }
     }
-     static {
+
+    static {
         conf = HBaseConfiguration.create();
     }
-    
+
     public static void creatTable(String tableName, String[] familys)
             throws Exception {
-        
-        conf=HBaseConfiguration.create();
+
+        conf = HBaseConfiguration.create();
         HBaseAdmin admin = new HBaseAdmin(conf);
         if (admin.tableExists(tableName)) {
             System.out.println("table already exists!");
@@ -124,18 +122,18 @@ public class HbaseServlet extends HttpServlet {
             System.out.println("create table " + tableName + " ok.");
         }
     }
-    
-     public static String get_MapFile(String rowkey) {
+
+    public static String get_MapFile(String tablename, String rowkey, String CF) {
         String holdvalue = null;
         try {
-            HTable table = new HTable(conf, "RawData");
+            HTable table = new HTable(conf, tablename);
             Get get = new Get(rowkey.getBytes());
-
+            get.addFamily(CF.getBytes());
             Result rs = table.get(get);
             for (KeyValue kv : rs.raw()) {
                 holdvalue = new String(kv.getValue());
-                System.out.println(holdvalue);
             }
+            table.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -143,10 +141,52 @@ public class HbaseServlet extends HttpServlet {
         return holdvalue;
 
     }
+   static ArrayList<String> arrDist = new ArrayList<String>();
+   static ArrayList<String> arrX = new ArrayList<String>();
+   static ArrayList<String> arrY = new ArrayList<String>();
+   static ArrayList<String> arrT = new ArrayList<String>();    
+
+    public static void FixAlgorithm() throws IOException {
+        long NosRow = Integer.valueOf(get_MapFile("ValidData", "01-01-All-Data.txt", "MD"));
+        System.out.println(NosRow);
+        HTable table = new HTable(conf, "ValidData");
+        int count = 0;
+        for (long a = 0; a <= 4 - 1; a++) {
+            Get get = new Get(Bytes.toBytes("1" + ":" + "01-01-All-Data.txt" + ":" + a));
+            Result result = table.get(get);
+            for (KeyValue kv : result.raw()) {
+                if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
+                    arrDist.add(new String(kv.getValue()));
+                    
+                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
+                    arrX.add(new String(kv.getValue()));
+                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
+                    arrY.add(new String(kv.getValue()));
+                } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
+                    arrT.add(new String(kv.getValue()));
+                    count++;
+                    if (count == 2) {
+                        System.out.println(arrDist);
+                        System.out.println(arrX);
+                        System.out.println(arrY);
+                        System.out.println(arrT);
+                        count=1;
+                        arrDist.remove(0);arrX.remove(0);arrY.remove(0);arrT.remove(0);
+                        System.out.println("REMOVED");
+                    }
+                }
+
+            }
+
+        }
+
+
+    }
 
     public static void main(String[] args) {
         try {
-             System.out.println(get_MapFile("01-01-All-Data.txt"));
+           // System.out.println(get_MapFile("01-01-All-Data.txt"));
+            FixAlgorithm();
 
 //            System.out.println("=========get one record========");
 //            HbaseTest.getonerecord(tablename, "baoniu");
