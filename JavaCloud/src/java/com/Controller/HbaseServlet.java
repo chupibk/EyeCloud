@@ -176,9 +176,11 @@ public class HbaseServlet extends HttpServlet {
     static ArrayList<String> arrX = new ArrayList<String>();
     static ArrayList<String> arrY = new ArrayList<String>();
     static ArrayList<String> arrT = new ArrayList<String>();
+    static ArrayList<String> arrXsac = new ArrayList<String>();
+    static ArrayList<String> arrYsac = new ArrayList<String>();
 
     public static void FixAlgorithm() throws IOException {
-        long NosRow = Integer.valueOf(get_MapFile("ValidData", "01-01-All-Data.txt", "MD"));
+        long NosRow = Integer.valueOf(get_MapFile("ValidData", "Rec 01-All-Data", "MD"));
         System.out.println(NosRow);
         HTable table = new HTable(conf, "ValidData");
         int count = 0;
@@ -196,9 +198,9 @@ public class HbaseServlet extends HttpServlet {
                     arrT.add(new String(kv.getValue()));
                     count++;
                     if (count == 2) {
-                       // int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
-                        
-                      //  if (durtmp <= Missing_Time_THRESHOLD)
+                        // int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+
+                        //  if (durtmp <= Missing_Time_THRESHOLD)
                         {
                             float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
                                     Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
@@ -208,16 +210,21 @@ public class HbaseServlet extends HttpServlet {
                             if (tmp <= VELOCITY_THRESHOLD) {
                                 putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
                                         Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
+                                arrXsac.add(arrX.get(0));
+                                arrYsac.add(arrY.get(0));
                             } else {
                                 if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-                                    System.out.println((float) sumX / countxy
+                                    System.out.println( (float) sumX / countxy
                                             + "\t" + (float) sumY / countxy + "\t" + duration);
+                                    System.out.println("Saccade X " + arrXsac.get(0) +"\t"+  arrXsac.get(countxy-1));
+                                    System.out.println("Saccade Y " + arrYsac.get(0) +"\t"+  arrYsac.get(countxy-1));
+                                    arrXsac.clear();
+                                    arrYsac.clear();
                                     countxy = 0;
                                     sumX = 0;
                                     sumY = 0;
                                     duration = 0;
                                 }
-
                             }
 
                             count = 1;
@@ -234,8 +241,8 @@ public class HbaseServlet extends HttpServlet {
 
         }
         if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-            System.out.println((float) sumX / countxy
-                    + "\t" + (float) sumY / countxy + "\t" + duration);
+           System.out.println((float) sumX / countxy
+                                            + "\t" + (float) sumY / countxy + "\t" + duration);
             countxy = 0;
             sumX = 0;
             sumY = 0;

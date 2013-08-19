@@ -162,24 +162,24 @@ public class ValidateData extends HttpServlet {
                 if (arrValue.get(vLindex).equals("4") && arrValue.get(vRindex).equals("4")) // For Validity L & R
                 {
                     breakflag = true;
-                } else if (Integer.parseInt(arrValue.get(gpXLindex).equals("") ? "0" : arrValue.get(gpXLindex)) < 1) // For Validity if XLeft is less than 0
+                } else if (Double.parseDouble(arrValue.get(gpXLindex).equals("") ? "0" : arrValue.get(gpXLindex)) < 1) // For Validity if XLeft is less than 0
                 {
                     if (gxleft != null && !gxleft.equals("")) {
                         breakflag = true;
                     }
-                } else if (Integer.parseInt(arrValue.get(gpXRindex).equals("") ? "0" : arrValue.get(gpXRindex)) < 1) // For Validity L=0 or 3 & then Update R
+                } else if (Double.parseDouble(arrValue.get(gpXRindex).equals("") ? "0" : arrValue.get(gpXRindex)) < 1) // For Validity L=0 or 3 & then Update R
                 {
                     if (gxright != null && !gxright.equals("")) {
                         breakflag = true;
                     }
-                } else if (Integer.parseInt(arrValue.get(gpYLindex).equals("") ? "0" : arrValue.get(gpYLindex)) < 1) // For Validity L=0 or 3 & then Update R
+                } else if (Double.parseDouble(arrValue.get(gpYLindex).equals("") ? "0" : arrValue.get(gpYLindex)) < 1) // For Validity L=0 or 3 & then Update R
                 {
                     if (gyleft != null && !gyleft.equals("")) {
                         breakflag = true;
                     }
 
                 } 
-                else if (Integer.parseInt(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity L=0 or 3 & then Update R
+                else if (Double.parseDouble(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity L=0 or 3 & then Update R
                 {
                     if (gyright != null && !gyright.equals("")) {
                         breakflag = true;
