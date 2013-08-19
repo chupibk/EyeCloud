@@ -141,23 +141,53 @@ public class HbaseServlet extends HttpServlet {
         return holdvalue;
 
     }
-   static ArrayList<String> arrDist = new ArrayList<String>();
-   static ArrayList<String> arrX = new ArrayList<String>();
-   static ArrayList<String> arrY = new ArrayList<String>();
-   static ArrayList<String> arrT = new ArrayList<String>();    
+    public static int RESOLUTION_WIDTH = 1920;
+    public static int RESOLUTION_HEIGHT = 1080;
+    public static int SCREEN_WIDTH = 51;
+    public static int SCREEN_HEIGHT = 29;
+    public static int THOUSAND = 1000;
+    public static int TEN = 10;
+    public static int SAMPLE_RATE = 300;
+    public static int FIXATION_DURATION_THRESHOLD = 100; // Millisecond
+    public static float VELOCITY_THRESHOLD = 75;
+    public static float Missing_Time_THRESHOLD = 100;// Millisecond
+
+    public static float pixalToCenti(int x1, int y1, int x2, int y2) {
+        float x;
+        float y;
+        x = Math.abs((float) (x1 - x2)) * SCREEN_WIDTH / RESOLUTION_WIDTH * TEN;
+        y = Math.abs((float) (y1 - y2)) * SCREEN_HEIGHT / RESOLUTION_HEIGHT * TEN;
+        return (float) Math.sqrt(x * x + y * y);
+    }
+
+    public static float VT_Degree(int x1, int y1, int x2, int y2, float a, float b, int dur) {
+        float c = pixalToCenti(x1, y1, x2, y2);
+
+        // c2 = a2 + b2 - 2ab cos(C)
+        float cosC;
+        cosC = (a * a + b * b - c * c) / (2 * a * b);
+        //System.out.println(cosC);
+        float degree;
+        degree = (float) Math.acos(cosC) * 180 / (float) Math.PI;
+        //System.out.println(degree/dur * Constants.THOUSAND + " " + dur);
+        return degree / dur; // it should be in mili second
+    }
+    static ArrayList<String> arrDist = new ArrayList<String>();
+    static ArrayList<String> arrX = new ArrayList<String>();
+    static ArrayList<String> arrY = new ArrayList<String>();
+    static ArrayList<String> arrT = new ArrayList<String>();
 
     public static void FixAlgorithm() throws IOException {
         long NosRow = Integer.valueOf(get_MapFile("ValidData", "01-01-All-Data.txt", "MD"));
         System.out.println(NosRow);
         HTable table = new HTable(conf, "ValidData");
         int count = 0;
-        for (long a = 0; a <= 4 - 1; a++) {
+        for (long a = 0; a <= 1000 - 1; a++) {
             Get get = new Get(Bytes.toBytes("1" + ":" + "01-01-All-Data.txt" + ":" + a));
             Result result = table.get(get);
             for (KeyValue kv : result.raw()) {
                 if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
                     arrDist.add(new String(kv.getValue()));
-                    
                 } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
                     arrX.add(new String(kv.getValue()));
                 } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
@@ -166,26 +196,68 @@ public class HbaseServlet extends HttpServlet {
                     arrT.add(new String(kv.getValue()));
                     count++;
                     if (count == 2) {
-                        System.out.println(arrDist);
-                        System.out.println(arrX);
-                        System.out.println(arrY);
-                        System.out.println(arrT);
-                        count=1;
-                        arrDist.remove(0);arrX.remove(0);arrY.remove(0);arrT.remove(0);
-                        System.out.println("REMOVED");
+                       // int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+                        
+                      //  if (durtmp <= Missing_Time_THRESHOLD)
+                        {
+                            float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                    Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
+                                    Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
+                                    Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
+
+                            if (tmp <= VELOCITY_THRESHOLD) {
+                                putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
+                            } else {
+                                if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+                                    System.out.println((float) sumX / countxy
+                                            + "\t" + (float) sumY / countxy + "\t" + duration);
+                                    countxy = 0;
+                                    sumX = 0;
+                                    sumY = 0;
+                                    duration = 0;
+                                }
+
+                            }
+
+                            count = 1;
+                            arrDist.remove(0);
+                            arrX.remove(0);
+                            arrY.remove(0);
+                            arrT.remove(0);
+
+                        }
                     }
                 }
 
             }
 
         }
+        if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+            System.out.println((float) sumX / countxy
+                    + "\t" + (float) sumY / countxy + "\t" + duration);
+            countxy = 0;
+            sumX = 0;
+            sumY = 0;
+            duration = 0;
+        }
+    }
+    private static int sumX;
+    private static int sumY;
+    private static int countxy = 0;
+    private static int duration = 0;
 
+    public static void putXY(int x, int y, int time) {
+        countxy++;
+        sumX += x;
+        sumY += y;
+        duration += time;
 
     }
 
     public static void main(String[] args) {
         try {
-           // System.out.println(get_MapFile("01-01-All-Data.txt"));
+            // System.out.println(get_MapFile("01-01-All-Data.txt"));
             FixAlgorithm();
 
 //            System.out.println("=========get one record========");

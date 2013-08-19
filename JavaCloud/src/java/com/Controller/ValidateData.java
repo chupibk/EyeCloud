@@ -95,38 +95,37 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
-    
-    ArrayList<String> ArrAvg=new ArrayList<String>();
-    
-    public void FixAlgorithm(String Efilename) throws IOException{
+    ArrayList<String> ArrAvg = new ArrayList<String>();
+
+    public void FixAlgorithm(String Efilename) throws IOException {
         long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", "01-01-All-Data.txt", "MD"));
         HTable table = new HTable(conf, "ValidData");
-        int count=0;
-        for(long a=0; a<=NosRow-1; a++){
-            Get get=new Get(Bytes.toBytes("1" + ":" + "01-01-All-Data.txt" + ":" + a));
-            Result result=table.get(get);
-            for(KeyValue kv: result.raw()){
-                if(Bytes.toString(kv.getQualifier()).equals("AvgDist")){
+        int count = 0;
+        for (long a = 0; a <= NosRow - 1; a++) {
+            Get get = new Get(Bytes.toBytes("1" + ":" + "01-01-All-Data.txt" + ":" + a));
+            Result result = table.get(get);
+            for (KeyValue kv : result.raw()) {
+                if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
                     ArrAvg.add(new String(kv.getValue()));
-                    
-                } else if(Bytes.toString(kv.getQualifier()).equals("AvgGxleft")){
+
+                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
                     ArrAvg.add(new String(kv.getValue()));
-                }else if(Bytes.toString(kv.getQualifier()).equals("AvgGyleft")){
+                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
                     ArrAvg.add(new String(kv.getValue()));
-                }else if(Bytes.toString(kv.getQualifier()).equals("Timestamp")){
+                } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
                     ArrAvg.add(new String(kv.getValue()));
                     count++;
-                    if(count==2){
-                        
+                    if (count == 2) {
                     }
                 }
-                
+
             }
-            
+
         }
-        
-        
+
+
     }
+
     public void Read_RawData_forValidation(String filename, String gxleft, String gxright,
             String gyleft, String gyright, String dleft, String dright) {
 
@@ -163,15 +162,39 @@ public class ValidateData extends HttpServlet {
                 if (arrValue.get(vLindex).equals("4") && arrValue.get(vRindex).equals("4")) // For Validity L & R
                 {
                     breakflag = true;
+                } else if (Integer.parseInt(arrValue.get(gpXLindex).equals("") ? "0" : arrValue.get(gpXLindex)) < 1) // For Validity if XLeft is less than 0
+                {
+                    if (gxleft != null && !gxleft.equals("")) {
+                        breakflag = true;
+                    }
+                } else if (Integer.parseInt(arrValue.get(gpXRindex).equals("") ? "0" : arrValue.get(gpXRindex)) < 1) // For Validity L=0 or 3 & then Update R
+                {
+                    if (gxright != null && !gxright.equals("")) {
+                        breakflag = true;
+                    }
+                } else if (Integer.parseInt(arrValue.get(gpYLindex).equals("") ? "0" : arrValue.get(gpYLindex)) < 1) // For Validity L=0 or 3 & then Update R
+                {
+                    if (gyleft != null && !gyleft.equals("")) {
+                        breakflag = true;
+                    }
+
+                } 
+                else if (Integer.parseInt(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity L=0 or 3 & then Update R
+                {
+                    if (gyright != null && !gyright.equals("")) {
+                        breakflag = true;
+                    }
                 } else if ((arrValue.get(vLindex).equals("0") || arrValue.get(vLindex).equals("3")) && arrValue.get(vRindex).equals("4")) // For Validity L=0 or 3 & then Update R
                 {
                     arrValue.set(gpXRindex, arrValue.get(gpXLindex));
                     arrValue.set(gpYRindex, arrValue.get(gpYLindex));
+                    arrValue.set(dRindex, arrValue.get(dLindex));
 
                 } else if (arrValue.get(vLindex).equals("4") && (arrValue.get(vRindex).equals("0") || arrValue.get(vRindex).equals("3"))) // For Validity R=0 or 3 & then Update L
                 {
                     arrValue.set(gpXLindex, arrValue.get(gpXRindex));
                     arrValue.set(gpYLindex, arrValue.get(gpYRindex));
+                    arrValue.set(dLindex, arrValue.get(dRindex));
 
                 } else if ((arrValue.get(vLindex).equals("") && arrValue.get(vRindex).equals(""))) // If row is blank or contains garbage
                 {
@@ -223,7 +246,7 @@ public class ValidateData extends HttpServlet {
                     } else if (gyright != null && !gyright.equals("")) {
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
                     }
-                    
+
                     addvalidData(filename, "VD", arrColumn, arrValue);
 
                 }
@@ -238,6 +261,7 @@ public class ValidateData extends HttpServlet {
 
     }
     long counter = 0;
+
     public void addvalidData(String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
 
         try {
@@ -259,6 +283,7 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -304,7 +329,6 @@ public class ValidateData extends HttpServlet {
         RequestDispatcher rd = request.getRequestDispatcher("/ShowValidData.jsp");
         rd.forward(request, response);
     }
-    
 
     /**
      * Returns a short description of the servlet.
