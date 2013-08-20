@@ -141,10 +141,10 @@ public class HbaseServlet extends HttpServlet {
         return holdvalue;
 
     }
-    public static int RESOLUTION_WIDTH = 1920;
-    public static int RESOLUTION_HEIGHT = 1080;
-    public static int SCREEN_WIDTH = 51;
-    public static int SCREEN_HEIGHT = 29;
+    public static int RESOLUTION_WIDTH = 1024;
+    public static int RESOLUTION_HEIGHT = 768;
+    public static int SCREEN_WIDTH = 21;
+    public static int SCREEN_HEIGHT = 16;
     public static int THOUSAND = 1000;
     public static int TEN = 10;
     public static int SAMPLE_RATE = 300;
@@ -152,26 +152,40 @@ public class HbaseServlet extends HttpServlet {
     public static float VELOCITY_THRESHOLD = 75;
     public static float Missing_Time_THRESHOLD = 100;// Millisecond
 
+//    public static float pixalToCenti(int x1, int y1, int x2, int y2) {
+//        float x;
+//        float y;
+//        x = Math.abs((float) (x1 - x2)) * SCREEN_WIDTH / RESOLUTION_WIDTH;
+//        y = Math.abs((float) (y1 - y2)) * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
+//        return (float) Math.sqrt(x * x + y * y);
+//    }
     public static float pixalToCenti(int x1, int y1, int x2, int y2) {
-        float x;
-        float y;
-        x = Math.abs((float) (x1 - x2)) * SCREEN_WIDTH / RESOLUTION_WIDTH * TEN;
-        y = Math.abs((float) (y1 - y2)) * SCREEN_HEIGHT / RESOLUTION_HEIGHT * TEN;
-        return (float) Math.sqrt(x * x + y * y);
+        float xf1, xf2, yf1, yf2;
+        xf1 = (float) x1 * SCREEN_WIDTH / RESOLUTION_WIDTH;
+        xf2 = (float) x2 * SCREEN_WIDTH / RESOLUTION_WIDTH;
+        yf1 = (float) y1 * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
+        yf2 = (float) y2 * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
+        return (float) Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
-    public static float VT_Degree(int x1, int y1, int x2, int y2, float a, float b, int dur) {
-        float c = pixalToCenti(x1, y1, x2, y2);
-
-        // c2 = a2 + b2 - 2ab cos(C)
-        float cosC;
-        cosC = (a * a + b * b - c * c) / (2 * a * b);
-        //System.out.println(cosC);
+    public static float VT_Degree(int x1, int y1, int x2, int y2, float d1, float d2, int dur) {
+        float cent = pixalToCenti(x1, y1, x2, y2);
         float degree;
-        degree = (float) Math.acos(cosC) * 180 / (float) Math.PI;
-        //System.out.println(degree/dur * Constants.THOUSAND + " " + dur);
-        return degree / dur; // it should be in mili second
+        degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
+        return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
     }
+//    public static float VT_Degree(int x1, int y1, int x2, int y2, float a, float b, int dur) {
+//        float c = pixalToCenti(x1, y1, x2, y2);
+//
+//        // c2 = a2 + b2 - 2ab cos(C)
+//        float cosC;
+//        cosC = (a * a + b * b - c * c) / (2 * a * b);
+//        //System.out.println(cosC);
+//        float degree;
+//        degree = (float) Math.acos(cosC) * 180 / (float) Math.PI;
+//        //System.out.println(degree/dur * Constants.THOUSAND + " " + dur);
+//        return degree / dur; // it should be in mili second
+//    }
     static ArrayList<String> arrDist = new ArrayList<String>();
     static ArrayList<String> arrX = new ArrayList<String>();
     static ArrayList<String> arrY = new ArrayList<String>();
@@ -184,8 +198,8 @@ public class HbaseServlet extends HttpServlet {
         System.out.println(NosRow);
         HTable table = new HTable(conf, "ValidData");
         int count = 0;
-        for (long a = 0; a <= 1000 - 1; a++) {
-            Get get = new Get(Bytes.toBytes("1" + ":" + "01-01-All-Data.txt" + ":" + a));
+        for (long a = 0; a <= NosRow - 1; a++) {
+            Get get = new Get(Bytes.toBytes("1" + ":" + "Rec 01-All-Data" + ":" + a));
             Result result = table.get(get);
             for (KeyValue kv : result.raw()) {
                 if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
@@ -195,13 +209,15 @@ public class HbaseServlet extends HttpServlet {
                 } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
                     arrY.add(new String(kv.getValue()));
                 } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
-                    arrT.add(new String(kv.getValue()));
+                    String time = new String(kv.getValue());
+                    time = time.replace("\n", "");
+                    arrT.add(time);
                     count++;
-                    if (count == 2) {
-                        // int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
 
-                        //  if (durtmp <= Missing_Time_THRESHOLD)
-                        {
+                    if (count == 2) {
+                        int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+
+                        if (durtmp <= Missing_Time_THRESHOLD) {
                             float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
                                     Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
                                     Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
@@ -214,10 +230,10 @@ public class HbaseServlet extends HttpServlet {
                                 arrYsac.add(arrY.get(0));
                             } else {
                                 if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-                                    System.out.println( (float) sumX / countxy
+                                    System.out.println((float) sumX / countxy
                                             + "\t" + (float) sumY / countxy + "\t" + duration);
-                                    System.out.println("Saccade X " + arrXsac.get(0) +"\t"+  arrXsac.get(countxy-1));
-                                    System.out.println("Saccade Y " + arrYsac.get(0) +"\t"+  arrYsac.get(countxy-1));
+                                    System.out.println("Saccade X " + arrXsac.get(0) + "\t" + arrXsac.get(countxy - 1) + "\t" + duration);
+                                    System.out.println("Saccade Y " + arrYsac.get(0) + "\t" + arrYsac.get(countxy - 1) + "\t" + duration);
                                     arrXsac.clear();
                                     arrYsac.clear();
                                     countxy = 0;
@@ -226,13 +242,16 @@ public class HbaseServlet extends HttpServlet {
                                     duration = 0;
                                 }
                             }
-
                             count = 1;
                             arrDist.remove(0);
                             arrX.remove(0);
                             arrY.remove(0);
                             arrT.remove(0);
 
+                        }
+                        else
+                        {
+                            System.out.println("test");
                         }
                     }
                 }
@@ -241,8 +260,8 @@ public class HbaseServlet extends HttpServlet {
 
         }
         if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-           System.out.println((float) sumX / countxy
-                                            + "\t" + (float) sumY / countxy + "\t" + duration);
+            System.out.println((float) sumX / countxy
+                    + "\t" + (float) sumY / countxy + "\t" + duration);
             countxy = 0;
             sumX = 0;
             sumY = 0;

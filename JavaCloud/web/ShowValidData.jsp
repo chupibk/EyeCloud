@@ -70,7 +70,7 @@
                                         </table>        
                                     </td></tr></table>
                         </div>
-                                            <input type="submit" value="Next" name="btnNext"
+                                            <input type="submit" value="Next" name="btnNext" />
                     </td>
                     <td>
                         <div style="overflow: scroll; height: 500px; width: 620px; background: White">
@@ -97,6 +97,7 @@
 
                             </table>        
                         </div>
+                                <input type="submit" value="Run Fixation" name="btnRun" />
                     </td>
 
                 </tr></table>

@@ -43,8 +43,6 @@ public class ValidateData extends HttpServlet {
     ArrayList<String> arrColumn = new ArrayList<String>();
     ArrayList<String> arrValue = new ArrayList<String>();
     ArrayList<String> arrTime = new ArrayList<String>();
-    ArrayList<String> arrAvgColumn = new ArrayList<String>();
-    ArrayList<String> arrAvgValue = new ArrayList<String>();
     ArrayList<String> arrColumn_lbl = new ArrayList<String>();
     ArrayList<String> arrValue_lbl = new ArrayList<String>();
     DataClass dc = new DataClass();
@@ -85,7 +83,7 @@ public class ValidateData extends HttpServlet {
                     breakLoop = true;
                 }
                 if (!breakLoop) {
-                    addvalidData(filename, "LD", arrColumn, arrValue);
+                    addData_inHbase("ValidData", filename, "LD", arrColumn, arrValue);
                 }
             }
             table.close();
@@ -95,34 +93,146 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
-    ArrayList<String> ArrAvg = new ArrayList<String>();
+    private int sumX;
+    private int sumY;
+    private int countxy = 0;
+    private int duration = 0;
+    private int RESOLUTION_WIDTH = 1920;
+    private int RESOLUTION_HEIGHT = 1080;
+    private int SCREEN_WIDTH = 51;
+    private int SCREEN_HEIGHT = 29;
+    private int THOUSAND = 1000;
+    private int TEN = 10;
+    private int SAMPLE_RATE = 300;
+    private int FIXATION_DURATION_THRESHOLD = 100; // Millisecond
+    private float VELOCITY_THRESHOLD = 75;
+    private float Missing_Time_THRESHOLD = 100;// Millisecond
+    ArrayList<String> arrDist = new ArrayList<String>();
+    ArrayList<String> arrX = new ArrayList<String>();
+    ArrayList<String> arrY = new ArrayList<String>();
+    ArrayList<String> arrT = new ArrayList<String>();
+    ArrayList<String> arrXsac = new ArrayList<String>();
+    ArrayList<String> arrYsac = new ArrayList<String>();
 
-    public void FixAlgorithm(String Efilename) throws IOException {
-        long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", "01-01-All-Data.txt", "MD"));
+    public float pixalToCenti(int x1, int y1, int x2, int y2) {
+        float xf1, xf2, yf1, yf2;
+        xf1 = (float) x1 * SCREEN_WIDTH / RESOLUTION_WIDTH;
+        xf2 = (float) x2 * SCREEN_WIDTH / RESOLUTION_WIDTH;
+        yf1 = (float) y1 * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
+        yf2 = (float) y2 * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
+        return (float) Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    }
+
+    public float VT_Degree(int x1, int y1, int x2, int y2, float d1, float d2, int dur) {
+        float cent = pixalToCenti(x1, y1, x2, y2);
+        float degree;
+        degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
+        return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
+    }
+
+    public void putXY(int x, int y, int time) {
+        countxy++;
+        sumX += x;
+        sumY += y;
+        duration += time;
+
+    }
+
+    public void FixAlgorithm(String filename) throws IOException {
+        counter = 0;
+        counterSaccade = 0;
+        long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", filename, "MD"));
         HTable table = new HTable(conf, "ValidData");
         int count = 0;
         for (long a = 0; a <= NosRow - 1; a++) {
-            Get get = new Get(Bytes.toBytes("1" + ":" + "01-01-All-Data.txt" + ":" + a));
+            Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a));
             Result result = table.get(get);
             for (KeyValue kv : result.raw()) {
                 if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
-                    ArrAvg.add(new String(kv.getValue()));
-
+                    arrDist.add(new String(kv.getValue()));
                 } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
-                    ArrAvg.add(new String(kv.getValue()));
+                    arrX.add(new String(kv.getValue()));
                 } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
-                    ArrAvg.add(new String(kv.getValue()));
+                    arrY.add(new String(kv.getValue()));
                 } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
-                    ArrAvg.add(new String(kv.getValue()));
+                    String time = new String(kv.getValue());
+                    time = time.replace("\n", "");
+                    arrT.add(time);
                     count++;
                     if (count == 2) {
+                        int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+                        if (durtmp <= Missing_Time_THRESHOLD) {
+                            float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                    Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
+                                    Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
+                                    Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
+
+                            if (tmp <= VELOCITY_THRESHOLD) {
+                                putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
+                                arrXsac.add(arrX.get(0));
+                                arrYsac.add(arrY.get(0));
+                            } else {
+                                if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+                                    // System.out.println((float) sumX / countxy
+                                    //        + "\t" + (float) sumY / countxy + "\t" + duration);
+                                    addfix_Sac_IntoHbase(filename);
+
+                                }
+                            }
+                            count = 1;
+                            arrDist.remove(0);
+                            arrX.remove(0);
+                            arrY.remove(0);
+                            arrT.remove(0);
+
+                        }
                     }
                 }
 
             }
 
         }
+        if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+//            System.out.println((float) sumX / countxy
+//                    + "\t" + (float) sumY / countxy + "\t" + duration);
+            addfix_Sac_IntoHbase(filename);
+        }
+    }
 
+    public void addfix_Sac_IntoHbase(String filename) {
+        arrColumn.clear();
+        arrValue.clear();
+        arrColumn.add("sumX");
+        arrValue.add(String.valueOf(sumX / countxy));
+        arrColumn.add("sumY");
+        arrValue.add(String.valueOf(sumY / countxy));
+        arrColumn.add("sumDur");
+        arrValue.add(String.valueOf(duration));
+        addData_inHbase("FixData", filename, "Fx", arrColumn, arrValue);
+
+        arrColumn.clear();
+        arrValue.clear();
+
+        arrColumn.add("XsacStart");
+        arrValue.add(arrXsac.get(0));
+        arrColumn.add("XsacEnd");
+        arrValue.add(arrXsac.get(countxy - 1));
+        arrColumn.add("XsacDur");
+        arrValue.add(String.valueOf(duration));
+        arrColumn.add("YsacStart");
+        arrValue.add(arrYsac.get(0));
+        arrColumn.add("YsacEnd");
+        arrValue.add(arrYsac.get(countxy - 1));
+        arrColumn.add("YsacDur");
+        arrValue.add(String.valueOf(duration));
+        addScade_inHbase("FixData", filename, "Sc", arrColumn, arrValue);
+        arrXsac.clear();
+        arrYsac.clear();
+        countxy = 0;
+        sumX = 0;
+        sumY = 0;
+        duration = 0;
 
     }
 
@@ -178,8 +288,7 @@ public class ValidateData extends HttpServlet {
                         breakflag = true;
                     }
 
-                } 
-                else if (Double.parseDouble(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity L=0 or 3 & then Update R
+                } else if (Double.parseDouble(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity L=0 or 3 & then Update R
                 {
                     if (gyright != null && !gyright.equals("")) {
                         breakflag = true;
@@ -247,7 +356,7 @@ public class ValidateData extends HttpServlet {
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
                     }
 
-                    addvalidData(filename, "VD", arrColumn, arrValue);
+                    addData_inHbase("ValidData", filename, "VD", arrColumn, arrValue);
 
                 }
             }
@@ -260,12 +369,12 @@ public class ValidateData extends HttpServlet {
         }
 
     }
-    long counter = 0;
+    long counter = 0, counterSaccade = 0;
 
-    public void addvalidData(String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
+    public void addData_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
 
         try {
-            HTable table = new HTable(conf, "ValidData");
+            HTable table = new HTable(conf, tablename);
             table.setAutoFlush(false);
             table.setWriteBufferSize(1024 * 1024 * 12);
             Put put = new Put(Bytes.toBytes("1" + ":" + rowKey + ":" + counter)); //userId + Filename+rownumber
@@ -273,10 +382,26 @@ public class ValidateData extends HttpServlet {
                 put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
             }
             table.put(put);
-            // if ("CD".equals(CQ))
-            {
-                counter++;
+            counter++;
+            table.flushCommits();
+            table.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addScade_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
+
+        try {
+            HTable table = new HTable(conf, tablename);
+            table.setAutoFlush(false);
+            table.setWriteBufferSize(1024 * 1024 * 12);
+            Put put = new Put(Bytes.toBytes("1" + ":" + rowKey + ":" + counterSaccade)); //userId + Filename+rownumber
+            for (int a = 0; a <= arrColumn.size() - 1; a++) {
+                put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
             }
+            table.put(put);
+            counterSaccade++;
             table.flushCommits();
             table.close();
         } catch (IOException e) {
@@ -304,10 +429,13 @@ public class ValidateData extends HttpServlet {
         arrTime.clear();
 
         String holdNext = request.getParameter("btnNext");
+        String holdRun = request.getParameter("btnRun");
         if ("Next".equalsIgnoreCase(holdNext)) {
             loopStarter = looprunner;
             looprunner = looprunner + 1000;
             dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+        } else if ("Run Fixation".equalsIgnoreCase(holdRun)) {
+            FixAlgorithm(Efilename);
         } else {
             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright);
             Read_LabelData_forValdiation(Efilename, Lfilename);

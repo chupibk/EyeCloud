@@ -407,8 +407,8 @@ public class LoadData extends HttpServlet {
             if (largeStr != null && !largeStr.isEmpty()) {
                 int countcoulmn = 0;
                 long countrow = 0;
-                largeStr = largeStr.replaceAll("\\r\\n", "	");
-                String[] strArr = largeStr.split("	");
+                largeStr = largeStr.replaceAll("\\r\\n", "\t");                
+                String[] strArr = largeStr.split("\t");
                 ArrayList<String> list = new ArrayList<String>(arrls.values());
                 HTable table = new HTable(conf, "RawData");
                 table.setAutoFlush(false);
@@ -449,8 +449,8 @@ public class LoadData extends HttpServlet {
             if (largeStr_lbl != null && !largeStr_lbl.isEmpty()) {
                 int countcoulmn = 0;
                 long countrow = 0;
-                largeStr_lbl = largeStr_lbl.replaceAll("\\r\\n", "	");
-                String[] strArr = largeStr_lbl.split("	");
+                largeStr_lbl = largeStr_lbl.replaceAll("\\r\\n", "\t");
+                String[] strArr = largeStr_lbl.split("\t");
                 ArrayList<String> list = new ArrayList<String>(lblarrls.values());
                 list.remove("Select");
                 HTable table = new HTable(conf, "RawData");
