@@ -28,11 +28,13 @@ public class DataClass {
     static {
         conf = HBaseConfiguration.create();
     }
-
     // hbase(main):005:0> create 'RawData','EF','LF','MF' 
     // RawData column family structure
     // hbase(main):006:0> create 'ValidData','VD','LD','CD'
     // ValidData column family structure
+    // create 'FixData','FX','SC','MD'
+    // FixData column family structure
+
     public void get_DataHbase(long loopStarter, long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
 
         try {

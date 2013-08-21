@@ -174,18 +174,7 @@ public class HbaseServlet extends HttpServlet {
         degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
         return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
     }
-//    public static float VT_Degree(int x1, int y1, int x2, int y2, float a, float b, int dur) {
-//        float c = pixalToCenti(x1, y1, x2, y2);
-//
-//        // c2 = a2 + b2 - 2ab cos(C)
-//        float cosC;
-//        cosC = (a * a + b * b - c * c) / (2 * a * b);
-//        //System.out.println(cosC);
-//        float degree;
-//        degree = (float) Math.acos(cosC) * 180 / (float) Math.PI;
-//        //System.out.println(degree/dur * Constants.THOUSAND + " " + dur);
-//        return degree / dur; // it should be in mili second
-//    }
+
     static ArrayList<String> arrDist = new ArrayList<String>();
     static ArrayList<String> arrX = new ArrayList<String>();
     static ArrayList<String> arrY = new ArrayList<String>();
@@ -194,6 +183,7 @@ public class HbaseServlet extends HttpServlet {
     static ArrayList<String> arrYsac = new ArrayList<String>();
 
     public static void FixAlgorithm() throws IOException {
+        boolean sacFlag = false;
         long NosRow = Integer.valueOf(get_MapFile("ValidData", "Rec 01-All-Data", "MD"));
         System.out.println(NosRow);
         HTable table = new HTable(conf, "ValidData");
@@ -224,23 +214,34 @@ public class HbaseServlet extends HttpServlet {
                                     Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
 
                             if (tmp <= VELOCITY_THRESHOLD) {
+                                if (sacFlag == true) {
+                                    System.out.println("Saccade X " + arrXsac.get(0) + "\t" + arrXsac.get(countxySac - 1) + "\t" + durationSac);
+                                    System.out.println("Saccade Y " + arrYsac.get(0) + "\t" + arrYsac.get(countxySac - 1) + "\t" + durationSac);
+                                    arrXsac.clear();
+                                    arrYsac.clear();
+                                    sacFlag = false;
+                                    countxySac = 0;
+                                    durationSac = 0;
+                                }
                                 putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
                                         Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
-                                arrXsac.add(arrX.get(0));
-                                arrYsac.add(arrY.get(0));
+
                             } else {
                                 if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
                                     System.out.println((float) sumX / countxy
                                             + "\t" + (float) sumY / countxy + "\t" + duration);
-                                    System.out.println("Saccade X " + arrXsac.get(0) + "\t" + arrXsac.get(countxy - 1) + "\t" + duration);
-                                    System.out.println("Saccade Y " + arrYsac.get(0) + "\t" + arrYsac.get(countxy - 1) + "\t" + duration);
-                                    arrXsac.clear();
-                                    arrYsac.clear();
                                     countxy = 0;
                                     sumX = 0;
                                     sumY = 0;
                                     duration = 0;
+
                                 }
+                                sacFlag = true;
+                                arrXsac.add(arrX.get(0));
+                                arrYsac.add(arrY.get(0));
+                                durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+                                countxySac++;
+
                             }
                             count = 1;
                             arrDist.remove(0);
@@ -248,9 +249,7 @@ public class HbaseServlet extends HttpServlet {
                             arrY.remove(0);
                             arrT.remove(0);
 
-                        }
-                        else
-                        {
+                        } else {
                             System.out.println("test");
                         }
                     }
@@ -268,10 +267,6 @@ public class HbaseServlet extends HttpServlet {
             duration = 0;
         }
     }
-    private static int sumX;
-    private static int sumY;
-    private static int countxy = 0;
-    private static int duration = 0;
 
     public static void putXY(int x, int y, int time) {
         countxy++;
@@ -280,6 +275,12 @@ public class HbaseServlet extends HttpServlet {
         duration += time;
 
     }
+    private static int sumX;
+    private static int sumY;
+    private static int countxy = 0;
+    private static int countxySac = 0;
+    private static int duration = 0;
+    private static int durationSac = 0;
 
     public static void main(String[] args) {
         try {

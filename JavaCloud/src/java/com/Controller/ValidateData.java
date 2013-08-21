@@ -39,7 +39,16 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "ValidateData", urlPatterns = {"/ValidateData"})
 public class ValidateData extends HttpServlet {
 
-    private static Configuration conf = null;
+    private int sumX, sumY;
+    private int countxy = 0, duration = 0, countxySac = 0, durationSac = 0;
+    private Integer RESOLUTION_WIDTH, RESOLUTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT,
+            FIXATION_DURATION_THRESHOLD, VELOCITY_THRESHOLD, Missing_Time_THRESHOLD;
+    ArrayList<String> arrDist = new ArrayList<String>();
+    ArrayList<String> arrX = new ArrayList<String>();
+    ArrayList<String> arrY = new ArrayList<String>();
+    ArrayList<String> arrT = new ArrayList<String>();
+    ArrayList<String> arrXsac = new ArrayList<String>();
+    ArrayList<String> arrYsac = new ArrayList<String>();
     ArrayList<String> arrColumn = new ArrayList<String>();
     ArrayList<String> arrValue = new ArrayList<String>();
     ArrayList<String> arrTime = new ArrayList<String>();
@@ -47,6 +56,7 @@ public class ValidateData extends HttpServlet {
     ArrayList<String> arrValue_lbl = new ArrayList<String>();
     DataClass dc = new DataClass();
     long loopStarter, looprunner = 1000;
+    private static Configuration conf = null;
 
     static {
         conf = HBaseConfiguration.create();
@@ -93,26 +103,6 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
-    private int sumX;
-    private int sumY;
-    private int countxy = 0;
-    private int duration = 0;
-    private int RESOLUTION_WIDTH = 1920;
-    private int RESOLUTION_HEIGHT = 1080;
-    private int SCREEN_WIDTH = 51;
-    private int SCREEN_HEIGHT = 29;
-    private int THOUSAND = 1000;
-    private int TEN = 10;
-    private int SAMPLE_RATE = 300;
-    private int FIXATION_DURATION_THRESHOLD = 100; // Millisecond
-    private float VELOCITY_THRESHOLD = 75;
-    private float Missing_Time_THRESHOLD = 100;// Millisecond
-    ArrayList<String> arrDist = new ArrayList<String>();
-    ArrayList<String> arrX = new ArrayList<String>();
-    ArrayList<String> arrY = new ArrayList<String>();
-    ArrayList<String> arrT = new ArrayList<String>();
-    ArrayList<String> arrXsac = new ArrayList<String>();
-    ArrayList<String> arrYsac = new ArrayList<String>();
 
     public float pixalToCenti(int x1, int y1, int x2, int y2) {
         float xf1, xf2, yf1, yf2;
@@ -137,8 +127,11 @@ public class ValidateData extends HttpServlet {
         duration += time;
 
     }
+    Boolean FlagSccade;
 
     public void FixAlgorithm(String filename) throws IOException {
+        FlagSccade = false;
+        //   boolean sacFlag = false;
         counter = 0;
         counterSaccade = 0;
         long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", filename, "MD"));
@@ -168,17 +161,30 @@ public class ValidateData extends HttpServlet {
                                     Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
 
                             if (tmp <= VELOCITY_THRESHOLD) {
+                                if (FlagSccade == true) {
+                                    //  System.out.println("Saccade X " + arrXsac.get(0) + "\t" + arrXsac.get(countxySac - 1) + "\t" + durationSac);
+                                    //  System.out.println("Saccade Y " + arrYsac.get(0) + "\t" + arrYsac.get(countxySac - 1) + "\t" + durationSac);
+                                    addfix_Sac_IntoHbase(filename);
+                                    arrXsac.clear();
+                                    arrYsac.clear();
+                                    //  sacFlag = false;
+                                    countxySac = 0;
+                                    durationSac = 0;
+                                }
                                 putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
                                         Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
-                                arrXsac.add(arrX.get(0));
-                                arrYsac.add(arrY.get(0));
+                                FlagSccade = false;
                             } else {
                                 if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-                                    // System.out.println((float) sumX / countxy
-                                    //        + "\t" + (float) sumY / countxy + "\t" + duration);
-                                    addfix_Sac_IntoHbase(filename);
 
+                                    addfix_Sac_IntoHbase(filename);
                                 }
+                                FlagSccade = true;
+                                // sacFlag = true;
+                                arrXsac.add(arrX.get(0));
+                                arrYsac.add(arrY.get(0));
+                                durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+                                countxySac++;
                             }
                             count = 1;
                             arrDist.remove(0);
@@ -201,34 +207,39 @@ public class ValidateData extends HttpServlet {
     }
 
     public void addfix_Sac_IntoHbase(String filename) {
-        arrColumn.clear();
-        arrValue.clear();
-        arrColumn.add("sumX");
-        arrValue.add(String.valueOf(sumX / countxy));
-        arrColumn.add("sumY");
-        arrValue.add(String.valueOf(sumY / countxy));
-        arrColumn.add("sumDur");
-        arrValue.add(String.valueOf(duration));
-        addData_inHbase("FixData", filename, "Fx", arrColumn, arrValue);
+        if (FlagSccade == true) {
+            arrColumn.add("XsacStart");
+            arrValue.add(arrXsac.get(0));
+            arrColumn.add("XsacEnd");
+            arrValue.add(arrXsac.get(countxySac - 1));
+            arrColumn.add("XsacDur");
+            arrValue.add(String.valueOf(durationSac));
+            arrColumn.add("YsacStart");
+            arrValue.add(arrYsac.get(0));
+            arrColumn.add("YsacEnd");
+            arrValue.add(arrYsac.get(countxySac - 1));
+            arrColumn.add("YsacDur");
+            arrValue.add(String.valueOf(durationSac));
+            addScade_inHbase("FixData", filename + "-S-", "SC", arrColumn, arrValue);// Inserting Saccade with adding "S" in file name
+            arrXsac.clear();
+            arrYsac.clear();
+            countxySac = 0;
+            durationSac = 0;
+        } else {
+            arrColumn.clear();
+            arrValue.clear();
+            arrColumn.add("sumX");
+            arrValue.add(String.valueOf(sumX / countxy));
+            arrColumn.add("sumY");
+            arrValue.add(String.valueOf(sumY / countxy));
+            arrColumn.add("sumDur");
+            arrValue.add(String.valueOf(duration));
+            addData_inHbase("FixData", filename, "FX", arrColumn, arrValue); /// Inserting Fixtation
 
-        arrColumn.clear();
-        arrValue.clear();
+            arrColumn.clear();
+            arrValue.clear();
 
-        arrColumn.add("XsacStart");
-        arrValue.add(arrXsac.get(0));
-        arrColumn.add("XsacEnd");
-        arrValue.add(arrXsac.get(countxy - 1));
-        arrColumn.add("XsacDur");
-        arrValue.add(String.valueOf(duration));
-        arrColumn.add("YsacStart");
-        arrValue.add(arrYsac.get(0));
-        arrColumn.add("YsacEnd");
-        arrValue.add(arrYsac.get(countxy - 1));
-        arrColumn.add("YsacDur");
-        arrValue.add(String.valueOf(duration));
-        addScade_inHbase("FixData", filename, "Sc", arrColumn, arrValue);
-        arrXsac.clear();
-        arrYsac.clear();
+        }
         countxy = 0;
         sumX = 0;
         sumY = 0;
@@ -423,6 +434,13 @@ public class ValidateData extends HttpServlet {
         String gyright = (String) session.getAttribute("hdnyright");
         String dleft = (String) session.getAttribute("hdndleft");
         String dright = (String) session.getAttribute("hdndright");
+        SCREEN_WIDTH = Integer.parseInt(session.getAttribute("xscreen").toString());
+        SCREEN_HEIGHT = Integer.parseInt(session.getAttribute("yscreen").toString());
+        RESOLUTION_WIDTH = Integer.parseInt(session.getAttribute("xresol").toString());
+        RESOLUTION_HEIGHT = Integer.parseInt(session.getAttribute("yresol").toString());
+        FIXATION_DURATION_THRESHOLD = Integer.parseInt(session.getAttribute("fxdr").toString());
+        VELOCITY_THRESHOLD =Integer.parseInt(session.getAttribute("velth").toString());
+        Missing_Time_THRESHOLD = Integer.parseInt(session.getAttribute("mstm").toString());
 
         arrColumn.clear();
         arrValue.clear();
@@ -436,6 +454,22 @@ public class ValidateData extends HttpServlet {
             dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         } else if ("Run Fixation".equalsIgnoreCase(holdRun)) {
             FixAlgorithm(Efilename);
+            dc.InsertMapRecord("FixData", Efilename, "MD", "1", String.valueOf(counter));// inserting Nos of Rows of fixation
+            dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", "1", String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
+
+            arrColumn.clear();
+            arrValue.clear();
+            arrColumn_lbl.clear();
+            arrValue_lbl.clear();
+            dc.get_DataHbase_common(0, 0, "", "1", "FixData", Efilename, "MD", arrColumn, arrValue);//reading fixation
+            dc.get_DataHbase_common(0, 0, "", "1", "FixData", Efilename + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
+            request.setAttribute("arrColumn", arrColumn);
+            request.setAttribute("arrValue", arrValue);
+            request.setAttribute("arrColumn_lbl", arrColumn_lbl);
+            request.setAttribute("arrValue_lbl", arrValue_lbl);
+
+            RequestDispatcher rd = request.getRequestDispatcher("/ShowFixData.jsp");
+            rd.forward(request, response);
         } else {
             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright);
             Read_LabelData_forValdiation(Efilename, Lfilename);

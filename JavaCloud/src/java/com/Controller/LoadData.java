@@ -68,7 +68,8 @@ public class LoadData extends HttpServlet {
     private static final long serialVersionUID = 1L;
     static String hdnlblfilename = "", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
             hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null,
-            hdnstartpnt = null, hdnduration = null, hdnlblstlname = null;
+            hdnstartpnt = null, hdnduration = null, hdnlblstlname = null, xscreen = null, yscreen = null, xresol = null, yresol = null,
+            fxdr = null, velth = null, mstm = null;
     int partcountrow = 0, partcountcell = 0;
     LinkedHashMap<String, String> arrls = new LinkedHashMap<String, String>();
     LinkedHashMap<String, String> partarrls = new LinkedHashMap<String, String>();
@@ -299,9 +300,9 @@ public class LoadData extends HttpServlet {
                         Alrd_value.clear();
                         Alrd_lbl_column.clear();
                         Alrd_lbl_value.clear();
-                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename,"MF", Alrd_column, Alrd_value);
+                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, "MF", Alrd_column, Alrd_value);
                         // get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
-                        dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename,"MF", Alrd_lbl_column, Alrd_lbl_value);
+                        dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value);
                         request.setAttribute("Alrd_column", Alrd_column);
                         request.setAttribute("Alrd_value", Alrd_value);
                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
@@ -316,6 +317,13 @@ public class LoadData extends HttpServlet {
                         session.setAttribute("hdndright", hdndright);
                         session.setAttribute("hdnfilename", hdnfilename);
                         session.setAttribute("hdnlblfilename", hdnlblfilename);
+                        session.setAttribute("xscreen", xscreen);
+                        session.setAttribute("yscreen", yscreen);
+                        session.setAttribute("xresol", xresol);
+                        session.setAttribute("yresol", yresol);
+                        session.setAttribute("fxdr", fxdr);
+                        session.setAttribute("velth", velth);
+                        session.setAttribute("mstm", mstm);
 
                         RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp");
                         rd.forward(request, response);
@@ -353,6 +361,20 @@ public class LoadData extends HttpServlet {
                         hdnduration = fielditem.getString();
                     } else if ("hdnlblstlname".equals(fielditem.getFieldName())) {
                         hdnlblstlname = fielditem.getString();
+                    } else if ("txtxscreen".equals(fielditem.getFieldName())) {
+                        xscreen = fielditem.getString();
+                    } else if ("txtyscreen".equals(fielditem.getFieldName())) {
+                        yscreen = fielditem.getString();
+                    } else if ("txtxresol".equals(fielditem.getFieldName())) {
+                        xresol = fielditem.getString();
+                    } else if ("txtyresol".equals(fielditem.getFieldName())) {
+                        yresol = fielditem.getString();
+                    } else if ("txtfxdr".equals(fielditem.getFieldName())) {
+                        fxdr = fielditem.getString();
+                    } else if ("txtvelth".equals(fielditem.getFieldName())) {
+                        velth = fielditem.getString();
+                    } else if ("txtmstm".equals(fielditem.getFieldName())) {
+                        mstm = fielditem.getString();
                     }
 
                 }
@@ -407,7 +429,7 @@ public class LoadData extends HttpServlet {
             if (largeStr != null && !largeStr.isEmpty()) {
                 int countcoulmn = 0;
                 long countrow = 0;
-                largeStr = largeStr.replaceAll("\\r\\n", "\t");                
+                largeStr = largeStr.replaceAll("\\r\\n", "\t");
                 String[] strArr = largeStr.split("\t");
                 ArrayList<String> list = new ArrayList<String>(arrls.values());
                 HTable table = new HTable(conf, "RawData");

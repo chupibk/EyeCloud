@@ -347,8 +347,14 @@
                                     </option>
                                 </c:forEach></select> <br/>
                             * Screen Size: x: <input type="text" name="txtxscreen" size="5" value="35" style="margin-bottom: 10px" /> y: <input type="text" name="txtyscreen" size="5" value="45" style="margin-bottom: 10px" /> <br/>
-                            * Resolution x: <input type="text" name="txtxresol" size="5" value="1024" style="margin-bottom: 10px" /> y: <input type="text" name="txtyresol" value="768" size="5" style="margin-bottom: 10px" /> 
-                            <br/><br/><br/><br/><br/><br/><br/><br/>
+                            * Resolution x: <input type="text" name="txtxresol" size="5" value="1024" style="margin-bottom: 10px" /> y: <input type="text" name="txtyresol" value="768" size="5" style="margin-bottom: 10px" /> <br/>
+                              <div style="background-color:#EEEEAE;height:120px;width:300px;float:left; text-align: left;">
+                            <strong>  Fixation Parameters: <br/></strong>
+                            Fixation Duration Threshold: <input type="text" name="txtfxdr" size="10px" value="100" style="margin-bottom: 10px" /><br/>
+                            Velocity Threshold: <input type="text" name="txtvelth" size="10px" value="75" style="margin-bottom: 10px" /> <br/>
+                            Missing Time Threshold: <input type="text" name="txtmstm" size="10px" value="100" style="margin-bottom: 10px" /> 
+                        </div>
+                            <br/>
                             <input type="button" name="btnloadsavedfiles" value="Load" style="margin-bottom: 10px" /> <br/>
                             <input type="submit" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></td>
                             <td style="vertical-align: top "><% if (filelabel == "1") {
