@@ -67,7 +67,7 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
     }
 
-    public void Read_LabelData_forValdiation(String Efilename, String filename) {
+    public void Read_LabelData_forValdiation(String Efilename, String filename) { // Here I am reading label data for validation
         HTable table = null;
         try {
 
@@ -78,11 +78,11 @@ public class ValidateData extends HttpServlet {
             table = new HTable(conf, "RawData");
             for (int a = 0; a <= NosRow - 1; a++) {
                 breakLoop = false;
-                Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a));
+                Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a)); // USER ID + filename +  nos of row
                 Result result = table.get(get);
                 arrColumn.clear();
                 arrValue.clear();
-                for (KeyValue kv : result.raw()) {
+                for (KeyValue kv : result.raw()) { //adding column and values
                     arrColumn.add(new String(kv.getQualifier()));
                     arrValue.add(new String(kv.getValue()));
                 }
@@ -98,13 +98,13 @@ public class ValidateData extends HttpServlet {
             }
             table.close();
             dc.InsertMapRecord("ValidData", Efilename, "LD", "1", filename); //Insert validData file name as row and Label data Filename as value 
-            dc.InsertMapRecord("ValidData", filename, "MD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into LD(Label Data) column FamIly
+            dc.InsertMapRecord("ValidData", filename, "MD", "1", String.valueOf(counter)); // here I am storing nos of rows of ValIDData Into LD(Label Data) column FamIly
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public float pixalToCenti(int x1, int y1, int x2, int y2) {
+    public float pixalToCenti(int x1, int y1, int x2, int y2) { //this function convert pixal to centimeter
         float xf1, xf2, yf1, yf2;
         xf1 = (float) x1 * SCREEN_WIDTH / RESOLUTION_WIDTH;
         xf2 = (float) x2 * SCREEN_WIDTH / RESOLUTION_WIDTH;
@@ -120,12 +120,11 @@ public class ValidateData extends HttpServlet {
         return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
     }
 
-    public void putXY(int x, int y, int time) {
+    public void putXY(int x, int y, int time) { //setting and incrementing value 
         countxy++;
         sumX += x;
         sumY += y;
         duration += time;
-
     }
     Boolean FlagSccade;
 
@@ -134,37 +133,35 @@ public class ValidateData extends HttpServlet {
         //   boolean sacFlag = false;
         counter = 0;
         counterSaccade = 0;
-        long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", filename, "MD"));
+        long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", filename, "MD")); // Getting total nos of value
         HTable table = new HTable(conf, "ValidData");
         int count = 0;
         for (long a = 0; a <= NosRow - 1; a++) {
-            Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a));
+            Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a)); // setting rowkey
             Result result = table.get(get);
             for (KeyValue kv : result.raw()) {
                 if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
-                    arrDist.add(new String(kv.getValue()));
+                    arrDist.add(new String(kv.getValue())); //adding AvgDist into arraylist
                 } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
-                    arrX.add(new String(kv.getValue()));
+                    arrX.add(new String(kv.getValue())); //adding AvgGxleft into arraylist
                 } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
-                    arrY.add(new String(kv.getValue()));
+                    arrY.add(new String(kv.getValue())); //adding AvgGyleft into arraylist
                 } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
-                    String time = new String(kv.getValue());
-                    time = time.replace("\n", "");
+                    String time = new String(kv.getValue()); //adding timestamp into arraylist
+                    time = time.replace("\n", ""); // remove \n frm the timestamp
                     arrT.add(time);
                     count++;
                     if (count == 2) {
-                        int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+                        int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)); // difference of time
                         if (durtmp <= Missing_Time_THRESHOLD) {
                             float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
                                     Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
                                     Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
-                                    Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
+                                    Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); // setting velocity into the var
 
                             if (tmp <= VELOCITY_THRESHOLD) {
                                 if (FlagSccade == true) {
-                                    //  System.out.println("Saccade X " + arrXsac.get(0) + "\t" + arrXsac.get(countxySac - 1) + "\t" + durationSac);
-                                    //  System.out.println("Saccade Y " + arrYsac.get(0) + "\t" + arrYsac.get(countxySac - 1) + "\t" + durationSac);
-                                    addfix_Sac_IntoHbase(filename);
+                                    addfix_Sac_IntoHbase(filename); // This time adding saccade into hbase
                                     arrXsac.clear();
                                     arrYsac.clear();
                                     //  sacFlag = false;
@@ -172,12 +169,12 @@ public class ValidateData extends HttpServlet {
                                     durationSac = 0;
                                 }
                                 putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
-                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
+                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); //passing parameter
                                 FlagSccade = false;
                             } else {
                                 if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
 
-                                    addfix_Sac_IntoHbase(filename);
+                                    addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase
                                 }
                                 FlagSccade = true;
                                 // sacFlag = true;
@@ -200,14 +197,12 @@ public class ValidateData extends HttpServlet {
 
         }
         if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-//            System.out.println((float) sumX / countxy
-//                    + "\t" + (float) sumY / countxy + "\t" + duration);
-            addfix_Sac_IntoHbase(filename);
+            addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase last time
         }
     }
 
     public void addfix_Sac_IntoHbase(String filename) {
-        if (FlagSccade == true) {
+        if (FlagSccade == true) { // when its Saccade
             arrColumn.add("XsacStart");
             arrValue.add(arrXsac.get(0));
             arrColumn.add("XsacEnd");
@@ -225,7 +220,7 @@ public class ValidateData extends HttpServlet {
             arrYsac.clear();
             countxySac = 0;
             durationSac = 0;
-        } else {
+        } else { // When Its fixation
             arrColumn.clear();
             arrValue.clear();
             arrColumn.add("sumX");
@@ -271,42 +266,42 @@ public class ValidateData extends HttpServlet {
                     arrColumn.add(new String(kv.getQualifier()));
                     arrValue.add(new String(kv.getValue()));
                 }
-                vLindex = arrColumn.indexOf("ValidityLeft");
-                vRindex = arrColumn.indexOf("ValidityRight");
+                vLindex = arrColumn.indexOf("ValidityLeft"); // getting Index of the speciFied column
+                vRindex = arrColumn.indexOf("ValidityRight"); // getting Index of the speciFied column
                 dLindex = arrColumn.indexOf("DistanceLeft");
                 dRindex = arrColumn.indexOf("DistanceRight");
                 gpXLindex = arrColumn.indexOf("GazePointXLeft");
                 gpXRindex = arrColumn.indexOf("GazePointXRight");
                 gpYLindex = arrColumn.indexOf("GazePointYLeft");
-                gpYRindex = arrColumn.indexOf("GazePointYRight");
+                gpYRindex = arrColumn.indexOf("GazePointYRight"); // getting Index of the speciFied column
 
-                if (arrValue.get(vLindex).equals("4") && arrValue.get(vRindex).equals("4")) // For Validity L & R
+                if (arrValue.get(vLindex).equals("4") && arrValue.get(vRindex).equals("4")) // if L & R=4 then skip the line
                 {
                     breakflag = true;
-                } else if (Double.parseDouble(arrValue.get(gpXLindex).equals("") ? "0" : arrValue.get(gpXLindex)) < 1) // For Validity if XLeft is less than 0
+                } else if (Double.parseDouble(arrValue.get(gpXLindex).equals("") ? "0" : arrValue.get(gpXLindex)) < 1) // For Validity if XLeft is less than 1
                 {
                     if (gxleft != null && !gxleft.equals("")) {
                         breakflag = true;
                     }
-                } else if (Double.parseDouble(arrValue.get(gpXRindex).equals("") ? "0" : arrValue.get(gpXRindex)) < 1) // For Validity L=0 or 3 & then Update R
+                } else if (Double.parseDouble(arrValue.get(gpXRindex).equals("") ? "0" : arrValue.get(gpXRindex)) < 1) // // For Validity if XRIGHT is less than 1
                 {
                     if (gxright != null && !gxright.equals("")) {
                         breakflag = true;
                     }
-                } else if (Double.parseDouble(arrValue.get(gpYLindex).equals("") ? "0" : arrValue.get(gpYLindex)) < 1) // For Validity L=0 or 3 & then Update R
+                } else if (Double.parseDouble(arrValue.get(gpYLindex).equals("") ? "0" : arrValue.get(gpYLindex)) < 1) // For Validity if YLeft is less than 1
                 {
                     if (gyleft != null && !gyleft.equals("")) {
                         breakflag = true;
                     }
 
-                } else if (Double.parseDouble(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity L=0 or 3 & then Update R
+                } else if (Double.parseDouble(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity if YRGHT is less than 1
                 {
                     if (gyright != null && !gyright.equals("")) {
                         breakflag = true;
                     }
                 } else if ((arrValue.get(vLindex).equals("0") || arrValue.get(vLindex).equals("3")) && arrValue.get(vRindex).equals("4")) // For Validity L=0 or 3 & then Update R
                 {
-                    arrValue.set(gpXRindex, arrValue.get(gpXLindex));
+                    arrValue.set(gpXRindex, arrValue.get(gpXLindex)); //updating  XRIght with Xleft
                     arrValue.set(gpYRindex, arrValue.get(gpYLindex));
                     arrValue.set(dRindex, arrValue.get(dLindex));
 
@@ -321,53 +316,53 @@ public class ValidateData extends HttpServlet {
                     breakflag = true;
                 }
                 if (!breakflag) {
-                    DLeft = new Double(arrValue.get(dLindex));
+                    DLeft = new Double(arrValue.get(dLindex)); //converting left Distance into cm
                     DLlength = (int) (Math.log10(DLeft.intValue()) + 1);
                     if (DLlength != 2) {
                         DLeft = DLeft / 10;
                     }
-                    DRight = new Double(arrValue.get(dRindex));
+                    DRight = new Double(arrValue.get(dRindex)); //converting left Distance into cm
                     DRlenght = (int) (Math.log10(DRight.intValue()) + 1);
                     if (DRlenght != 2) {
                         DRight = DRight / 10;
                     }
 
-                    arrValue.set(dLindex, String.valueOf(Math.round(DLeft)));
-                    arrValue.set(dRindex, String.valueOf(Math.round(DRight)));
+                    arrValue.set(dLindex, String.valueOf(Math.round(DLeft))); //roundIng Left dIstance 
+                    arrValue.set(dRindex, String.valueOf(Math.round(DRight)));  //roundIng RIght dIstance 
                     //arrAvgColumn.add("Timestamp");
                     // arrAvgValue.add(arrValue.get(arrColumn.indexOf("Timestamp")));
 
                     arrColumn.add("AvgDist");
-                    if ((dright != null && !dright.equals("")) && (dleft != null && !dleft.equals(""))) {
-                        DLeft = (DLeft + DRight) / 2;
+                    if ((dright != null && !dright.equals("")) && (dleft != null && !dleft.equals(""))) { // checkIng If users select Both L & R dIstance
+                        DLeft = (DLeft + DRight) / 2; // nw takIng avg Dleft & DrIght & addIng Into the lIst
                         arrValue.add(String.valueOf(Math.round(DLeft)));
-                    } else if (dright != null && !dright.equals("")) {
+                    } else if (dright != null && !dright.equals("")) { //when user select DIstance RIght
                         arrValue.add(String.valueOf(Math.round(DRight)));
-                    } else if (dleft != null && !dleft.equals("")) {
+                    } else if (dleft != null && !dleft.equals("")) { //when user select DIstance left
                         arrValue.add(String.valueOf(Math.round(DLeft)));
                     }
 
                     arrColumn.add("AvgGxleft");
-                    if ((gxleft != null && !gxleft.equals("")) && (gxright != null && !gxright.equals(""))) {
+                    if ((gxleft != null && !gxleft.equals("")) && (gxright != null && !gxright.equals(""))) { //same as above
                         gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
                         arrValue.add(String.valueOf(Math.round(gpXleft)));
-                    } else if (gxleft != null && !gxleft.equals("")) {
+                    } else if (gxleft != null && !gxleft.equals("")) { //same as above
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXLindex)))));
-                    } else if (gxright != null && !gxright.equals("")) {
+                    } else if (gxright != null && !gxright.equals("")) { //same as above
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXRindex)))));
                     }
 
                     arrColumn.add("AvgGyleft");
-                    if ((gyleft != null && !gyleft.equals("")) && (gyright != null && !gyright.equals(""))) {
+                    if ((gyleft != null && !gyleft.equals("")) && (gyright != null && !gyright.equals(""))) { //same as above
                         gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
                         arrValue.add(String.valueOf(Math.round(gpYleft)));
-                    } else if (gyleft != null && !gyleft.equals("")) {
+                    } else if (gyleft != null && !gyleft.equals("")) { //same as above
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYLindex)))));
-                    } else if (gyright != null && !gyright.equals("")) {
+                    } else if (gyright != null && !gyright.equals("")) { //same as above
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
                     }
 
-                    addData_inHbase("ValidData", filename, "VD", arrColumn, arrValue);
+                    addData_inHbase("ValidData", filename, "VD", arrColumn, arrValue); //addIng Into Hbase 
 
                 }
             }
@@ -426,7 +421,7 @@ public class ValidateData extends HttpServlet {
         PrintWriter out = response.getWriter();
         //out.println("System ");
         HttpSession session = request.getSession(false);
-        String Efilename = (String) session.getAttribute("hdnfilename");
+        String Efilename = (String) session.getAttribute("hdnfilename"); //settIng sessIons Into StrIng
         String Lfilename = (String) session.getAttribute("hdnlblfilename");
         String gxleft = (String) session.getAttribute("hdnxleft");
         String gxright = (String) session.getAttribute("hdnxright");
@@ -439,7 +434,7 @@ public class ValidateData extends HttpServlet {
         RESOLUTION_WIDTH = Integer.parseInt(session.getAttribute("xresol").toString());
         RESOLUTION_HEIGHT = Integer.parseInt(session.getAttribute("yresol").toString());
         FIXATION_DURATION_THRESHOLD = Integer.parseInt(session.getAttribute("fxdr").toString());
-        VELOCITY_THRESHOLD =Integer.parseInt(session.getAttribute("velth").toString());
+        VELOCITY_THRESHOLD = Integer.parseInt(session.getAttribute("velth").toString());
         Missing_Time_THRESHOLD = Integer.parseInt(session.getAttribute("mstm").toString());
 
         arrColumn.clear();
@@ -448,11 +443,11 @@ public class ValidateData extends HttpServlet {
 
         String holdNext = request.getParameter("btnNext");
         String holdRun = request.getParameter("btnRun");
-        if ("Next".equalsIgnoreCase(holdNext)) {
+        if ("Next".equalsIgnoreCase(holdNext)) { // when user clIck on next button
             loopStarter = looprunner;
             looprunner = looprunner + 1000;
             dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
-        } else if ("Run Fixation".equalsIgnoreCase(holdRun)) {
+        } else if ("Run Fixation".equalsIgnoreCase(holdRun)) { // Run FixatIon and Saccade
             FixAlgorithm(Efilename);
             dc.InsertMapRecord("FixData", Efilename, "MD", "1", String.valueOf(counter));// inserting Nos of Rows of fixation
             dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", "1", String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
@@ -471,15 +466,15 @@ public class ValidateData extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/ShowFixData.jsp");
             rd.forward(request, response);
         } else {
-            Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright);
-            Read_LabelData_forValdiation(Efilename, Lfilename);
+            Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
+            Read_LabelData_forValdiation(Efilename, Lfilename); //ReadIng label Data for valIdatIon 
             arrColumn.clear();
             arrValue.clear();
             arrTime.clear();
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
-            dc.get_DataHbase(0, 1000, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
-            dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);//UserID TO BE ADDED IN IT
+            dc.get_DataHbase(0, 1000, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
+            dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// readIng label valId data to show on page
         }
 
         request.setAttribute("arrColumn", arrColumn);

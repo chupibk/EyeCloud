@@ -64,7 +64,8 @@ import org.apache.hadoop.hbase.util.Bytes;
  */
 @WebServlet(name = "LoadData", urlPatterns = {"/LoadData"})
 public class LoadData extends HttpServlet {
-
+    
+    // Declaring & Initializing Variables
     private static final long serialVersionUID = 1L;
     static String hdnlblfilename = "", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
             hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null,
@@ -95,16 +96,21 @@ public class LoadData extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-
+        
+        /*I have used Appache File Uploader for uploading Files bcoz of this all the 
+         * controls have become the Items of this uploader that is why I have to use if Condition to get values of each 
+         * control
+         */
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
-
         try {
             List<FileItem> fields = upload.parseRequest(request);
             for (FileItem fielditem : fields) {
                 if (fielditem.isFormField()) {
-                    if ("btnload".equals(fielditem.getFieldName())) {
-                        if (arrls.size() != 0) {
+                    if ("btnload".equals(fielditem.getFieldName())) { /* If Load button of Eye tracker File is 
+                     * clicked do this.
+                     */
+                        if (arrls.size() != 0) { //clear the hidden files & array if they are already set
                             hdntimestamp = null;
                             hdnxleft = null;
                             hdnxright = null;
@@ -118,7 +124,7 @@ public class LoadData extends HttpServlet {
                             hdnpart = null;
                             arrls.clear();
                         }
-                        if (partarrls.size() != 0) {
+                        if (partarrls.size() != 0) { 
                             partarrls.clear();
                         }
                         if (partarrlsvalue.size() != 0) {
@@ -127,7 +133,6 @@ public class LoadData extends HttpServlet {
                         if (lblarrls.size() != 0) {
                             lblarrls.clear();
                         }
-
                         Iterator<FileItem> it = fields.iterator();
                         while (it.hasNext()) {
                             FileItem fileItem = it.next();
@@ -136,17 +141,13 @@ public class LoadData extends HttpServlet {
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
                                 String str;
                                 LineNumberReader ln = new LineNumberReader(br);
-
                                 while (ln.getLineNumber() == 0) {
                                     str = ln.readLine();
-                                    if (str != null) {
-                                        largeStr = fileItem.getString();
+                                    if (str != null) { //If files is selected
+                                        largeStr = fileItem.getString(); //set textfile to string 
                                         String[] strArr = str.split("	");
-                                        for (int a = 0; a <= strArr.length - 1; a++) {
-                                            // out.println(strArr[a] + "<br/>");
-                                            // arrls.put("Select", "Select");
-
-                                            arrls.put(strArr[a], strArr[a]);
+                                        for (int a = 0; a <= strArr.length - 1; a++) { 
+                                            arrls.put(strArr[a], strArr[a]); // SETTING THE FIRST LINE OF TEXT FILE(HEADER) IN hashmap
                                             request.setAttribute("fileload", "0");
                                         }
                                     } else {
@@ -157,10 +158,9 @@ public class LoadData extends HttpServlet {
                                 }
                                 br.close();
                             }
-
                         }
 
-                    } else if ("btnpart".equals(fielditem.getFieldName())) {
+                    } else if ("btnpart".equals(fielditem.getFieldName())) { // read participant excel file  
                         Iterator<FileItem> it = fields.iterator();
                         partcountrow = 0;
                         while (it.hasNext()) {
@@ -168,12 +168,8 @@ public class LoadData extends HttpServlet {
                             System.out.println(fileItem.getName());
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
-
-                                //     FileInputStream file = new FileInputStream(new File(fields.));
-                                //FileInputStream file = new FileInputStream(new File("C:\\test.xls"));
-
                                 //Get the workbook instance for XLS file 
-                                if (fileItem.getName().endsWith("xlsx")) {
+                                if (fileItem.getName().endsWith("xlsx")) { // when its xlsx file
                                     XSSFWorkbook workbook = new XSSFWorkbook(fileItem.getInputStream());
                                     //Get first sheet from the workbook
                                     XSSFSheet sheet = workbook.getSheetAt(0);
@@ -187,19 +183,14 @@ public class LoadData extends HttpServlet {
                                         while (cellIterator.hasNext()) {
                                             Cell cell = cellIterator.next();
                                             if (partcountrow == 0) {
-                                                partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
+                                                partarrls.put(cell.getStringCellValue(), cell.getStringCellValue()); //Set only the columns name
                                                 strholdexcel.add(cell.getStringCellValue());
                                             } else {
-
                                                 switch (cell.getCellType()) {
-//                                                case Cell.CELL_TYPE_BOOLEAN:
-//                                                    System.out.print(cell.getBooleanCellValue() + "\t\t");
-//                                                    break;
-
-                                                    case Cell.CELL_TYPE_NUMERIC:
+                                                    case Cell.CELL_TYPE_NUMERIC: // if its numeric value set them in numeric sections
                                                         partarrlsvalue.put(strholdexcel.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
                                                         break;
-                                                    case Cell.CELL_TYPE_STRING:
+                                                    case Cell.CELL_TYPE_STRING: // if its numeric value set them in string sections
                                                         partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
                                                         break;
 
@@ -212,7 +203,7 @@ public class LoadData extends HttpServlet {
                                         partcountrow++;
 
                                     }
-                                } else {
+                                } else { // when its xls file
                                     HSSFWorkbook workbook = new HSSFWorkbook(fileItem.getInputStream());
                                     //Get first System.out.println("xlsx");sheet from the workbook
                                     HSSFSheet sheet = workbook.getSheetAt(0);
@@ -232,14 +223,10 @@ public class LoadData extends HttpServlet {
                                             } else {
 
                                                 switch (cell.getCellType()) {
-//                                                case Cell.CELL_TYPE_BOOLEAN:
-//                                                    System.out.print(cell.getBooleanCellValue() + "\t\t");
-//                                                    break;
-
-                                                    case Cell.CELL_TYPE_NUMERIC:
+                                                    case Cell.CELL_TYPE_NUMERIC: // if its numeric value set them in numeric sections
                                                         partarrlsvalue.put(strholdexcel.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
                                                         break;
-                                                    case Cell.CELL_TYPE_STRING:
+                                                    case Cell.CELL_TYPE_STRING: // if its numeric value set them in string sections
                                                         partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
                                                         break;
 
@@ -250,25 +237,19 @@ public class LoadData extends HttpServlet {
                                         }
                                         partcountcell = 0;
                                         partcountrow++;
-                                        //System.out.println("xls");
-                                        //  break;
                                     }
                                 }
                             }
                         }
 
 
-                    } else if ("btnlblfiles".equals(fielditem.getFieldName())) {
+                    } else if ("btnlblfiles".equals(fielditem.getFieldName())) { // if its Label file
                         Iterator<FileItem> it = fields.iterator();
                         lblarrls.put("Select", "Select");
                         while (it.hasNext()) {
-
                             FileItem fileItem = it.next();
-                            // System.out.println(fileItem.getName());
-
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
-
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
                                 String str;
                                 LineNumberReader ln = new LineNumberReader(br);
@@ -292,24 +273,23 @@ public class LoadData extends HttpServlet {
                         }
                         break;
 
-                    } else if ("btnsave".equals(fielditem.getFieldName())) {
-                        //System.out.println(fielditem.getString());
-                        addrawData();
-                        addLabelrawData();
-                        Alrd_column.clear();
-                        Alrd_value.clear();
-                        Alrd_lbl_column.clear();
-                        Alrd_lbl_value.clear();
-                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, "MF", Alrd_column, Alrd_value);
+                    } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
+                        addrawData(); // Adding raw Data from the Text File
+                        addLabelrawData(); // Adding Label Data from the Text File
+                        Alrd_column.clear(); // clear the array
+                        Alrd_value.clear(); // clear the array
+                        Alrd_lbl_column.clear(); // clear the array
+                        Alrd_lbl_value.clear(); // clear the array
+                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
                         // get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
                         dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value);
-                        request.setAttribute("Alrd_column", Alrd_column);
-                        request.setAttribute("Alrd_value", Alrd_value);
-                        request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);
-                        request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);
+                        request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
+                        request.setAttribute("Alrd_value", Alrd_value);  // setting array List for forwarding data to next page
+                        request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);  // setting array List for forwarding data to next page
+                        request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);  // setting array List for forwarding data to next page
 
                         HttpSession session = request.getSession(false);
-                        session.setAttribute("hdnxleft", hdnxleft);
+                        session.setAttribute("hdnxleft", hdnxleft);  // setting session
                         session.setAttribute("hdnyleft", hdnyleft);
                         session.setAttribute("hdnxright", hdnxright);
                         session.setAttribute("hdnyright", hdnyright);
@@ -325,11 +305,11 @@ public class LoadData extends HttpServlet {
                         session.setAttribute("velth", velth);
                         session.setAttribute("mstm", mstm);
 
-                        RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp");
+                        RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp"); // redirecting to the next page
                         rd.forward(request, response);
                         break;
                     }
-                    if ("hdntimestamp".equals(fielditem.getFieldName())) {
+                    if ("hdntimestamp".equals(fielditem.getFieldName())) { //setting hidden fields values to show it back to the user
                         hdntimestamp = fielditem.getString();
                     } else if ("hdnxleft".equals(fielditem.getFieldName())) {
                         hdnxleft = fielditem.getString();
@@ -380,18 +360,18 @@ public class LoadData extends HttpServlet {
                 }
             }
             List lstpart = null;
-            if (hdnpart != null && !hdnpart.isEmpty()) {
+            if (hdnpart != null && !hdnpart.isEmpty()) { // set list to show the participant list
                 request.setAttribute("selectedpart", hdnpart);
                 lstpart = (List) partarrlsvalue.get(hdnpart);
             } else {
                 request.setAttribute("selectedpart", "ID");
                 lstpart = (List) partarrlsvalue.get("ID");
             }
-            if (hdnfilename.contains("\\")) {
+            if (hdnfilename.contains("\\")) { // remove the \ sign from the file name of eye tracker
                 String[] holdpath = hdnfilename.split("[\\\\]");
                 hdnfilename = holdpath[2];
             }
-            if (hdnlblfilename.contains("\\")) {
+            if (hdnlblfilename.contains("\\")) { // remove the \ sign from the file name of label
                 String[] holdpath = hdnlblfilename.split("[\\\\]");
                 hdnlblfilename = holdpath[2];
             }
@@ -429,37 +409,37 @@ public class LoadData extends HttpServlet {
             if (largeStr != null && !largeStr.isEmpty()) {
                 int countcoulmn = 0;
                 long countrow = 0;
-                largeStr = largeStr.replaceAll("\\r\\n", "\t");
-                String[] strArr = largeStr.split("\t");
-                ArrayList<String> list = new ArrayList<String>(arrls.values());
+                largeStr = largeStr.replaceAll("\\r\\n", "\t"); // remove \n from the  text file
+                String[] strArr = largeStr.split("\t");// spliting text into the array
+                ArrayList<String> list = new ArrayList<String>(arrls.values()); // setting all values of array into another array
                 HTable table = new HTable(conf, "RawData");
                 table.setAutoFlush(false);
                 table.setWriteBufferSize(1024 * 1024 * 12);
-                Put put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); // userID + FIleName + RowNumber
-                for (int a = 0; a <= strArr.length - 1; a++) {
-                    for (int b = countcoulmn; b <= list.size() - 1; b++) {
-                        if (list.get(b).equals(strArr[a])) {
+                Put put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); //setting rowkey in this format userID + FIleName + RowNumber
+                for (int a = 0; a <= strArr.length - 1; a++) { // run the loop untl Str arry has value
+                    for (int b = countcoulmn; b <= list.size() - 1; b++) { // run the loop untl list has value
+                        if (list.get(b).equals(strArr[a])) { // here I checked if in str arry there are header like list header then dont do anythng
                         } else {
-                            put.add(Bytes.toBytes("EF"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a])); // Column family  is EF(EyeTracker File)
+                            put.add(Bytes.toBytes("EF"), Bytes.toBytes(list.get(b)), Bytes.toBytes(strArr[a])); // else I add the value into PUT with this Column family  is EF(EyeTracker File)
                         }
-                        if ((countcoulmn + 1) == list.size()) {
+                        if ((countcoulmn + 1) == list.size()) { // here I Check if lIST Size are equal to the header columns count 
                             countcoulmn = 0;
                             if (put.size() != 0) {
-                                countrow++;
+                                countrow++; // incrment the row
                                 table.put(put);
-                                put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); // userID + FIleName + RowNumber
+                                put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); //INIALIZE NEW PUT WITH THIS ROWKEY userID + FIleName + RowNumber
                             }
 
                         } else {
                             b++;
-                            countcoulmn = b;
+                            countcoulmn = b; //set countcolumn to b
                         }
                         break;
                     }
                 }
                 table.flushCommits();
                 table.close();
-                dc.InsertMapRecord("RawData", hdnfilename, "MF", "1", String.valueOf(countrow)); // 1  is userID
+                dc.InsertMapRecord("RawData", hdnfilename, "MF", "1", String.valueOf(countrow)); //Insert total nos of rows into the Raw data with the name of eye tracker file  under MF column family
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -503,8 +483,8 @@ public class LoadData extends HttpServlet {
                 }
                 table.flushCommits();
                 table.close();
-                dc.InsertMapRecord("RawData", hdnfilename, "LF", "1", hdnlblfilename); //Insert RawData file name in RawData 
-                dc.InsertMapRecord("RawData", hdnlblfilename, "MF", "1", String.valueOf(countrow)); // Insert nos of records in RawData
+                dc.InsertMapRecord("RawData", hdnfilename, "LF", "1", hdnlblfilename); //Insert RawData file name under LF Column family to link label file name to the user
+                dc.InsertMapRecord("RawData", hdnlblfilename, "MF", "1", String.valueOf(countrow)); //Insert total nos of rows into the Label data with the name of label file under MF column family 1  is userID
 
             }
         } catch (IOException e) {

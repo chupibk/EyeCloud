@@ -42,13 +42,13 @@ public class DataClass {
             HTable table = new HTable(conf, tablename);
             List<Get> Rowlist = new ArrayList<Get>();
             for (long a = loopStarter; a <= loopruner - 1; a++) {
-                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
+                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a))); //Here I am adding all the numbers of rows that I want to call
             }
             int hold_a = 0, hold_b = 0;
             Result[] result = table.get(Rowlist);
             for (Result r : result) {
                 for (KeyValue kv : r.raw()) {
-                    if (Bytes.toString(kv.getQualifier()).equals("GazePointXLeft")
+                    if (Bytes.toString(kv.getQualifier()).equals("GazePointXLeft") // here I am only showing these specific columns and values
                             || Bytes.toString(kv.getQualifier()).equals("GazePointYLeft")
                             || Bytes.toString(kv.getQualifier()).equals("GazePointXRight")
                             || Bytes.toString(kv.getQualifier()).equals("GazePointYRight")
@@ -57,20 +57,20 @@ public class DataClass {
                             || Bytes.toString(kv.getQualifier()).equals("ValidityLeft")
                             || Bytes.toString(kv.getQualifier()).equals("DistanceLeft")) {
                         if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
-                            ArrayRD_Column.add(new String(kv.getQualifier()));
+                            ArrayRD_Column.add(new String(kv.getQualifier())); //Here I am adding all the columns
                             hold_a++;
                         } else if (hold_b == 0) {
-                            ArrayRD_Value.add("/");
+                            ArrayRD_Value.add("/"); // here I add "\" to show that from here New Recrds its started
                             hold_b = 1;
                         } else {
                             if (hold_a == hold_b) {
-                                ArrayRD_Value.add("/");
+                                ArrayRD_Value.add("/"); // here I add "\" to show that from here New Recrds its started
                                 hold_b = 0;
                             }
                             hold_b++;
                         }
-                        ArrayRD_Value.add(new String(kv.getValue()));
-                    } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
+                        ArrayRD_Value.add(new String(kv.getValue())); // here I am adding values 
+                    } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) { // I am adding time stamp
                         ArrayRD_Time.add(new String(kv.getValue()));
                     }
                 }
@@ -82,7 +82,7 @@ public class DataClass {
 
     }
 
-    public String get_MapFile(String tablename, String rowkey, String CF) {
+    public String get_MapFile(String tablename, String rowkey, String CF) { // This function will gives single record frm database
         String holdvalue = null;
         try {
             HTable table = new HTable(conf, tablename);
@@ -101,7 +101,7 @@ public class DataClass {
 
     }
 
-    public void InsertMapRecord(String tablename, String rowkey, String CF, String qualifier, String value) {
+    public void InsertMapRecord(String tablename, String rowkey, String CF, String qualifier, String value) { // TO Insert one record
 
         try {
             HTable table = new HTable(conf, tablename);
@@ -115,7 +115,8 @@ public class DataClass {
         }
 
     }
-
+    
+    //This funcation is just like get_DataHbase but just contain some other setup
     public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
         try {
@@ -136,7 +137,6 @@ public class DataClass {
             Result[] result = table.get(Rowlist);
             for (Result r : result) {
                 for (KeyValue kv : r.raw()) {
-
                     if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
                         ArrayRD_Column.add(new String(kv.getQualifier()));
                         hold_a++;
