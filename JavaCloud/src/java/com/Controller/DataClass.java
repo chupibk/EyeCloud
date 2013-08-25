@@ -15,6 +15,13 @@ import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.util.Date;
 
 /**
  * ++++
@@ -34,6 +41,9 @@ public class DataClass {
     // ValidData column family structure
     // create 'FixData','FX','SC','MD'
     // FixData column family structure
+    public boolean isBlankOrNull(String str) {
+    return (str == null || "".equals(str.trim()));
+}
 
     public void get_DataHbase(long loopStarter, long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
 
@@ -115,7 +125,7 @@ public class DataClass {
         }
 
     }
-    
+
     //This funcation is just like get_DataHbase but just contain some other setup
     public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
@@ -156,6 +166,48 @@ public class DataClass {
             table.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+    }
+    Connection connection = null;
+    PreparedStatement preStat = null;
+    Statement stat = null;
+    ResultSet rs = null;
+
+    public int RegIsteruser_mysql(String name, String email, String pass, String country, String state,
+            String city, String address, String mobNum, String phoneNum, String postalcode) {
+        try {
+            int result = 0;
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+            preStat = connection.prepareStatement("insert into tblRegister values(default,?,?,?,?,?,?,?,?,?,?)");
+            preStat.setString(1, name);
+            preStat.setString(2, email);
+            preStat.setString(3, pass);
+            preStat.setString(4, country);
+            preStat.setString(5, state);
+            preStat.setString(6, city);
+            preStat.setString(7, address);
+            preStat.setString(8, mobNum);
+            preStat.setString(9, phoneNum);
+            preStat.setString(10, postalcode);
+            preStat.executeUpdate();
+            if (preStat.getUpdateCount() == 1) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            return result;
+
+//            preStat = connection.prepareStatement("select * from tblRegister");
+//            rs = preStat.executeQuery();
+//            System.out.println(rs);
+
+        } catch (Exception e) {
+            System.out.println("Connection Failed! Check output console");
+            e.printStackTrace();
+            return 0;
         }
 
     }

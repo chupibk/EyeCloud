@@ -29,6 +29,13 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.util.Date;
 
 /**
  *
@@ -63,7 +70,6 @@ public class HbaseServlet extends HttpServlet {
         if ("Add".equalsIgnoreCase(actIon)) {
             try {
                 //creatTable(tablename, familys);
-                addRecord(tablename, row, famIly, qualifier, value);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -81,46 +87,8 @@ public class HbaseServlet extends HttpServlet {
 
     }
 
-    public static void addRecord(String tablename, String rowkey, String family,
-            String qualifier, String value) throws ZooKeeperConnectionException, MasterNotRunningException, IOException {
-        try {
-
-            // HBaseAdmin admin = new HBaseAdmin(conf);
-            conf = HBaseConfiguration.create();
-
-            HTable table = new HTable(conf, tablename);
-
-            Put put = new Put(Bytes.toBytes(rowkey));
-            put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
-            put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
-
-            table.put(put);
-
-            System.out.println("insert record " + rowkey + " to table " + tablename + " ok.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     static {
         conf = HBaseConfiguration.create();
-    }
-
-    public static void creatTable(String tableName, String[] familys)
-            throws Exception {
-
-        conf = HBaseConfiguration.create();
-        HBaseAdmin admin = new HBaseAdmin(conf);
-        if (admin.tableExists(tableName)) {
-            System.out.println("table already exists!");
-        } else {
-            HTableDescriptor tableDesc = new HTableDescriptor(tableName);
-            for (int i = 0; i < familys.length; i++) {
-                tableDesc.addFamily(new HColumnDescriptor(familys[i]));
-            }
-            admin.createTable(tableDesc);
-            System.out.println("create table " + tableName + " ok.");
-        }
     }
 
     public static String get_MapFile(String tablename, String rowkey, String CF) {
@@ -174,7 +142,6 @@ public class HbaseServlet extends HttpServlet {
         degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
         return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
     }
-
     static ArrayList<String> arrDist = new ArrayList<String>();
     static ArrayList<String> arrX = new ArrayList<String>();
     static ArrayList<String> arrY = new ArrayList<String>();
@@ -281,24 +248,48 @@ public class HbaseServlet extends HttpServlet {
     private static int countxySac = 0;
     private static int duration = 0;
     private static int durationSac = 0;
+    static Connection connection = null;
+    static PreparedStatement preStat = null;
+    static Statement stat = null;
+    static ResultSet rs = null;
+
+    public static void Insertmysql() {
+
+        try {
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+
+            preStat = connection.prepareStatement("insert into tblRegister values(default,?,?,?,?,?,?,?,?,?,?)");
+
+            preStat.setString(1, "Test");
+            preStat.setString(2, "TestEmail");
+            preStat.setString(3, "TestWebpage");
+            preStat.setString(4, "ss");
+            preStat.setString(5, "TestSummary");
+            preStat.setString(6, "TestComment");
+            preStat.setString(7, "TestComment7");
+            preStat.setString(8, "TestComment8");
+            preStat.setString(9, "TestComment9");
+            preStat.setString(10, "TestComment10");
+            preStat.executeUpdate();
+
+            preStat = connection.prepareStatement("select * from tblRegister");
+            rs = preStat.executeQuery();
+            System.out.println(rs);
+
+        } catch (SQLException e) {
+            System.out.println("Connection Failed! Check output console");
+            e.printStackTrace();
+            return;
+        }
+
+    }
 
     public static void main(String[] args) {
         try {
             // System.out.println(get_MapFile("01-01-All-Data.txt"));
-            FixAlgorithm();
-
-//            System.out.println("=========get one record========");
-//            HbaseTest.getonerecord(tablename, "baoniu");
-//
-//            System.out.println("=========show all record========");
-//            HbaseTest.getAllRecord(tablename);
-//
-//            System.out.println("=========del one record========");
-//            HbaseTest.delRecord(tablename, "zkb");
-//            HbaseTest.getAllRecord(tablename);
-//
-//            System.out.println("=========show all record========");
-//            HbaseTest.getAllRecord(tablename);
+            // FixAlgorithm();
+            Insertmysql();
         } catch (Exception e) {
             e.printStackTrace();
         }
