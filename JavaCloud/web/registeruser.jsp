@@ -60,15 +60,17 @@
                     elem.value = postal;
                 }
                 if (error !== null) {
-                    var elem = document.getElementById("lblerror");
                     if (error === "1")
                     {
-                        alert(error);
-                        elem.value = "Please fill required fields";
+                        document.getElementById('lblerror').innerHTML = 'Please fill all required fields!';
+                    } else if (error === "2")
+                    {
+                        document.getElementById('lblerror').innerHTML = 'Password should be matched!';
                     }
                     else {
-                        elem.value = "";
+                        document.getElementById('lblerror').innerHTML = '';
                     }
+
                 }
             }
             window.onload = setvalues;
@@ -97,7 +99,7 @@
                     <tr><td>&nbsp;&nbsp;&nbsp;Postal Code:</td> <td> <input name="txtpostal" id="txtpostal" type="text" size="30px" /></td></tr>
                     <br/>
 
-                    <tr><td colspan="2"><label id="lblerror" name="lblerror" style="color: red" > </label></td></tr>
+                    <tr><td colspan="2" style="text-align: center"><label id="lblerror" name="lblerror" style="color: red" > </label></td></tr>
                     <tr><td></td> <td style="text-align: right"> <input id="btncreate" type="submit" value="Create"/></td></tr>
 
 

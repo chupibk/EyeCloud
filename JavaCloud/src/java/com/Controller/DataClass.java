@@ -41,9 +41,10 @@ public class DataClass {
     // ValidData column family structure
     // create 'FixData','FX','SC','MD'
     // FixData column family structure
+
     public boolean isBlankOrNull(String str) {
-    return (str == null || "".equals(str.trim()));
-}
+        return (str == null || "".equals(str.trim()));
+    }
 
     public void get_DataHbase(long loopStarter, long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
 
@@ -210,5 +211,26 @@ public class DataClass {
             return 0;
         }
 
+    }
+
+    public int loginUser(String email, String password) {
+        try{
+        int ID = 0;
+        Class.forName("com.mysql.jdbc.Driver");
+        connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+        preStat = connection
+                .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ? and Password= ?");
+        preStat.setString(1, email);
+        preStat.setString(2, password);
+        rs = preStat.executeQuery();
+        while (rs.next()) {
+            ID= Integer.valueOf(rs.getString("Id"));
+        }
+        return ID;
+        }
+        catch(Exception e){
+        return 0;    
+        }
     }
 }

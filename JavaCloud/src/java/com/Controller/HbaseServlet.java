@@ -253,6 +253,21 @@ public class HbaseServlet extends HttpServlet {
     static Statement stat = null;
     static ResultSet rs = null;
 
+    public static void getlogin() throws SQLException {
+        connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+        preStat = connection
+                .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ? and Password= ?");
+        preStat.setString(1, "abc@ymail.com");
+        preStat.setString(2, "karachi");
+        rs = preStat.executeQuery();
+        while (rs.next()) {
+            System.out.println(rs.getString("Fullname"));
+        }
+
+
+    }
+
     public static void Insertmysql() {
 
         try {
@@ -289,7 +304,8 @@ public class HbaseServlet extends HttpServlet {
         try {
             // System.out.println(get_MapFile("01-01-All-Data.txt"));
             // FixAlgorithm();
-            Insertmysql();
+            //Insertmysql();
+            getlogin();
         } catch (Exception e) {
             e.printStackTrace();
         }
