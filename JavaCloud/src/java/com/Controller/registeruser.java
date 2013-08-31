@@ -25,85 +25,88 @@ public class registeruser extends HttpServlet {
             throws ServletException, IOException {
     }
     DataClass dc = new DataClass();
+    String txtfname, txtemail, txtpass, txtCpass, txtcountry, txtcity, txtadd,
+            txtphone, txtmob, txtpostal, txtstate, btnlogin, btnregister;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String txtfname = request.getParameter("txtfname");
-        String txtemail = request.getParameter("txtemail");
-        String txtpass = request.getParameter("txtpass");
-        String txtCpass = request.getParameter("txtCpass");
-        String txtcountry = request.getParameter("txtcountry");
-        String txtcity = request.getParameter("txtcity");
-        String txtadd = request.getParameter("txtadd");
-        String txtphone = request.getParameter("txtphone");
-        String txtmob = request.getParameter("txtmob");
-        String txtpostal = request.getParameter("txtpostal");
-        String txtstate = request.getParameter("txtstate");
-        String btnlogin=request.getParameter("btnlogin");
-        
-        int result = 0;
-        if (txtpass.equals(txtCpass)) {
-            if (!txtfname.isEmpty() && !txtemail.isEmpty()
-                     && !txtcountry.isEmpty() && !txtstate.isEmpty()
-                    && !txtcity.isEmpty() && !txtadd.isEmpty()
-                    && !txtphone.isEmpty()) {
-                result = dc.RegIsteruser_mysql(txtfname, txtemail,
-                        txtpass, txtcountry, txtstate,
-                        txtcity, txtadd, txtmob,
-                        txtphone, txtpostal);
+        txtfname = request.getParameter("txtfname");
+        txtemail = request.getParameter("txtemail");
+        txtpass = request.getParameter("txtpass");
+        txtCpass = request.getParameter("txtCpass");
+        txtcountry = request.getParameter("txtcountry");
+        txtcity = request.getParameter("txtcity");
+        txtadd = request.getParameter("txtadd");
+        txtphone = request.getParameter("txtphone");
+        txtmob = request.getParameter("txtmob");
+        txtpostal = request.getParameter("txtpostal");
+        txtstate = request.getParameter("txtstate");
+        btnlogin = request.getParameter("btnlogin");
+        btnregister = request.getParameter("btnregister");
 
-                if (result == 1) {
-                    
-                } else {
-                    request.setAttribute("name", txtfname);
-                    request.setAttribute("email", txtemail);
-                    request.setAttribute("country", txtcountry);
-                    request.setAttribute("state", txtstate);
-                    request.setAttribute("city", txtcity);
-                    request.setAttribute("address", txtadd);
-                    request.setAttribute("mobile", txtmob);
-                    request.setAttribute("phone", txtphone);
-                    request.setAttribute("postal", txtpostal);
+        int result = 0;
+        if (txtpass.equals(txtCpass)) { // if password is same
+            if (!txtemail.isEmpty() && !txtpass.isEmpty()) { // if required field Is not empty
+                if (dc.CheckEmaIl(txtemail) != 0) { //If emaIl already exIsts
+                    request.setAttribute("error", "3");
+                    setAttribute(request);
                     RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
                     rd.forward(request, response);
+                } else {
+                    result = dc.RegIsteruser_mysql(txtfname, txtemail,
+                            txtpass, txtcountry, txtstate,
+                            txtcity, txtadd, txtmob,
+                            txtphone, txtpostal);
+
+                    if (result == 1) {
+                        RequestDispatcher rd = request.getRequestDispatcher("/loginuser.jsp");
+                        rd.forward(request, response);
+                    } else { //if user can not regIster
+                        setAttribute(request);
+                        RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
+                        rd.forward(request, response);
+                    }
                 }
             } else {
                 request.setAttribute("error", "1");
-                request.setAttribute("name", txtfname);
-                request.setAttribute("email", txtemail);
-                request.setAttribute("country", txtcountry);
-                request.setAttribute("state", txtstate);
-                request.setAttribute("city", txtcity);
-                request.setAttribute("address", txtadd);
-                request.setAttribute("mobile", txtmob);
-                request.setAttribute("phone", txtphone);
-                request.setAttribute("postal", txtpostal);
+                setAttribute(request);
                 RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
                 rd.forward(request, response);
             }
-        } else if("login".equalsIgnoreCase(btnlogin)) {
-           int hold=dc.loginUser(txtemail, txtpass);
-           System.out.println(hold);
-            
-        }
-        else {
+        } else if ("login".equalsIgnoreCase(btnlogin)) { //If login button Is pressed
+
+            if (dc.loginUser(txtemail, txtpass) > 0) {
+                RequestDispatcher rd = request.getRequestDispatcher("/Dashboard.jsp");
+                rd.forward(request, response);
+            } else {
+                request.setAttribute("error", "1");
+                RequestDispatcher rd = request.getRequestDispatcher("/loginuser.jsp");
+                rd.forward(request, response);
+            }
+        } else if ("register".equalsIgnoreCase(btnregister)) { //If regIster button Is pressed
+            RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
+            rd.forward(request, response);
+
+        } else {
             request.setAttribute("error", "2");
-            request.setAttribute("name", txtfname);
-            request.setAttribute("email", txtemail);
-            request.setAttribute("country", txtcountry);
-            request.setAttribute("state", txtstate);
-            request.setAttribute("city", txtcity);
-            request.setAttribute("address", txtadd);
-            request.setAttribute("mobile", txtmob);
-            request.setAttribute("phone", txtphone);
-            request.setAttribute("postal", txtpostal);
+            setAttribute(request);
             RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
             rd.forward(request, response);
         }
+    }
 
-
+    private void setAttribute(HttpServletRequest request) {
+        request.setAttribute("name", txtfname);
+        request.setAttribute("email", txtemail);
+        request.setAttribute("country", txtcountry);
+        request.setAttribute("state", txtstate);
+        request.setAttribute("city", txtcity);
+        request.setAttribute("address", txtadd);
+        request.setAttribute("mobile", txtmob);
+        request.setAttribute("phone", txtphone);
+        request.setAttribute("postal", txtpostal);
     }
 
     @Override

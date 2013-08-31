@@ -174,6 +174,26 @@ public class DataClass {
     PreparedStatement preStat = null;
     Statement stat = null;
     ResultSet rs = null;
+    
+    public int CheckEmaIl(String email) {
+        try{
+        int ID = 0;
+        Class.forName("com.mysql.jdbc.Driver");
+        connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+        preStat = connection
+                .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?");
+        preStat.setString(1, email);
+        rs = preStat.executeQuery();
+        while (rs.next()) {
+            ID= Integer.valueOf(rs.getString("Id"));
+        }
+        return ID;
+        }
+        catch(Exception e){
+        return 0;    
+        }
+    }
 
     public int RegIsteruser_mysql(String name, String email, String pass, String country, String state,
             String city, String address, String mobNum, String phoneNum, String postalcode) {

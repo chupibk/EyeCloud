@@ -13,12 +13,28 @@
         <meta http-equiv="imagetoolbar" content="no" />
         <title>Login Panel</title>
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
+        <script type="text/javascript">
+            function setvalues() {
+                var error = '${error}';
+
+                if (error !== null) {
+                    if (error === "1")
+                    {
+                        document.getElementById('lblerror').innerHTML = 'Password or Email is incorrect!';
+                    }
+                    else {
+                        document.getElementById('lblerror').innerHTML = '';
+                    }
+                }
+            }
+            window.onload = setvalues;
+        </script>
     </head>
     <body>
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="login_wrapper">			
-                
+
                 <!--[if !IE]>start login<![endif]-->
                 <form id="form1" method="POST" action="./registeruser">
                     <fieldset>
@@ -37,11 +53,16 @@
                                     <strong>Password:</strong>
                                     <span class="input_wrapper">
                                         <input name="txtpass" id="txtpass" type="password" />
+
                                     </span>
                                 </label>
+                                <center>
+                                    <label id="lblerror" name="lblerror" style="color: red" > </label>
+                                </center>
                                 <ul class="form_menu">
                                     <li><span class="button"><span><span>Login</span></span><input type="submit" value="login" name="btnlogin"/></span></li>
-                                    <li><span class="button"><span><span>Forgot Pass</span></span><input type="submit" value="forget" name="btnforget"/></span></li>
+
+                                    <li><span class="button"><span><span>Register</span></span><input type="submit" value="register" name="btnregister"/></span></li>
                                 </ul>
 
                             </div>

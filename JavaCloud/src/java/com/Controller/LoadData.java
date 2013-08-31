@@ -274,15 +274,17 @@ public class LoadData extends HttpServlet {
                         break;
 
                     } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
-                        addrawData(); // Adding raw Data from the Text File
-                        addLabelrawData(); // Adding Label Data from the Text File
+//                        addrawData(); // Adding raw Data from the Text File
+//                        addLabelrawData(); // Adding Label Data from the Text File
                         Alrd_column.clear(); // clear the array
                         Alrd_value.clear(); // clear the array
                         Alrd_lbl_column.clear(); // clear the array
                         Alrd_lbl_value.clear(); // clear the array
-                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
+                        //dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
+                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", "01-01-All-Data.txt", "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
                         // get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
-                        dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value);
+                       // dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value);
+                         dc.get_DataHbase_common(0, 0, "", "1", "RawData", "01-LOE-1.txt", "MF", Alrd_lbl_column, Alrd_lbl_value);
                         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
                         request.setAttribute("Alrd_value", Alrd_value);  // setting array List for forwarding data to next page
                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);  // setting array List for forwarding data to next page

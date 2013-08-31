@@ -10,7 +10,7 @@
 	position: relative;
 	top: 0;
 	left: 0;
-	float: left;
+	float: right;
 	
 	font-weight: bold;
 	text-decoration: none;
@@ -131,7 +131,7 @@ a.uncheck_all span span {
 
 span.approve {
 	background-image:url(layout/site/tables/approve_middle.gif);
-	background-color: #339fd0;
+	
 }
 
 span.approve span {

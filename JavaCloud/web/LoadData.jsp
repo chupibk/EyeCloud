@@ -11,7 +11,9 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
+        <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
+        <title>Upload Files</title>
         <script type="text/javascript" src="js/si.files.js"></script>
         <script type="text/javascript" >
             function selectedValue() {
@@ -145,229 +147,322 @@
 
         <% String fileload = (String) request.getAttribute("fileload");%>
         <% String filelabel = (String) request.getAttribute("filelabel");%>
-        <form name="form1" action="./LoadData" method="POST" enctype="multipart/form-data" >
-            <center>
-                <table>
-                    <tbody>
-                        <tr>
-                    <input type="hidden" name="hdnfilename"/>
-                    <input type="hidden" name="hdnlblfilename"/>
-                    <input type="hidden" name="hdnstartpnt"/>
-                    <input type="hidden" name="hdnduration"/>
-                    <input type="hidden" name="hdnlblstlname"/>
+        <div id="wrapper">
+            <!--[if !IE]>start login wrapper<![endif]-->
+            <div id="content">
 
-                    <td style="text-align: right; font-size:14px; ">Select Eye Tracking Folder: 
-                        <label class="cabinet">  <input type="file" class="file" name="file1"/> </label>
-                        <input type="submit" name="btnload" id="btnload" onclick="Sethdnfield()" value="Load file" style="margin-bottom: 10px"/>
-                        <br/></td>
-                    <td colspan="2"> <% if (fileload == "1") {
-                            out.print("Please Select File to Load");
+                <div class="inner-image">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
+                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
+                        Interactive Technologies Research Group
+                    </div>
+                </div>
+                <!--[if !IE]>start page<![endif]-->
+                <div id="page">
+                    <div class="inner-data">
 
-                        } else {
-                            out.print("");
+                        <div class="section">
+                            <!--[if !IE]>start title wrapper<![endif]-->
+                            <div class="title_wrapper">
+                                <h2>Setup Upload Files</h2>
+                                <span class="title_wrapper_left"></span>
+                                <span class="title_wrapper_right"></span>
+                            </div>
+                            <!--[if !IE]>end title wrapper<![endif]-->
+                            <!--[if !IE]>start section content<![endif]-->
+                            <div class="section_content">
+                                <!--[if !IE]>start section content top<![endif]-->
+                                <div class="sct">
+                                    <div class="sct_left">
+                                        <div class="sct_right">
+                                            <div class="sct_left">
+                                                <div class="sct_right_load">
 
-                        }%>  </td>
-                    <br/><br/><br/>
-                    </tr>
+                                                    <form name="form1" action="./LoadData" method="POST" enctype="multipart/form-data" >
+                                                        <center>
+                                                            <table>
+                                                                <tbody>
+                                                                    <tr>
+                                                                <input type="hidden" name="hdnfilename"/>
+                                                                <input type="hidden" name="hdnlblfilename"/>
+                                                                <input type="hidden" name="hdnstartpnt"/>
+                                                                <input type="hidden" name="hdnduration"/>
+                                                                <input type="hidden" name="hdnlblstlname"/>
 
-                    <tr>
+                                                                <td style=" font-size:14px; ">Select Eye Tracking Folder: 
+                                                                    <label class="cabinet">  <input type="file" class="file" name="file1"/> </label>
+                                                                    <span class="button approve"><span><span>Load</span></span>  <input type="submit" name="btnload" id="btnload" onclick="Sethdnfield()" value="Load file" style="margin-bottom: 10px"/> </span>
+                                                                    <br/></td>
+                                                                <td colspan="3"> <% if (fileload == "1") {
+                                                                        out.print("Please Select File to Load");
 
-                        <td style="text-align: right">* Time Stamp: <select style="margin-bottom: 10px" name="ddltimestamp" onchange="Setdropdownvalue()">
+                                                                    } else {
+                                                                        out.print("");
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" />
-                                    </option>
-                                </c:forEach>
-                            </select> 
+                                                                    }%>  </td>
+                                                                <br/><br/><br/>
+                                                                </tr>
+
+                                                                <tr>
+
+                                                                    <td style="text-align: right">* Time Stamp: <select style="margin-bottom: 10px" name="ddltimestamp" onchange="Setdropdownvalue()">
+
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" />
+                                                                                </option>
+                                                                            </c:forEach>
+                                                                        </select> 
 
 
-                            <br/>
-                            * X Left: <select style="margin-bottom: 10px" name="ddlxleft" onchange="Setdropdownvalue()">
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" />
-                                    </option>
-                                </c:forEach>
-                            </select>
-                            <br/>                    
-                            X Right: <select name="ddlxright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                        <br/>
+                                                                        * X Left: <select style="margin-bottom: 10px" name="ddlxleft" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" />
+                                                                                </option>
+                                                                            </c:forEach>
+                                                                        </select>
+                                                                        <br/>                    
+                                                                        X Right: <select name="ddlxright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select>
-                            <br/>
-                            * Y Left: <select name="ddlyleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select>
+                                                                        <br/>
+                                                                        * Y Left: <select name="ddlyleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select> 
-                            <br/>
-                            Y Right: <select name="ddlyright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select> 
+                                                                        <br/>
+                                                                        Y Right: <select name="ddlyright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select> 
-                            <br/>
-                            Distance Left: <select name="ddldistleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select> 
+                                                                        <br/>
+                                                                        Distance Left: <select name="ddldistleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select> 
-                            <br/>
-                            Distance Right: <select name="ddldistright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select> 
+                                                                        <br/>
+                                                                        Distance Right: <select name="ddldistright" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select> 
-                            <br/>
-                            Validity Left: <select name="ddlvleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select> 
+                                                                        <br/>
+                                                                        Validity Left: <select name="ddlvleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select> 
-                            <br/>
-                            Validity Right: <select name="ddlvrght" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select> 
+                                                                        <br/>
+                                                                        Validity Right: <select name="ddlvrght" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select> <br/>
-                            * Stimuli Name/ID: <select name="ddlstmName" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select> <br/>
+                                                                        * Stimuli Name/ID: <select name="ddlstmName" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
-                                <c:forEach items="${arrls}" var="arrl">
-                                    <option value="${arrl.key}">
-                                        <c:out value="${arrl.value}" /></option>
-                                </c:forEach></select> <br/> <br/>
-                            </form>
-                            <form name="form2" action="./LoadData" method="POST" enctype="multipart/form-data">
-                                Load Participant identity Excel file: 
-                                <label class="cabinet">  <input type="file" name="loadpart" class="file" /> </label> <input type="submit" name="btnpart" value="Load" onclick="Setdropdownvalue()" style="margin-bottom: 10px" />
-                                <br/>
-                                <input type="hidden" name="hdntimestamp"/>
-                                <input type="hidden" name="hdnxleft"/>
-                                <input type="hidden" name="hdnxright"/>
-                                <input type="hidden" name="hdnyleft"/>
-                                <input type="hidden" name="hdnyright"/>
-                                <input type="hidden" name="hdndleft"/>
-                                <input type="hidden" name="hdndright"/>
-                                <input type="hidden" name="hdnvleft"/>
-                                <input type="hidden" name="hdnvright"/>
-                                <input type="hidden" name="hdnstname"/>
-                                <input type="hidden" name="hdnpart"/>
+                                                                            <c:forEach items="${arrls}" var="arrl">
+                                                                                <option value="${arrl.key}">
+                                                                                    <c:out value="${arrl.value}" /></option>
+                                                                            </c:forEach></select> <br/> <br/>
+                                                                        </form>
+                                                                        <form name="form2" action="./LoadData" method="POST" enctype="multipart/form-data">
+                                                                            Load Participant identity Excel file: 
+                                                                            <label class="cabinet">  <input type="file" name="loadpart" class="file" /> </label><span class="button approve"><span><span>Load</span></span>  <input type="submit" name="btnpart" value="Load" onclick="Setdropdownvalue()" style="margin-bottom: 10px" /></span>
+                                                                            <br/>
+                                                                            <input type="hidden" name="hdntimestamp"/>
+                                                                            <input type="hidden" name="hdnxleft"/>
+                                                                            <input type="hidden" name="hdnxright"/>
+                                                                            <input type="hidden" name="hdnyleft"/>
+                                                                            <input type="hidden" name="hdnyright"/>
+                                                                            <input type="hidden" name="hdndleft"/>
+                                                                            <input type="hidden" name="hdndright"/>
+                                                                            <input type="hidden" name="hdnvleft"/>
+                                                                            <input type="hidden" name="hdnvright"/>
+                                                                            <input type="hidden" name="hdnstname"/>
+                                                                            <input type="hidden" name="hdnpart"/>
 
-                                Participant ID: <select name="ddlpart" style="margin-bottom: 10px" onchange="Setdropdownvalue(), this.form.submit()">
+                                                                            Participant ID: <select name="ddlpart" style="margin-bottom: 10px" onchange="Setdropdownvalue(), this.form.submit()">
 
-                                    <c:forEach items="${partarrls}" var="partarrl">
-                                        <option value="${partarrl.key}" ${partarrl.key == selectedpart ? 'selected="selected"' : ''}>
+                                                                                <c:forEach items="${partarrls}" var="partarrl">
+                                                                                    <option value="${partarrl.key}" ${partarrl.key == selectedpart ? 'selected="selected"' : ''}>
 
-                                            <c:out value="${partarrl.value}" /></option>
-                                    </c:forEach></select> </td> 
+                                                                                        <c:out value="${partarrl.value}" /></option>
+                                                                                </c:forEach></select> </td> 
 
-                        <td style="vertical-align: top"> 
-                            <table border="1">
-                                <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
-                                <tr><td style="vertical-align: top">
-                                        <table border="1">
-                                            <c:forEach items="${hdnfilename}" var="hdnfilename">
-                                                <tr>
-                                                    <td style="font-size:12px;"> ${hdnfilename}</td>
-                                                </tr>    
+                                                                    <td style="vertical-align: top"> 
+                                                                        <table border="1">
+                                                                            <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
+                                                                            <tr><td style="vertical-align: top">
+                                                                                    <table border="1">
+                                                                                        <c:forEach items="${hdnfilename}" var="hdnfilename">
+                                                                                            <tr>
+                                                                                                <td style="font-size:12px;"> ${hdnfilename}</td>
+                                                                                            </tr>    
 
-                                            </c:forEach>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table border="1">
-                                            <c:forEach items="${lstpart}" var="DemoNames">
-                                                <tr>
+                                                                                        </c:forEach>
+                                                                                    </table>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <table border="1">
+                                                                                        <c:forEach items="${lstpart}" var="DemoNames">
+                                                                                            <tr>
 
-                                                    <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
-                                                </tr>
-                                            </c:forEach>
-                                        </table>
-                                    </td></tr>
-                            </table>
-                        </td>
+                                                                                                <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
+                                                                                            </tr>
+                                                                                        </c:forEach>
+                                                                                    </table>
+                                                                                </td></tr>
+                                                                        </table>
+                                                                    </td>
 
-                        </form> 
-                        <td style="vertical-align: top"> <table border="1">
-                                <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
-                                <% String hdnlblfilename = (String) request.getAttribute("hdnlblfilename");
-                                    if (hdnlblfilename != null && !hdnlblfilename.isEmpty()) {%>
+                                                                    </form> 
+                                                                    <td style="vertical-align: top"> <table border="1">
+                                                                            <tr><td style="font-size:12px;">File Name</td> <td style="font-size:12px;">Participant ID</td></tr>
+                                                                            <% String hdnlblfilename = (String) request.getAttribute("hdnlblfilename");
+                                                                                if (hdnlblfilename != null && !hdnlblfilename.isEmpty()) {%>
 
-                                <tr><td style="vertical-align: top">
-                                        <table border="1">
-                                            <c:forEach items="${hdnlblfilename}" var="hdnlblfilename">
-                                                <tr>
-                                                    <td style="font-size:12px;"> ${hdnlblfilename}</td>
-                                                </tr>    
-                                            </c:forEach>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table border="1">
-                                            <c:forEach items="${lstpart}" var="DemoNames">
-                                                <tr>
-                                                    <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
-                                                </tr>
-                                            </c:forEach>
+                                                                            <tr><td style="vertical-align: top">
+                                                                                    <table border="1">
+                                                                                        <c:forEach items="${hdnlblfilename}" var="hdnlblfilename">
+                                                                                            <tr>
+                                                                                                <td style="font-size:12px;"> ${hdnlblfilename}</td>
+                                                                                            </tr>    
+                                                                                        </c:forEach>
+                                                                                    </table>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <table border="1">
+                                                                                        <c:forEach items="${lstpart}" var="DemoNames">
+                                                                                            <tr>
+                                                                                                <td style="font-size:12px;"><input type="text" size="5" value="${DemoNames}"</td>
+                                                                                            </tr>
+                                                                                        </c:forEach>
+
+                                                                                    </table>
+                                                                                </td></tr>
+
+                                                                            <%}%>
+                                                                        </table></td>
+                                                                    <td style="text-align: right; vertical-align: top;"> Select Label files folder:  <label class="cabinet"> <input type="file"  name="loadlabel" class="file" /> </label>
+                                                                        <span class="button approve"><span><span>Load</span></span>  <input type="submit" name="btnlblfiles" style="margin-bottom: 10px" value="Load" onclick="setlblhdnfield()"  /></span> <br/>
+                                                                        <br/>
+                                                                        *Time Stamp Start Point: <select name="ddlstartpoint" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                            <c:forEach items="${lblarrls}" var="lblarrl">
+                                                                                <option value="${lblarrl.key}">
+                                                                                    <c:out value="${lblarrl.value}" />
+                                                                                </option>
+                                                                            </c:forEach></select> <br/>
+                                                                        * Duration: <select name="ddlduration" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
+                                                                                <option value="${lblarrl.key}">
+                                                                                    <c:out value="${lblarrl.value}" />
+                                                                                </option>
+                                                                            </c:forEach></select> <br/>
+                                                                        * Stimuli Name/ID: <select name="ddlstimuli" style="margin-bottom: 10px">
+                                                                            <c:forEach items="${lblarrls}" var="lblarrl">
+                                                                                <option value="${lblarrl.key}">
+                                                                                    <c:out value="${lblarrl.value}" />
+                                                                                </option>
+                                                                            </c:forEach></select> <br/>
+                                                                        * Screen Size x: <input type="text" name="txtxscreen" size="5" value="35" style="margin-bottom: 10px" /> y: <input type="text" name="txtyscreen" size="5" value="45" style="margin-bottom: 10px" /> <br/>
+                                                                        * Resolution x: <input type="text" name="txtxresol" size="5" value="1024" style="margin-bottom: 10px" /> y: <input type="text" name="txtyresol" value="768" size="5" style="margin-bottom: 10px" /> <br/>
+
+                                                                        <div class="green" >
+                                                                            <strong style="float: left">  Fixation Parameters: </strong><br/><br/>
+                                                                            Fixation Duration Threshold: <input type="text" name="txtfxdr" size="10px" value="100" style="margin-bottom: 10px" /><br/>
+                                                                            Velocity Threshold: <input type="text" name="txtvelth" size="10px" value="75" style="margin-bottom: 10px" /> <br/>
+                                                                            Missing Time Threshold: <input type="text" name="txtmstm" size="10px" value="100" style="margin-bottom: 10px" /> 
+                                                                            <br/>
+                                                                        </div>
+                                                                        <br/><br/>
+                                                                        <span class="button approve"><span><span>Start</span></span> <input type="submit" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></td>
+                                                                    <td style="vertical-align: top "><% if (filelabel == "1") {
+                                                                            out.print("Please Select File to Load");
+
+                                                                        } else {
+                                                                            out.print("");
+
+                                                                        }%> </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </center>
                                                 
-                                        </table>
-                                    </td></tr>
+                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--[if !IE]>end section content top<![endif]-->
+                                <!--[if !IE]>start section content bottom<![endif]-->
+                                <span class="scb"><span class="scb_left"></span><span class="scb_right"></span></span>
+                                <!--[if !IE]>end section content bottom<![endif]-->
 
-                                <%}%>
-                            </table></td>
-                            <td style="text-align: right; vertical-align: top;font-size:14px;"> Select Label files folder:  <label class="cabinet"> <input type="file"  name="loadlabel" class="file" /> </label>
-                            <input type="submit" name="btnlblfiles" style="margin-bottom: 10px" value="Load" onclick="setlblhdnfield()"  /> <br/>
+                            </div> 
 
-                            * Time Stamp Start Point: <select name="ddlstartpoint" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
-                                <c:forEach items="${lblarrls}" var="lblarrl">
-                                    <option value="${lblarrl.key}">
-                                        <c:out value="${lblarrl.value}" />
-                                    </option>
-                                </c:forEach></select> <br/>
-
-
-                            * Duration: <select name="ddlduration" style="margin-bottom: 10px"><c:forEach items="${lblarrls}" var="lblarrl">
-                                    <option value="${lblarrl.key}">
-                                        <c:out value="${lblarrl.value}" />
-                                    </option>
-                                </c:forEach></select> <br/>
-                            * Stimuli Name/ID: <select name="ddlstimuli" style="margin-bottom: 10px">
-                                <c:forEach items="${lblarrls}" var="lblarrl">
-                                    <option value="${lblarrl.key}">
-                                        <c:out value="${lblarrl.value}" />
-                                    </option>
-                                </c:forEach></select> <br/>
-                            * Screen Size: x: <input type="text" name="txtxscreen" size="5" value="35" style="margin-bottom: 10px" /> y: <input type="text" name="txtyscreen" size="5" value="45" style="margin-bottom: 10px" /> <br/>
-                            * Resolution x: <input type="text" name="txtxresol" size="5" value="1024" style="margin-bottom: 10px" /> y: <input type="text" name="txtyresol" value="768" size="5" style="margin-bottom: 10px" /> <br/>
-                              <div style="background-color:#EEEEAE;height:120px;width:300px;float:left; text-align: left;">
-                            <strong>  Fixation Parameters: <br/></strong>
-                            Fixation Duration Threshold: <input type="text" name="txtfxdr" size="10px" value="100" style="margin-bottom: 10px" /><br/>
-                            Velocity Threshold: <input type="text" name="txtvelth" size="10px" value="75" style="margin-bottom: 10px" /> <br/>
-                            Missing Time Threshold: <input type="text" name="txtmstm" size="10px" value="100" style="margin-bottom: 10px" /> 
                         </div>
-                            <br/>
-                            <input type="button" name="btnloadsavedfiles" value="Load" style="margin-bottom: 10px" /> <br/>
-                            <input type="submit" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></td>
-                            <td style="vertical-align: top "><% if (filelabel == "1") {
-                            out.print("Please Select File to Load");
+                    </div>
+                </div>
+                <div id="sidebar">
+                    <div class="inner">                                     
 
-                        } else {
-                            out.print("");
+                        <div class="section">
+                            <!--[if !IE]>start title wrapper<![endif]-->
+                            <div class="title_wrapper">
+                                <h2>Menu</h2>
+                                <span class="title_wrapper_left"></span>
+                                <span class="title_wrapper_right"></span>
+                            </div>
+                            <!--[if !IE]>end title wrapper<![endif]-->
+                            <!--[if !IE]>start section content<![endif]-->
+                            <div class="section_content">
+                                <!--[if !IE]>start section content top<![endif]-->
+                                <div class="sct">
+                                    <div class="sct_left">
+                                        <div class="sct_right">
+                                            <div class="sct_left">
+                                                <div class="sct_right">
+                                                    <ul class="sidebar_menu">
+                                                        <li><a href="#">Dash Board</a></li>
+                                                        <li><a href="#">Raw Data</a></li>
+                                                        <li><a href="#">Valid Data</a></li>
+                                                        <li><a href="#">Fixation & Saccade Data</a></li>
+                                                        <li><a href="#">User Profile</a></li>
+                                                        
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--[if !IE]>end section content top<![endif]-->
+                                <!--[if !IE]>start section content bottom<![endif]-->
+                                <span class="scb"><span class="scb_left"></span><span class="scb_right"></span></span>
+                                <!--[if !IE]>end section content bottom<![endif]-->
 
-                        }%> </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </center>
+                            </div>
+                            <!--[if !IE]>end section content<![endif]-->
+                        </div>
+                    </div>
+                </div>
+
+            </div> 
+
+
             <script type="text/javascript" language="javascript">
             // <![CDATA[
 
@@ -407,6 +502,9 @@
 
             // ]]>
             </script>
+
+
+
 
     </body>
 </html>
