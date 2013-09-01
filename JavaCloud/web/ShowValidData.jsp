@@ -59,7 +59,7 @@
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
 
-                                                                            <div style="overflow: scroll; height: 400px; width: 580px; background: White">
+                                                                            <div style="overflow: scroll; height: 400px; width: 580px; background: transparent">
                                                                                 <table border="1" style='table-layout:fixed'><tr> <td style=" vertical-align: top"> 
                                                                                             <table >
                                                                                                 <tr><td style='text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'>Timestamp</td> </tr>
@@ -117,7 +117,7 @@
                                                                 <td>
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 500px; background: White">
+                                                                            <div style="overflow: scroll; height: 400px; width: 500px; background: transparent">
                                                                                 <table border="1">
                                                                                     <tr>
                                                                                         <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>

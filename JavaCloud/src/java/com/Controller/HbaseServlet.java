@@ -300,12 +300,28 @@ public class HbaseServlet extends HttpServlet {
 
     }
 
+    public static void getrowkey() throws IOException {
+        HTable table = new HTable(conf, "ValidData");
+        Scan s = new Scan();
+        s.addColumn(Bytes.toBytes("MD"), Bytes.toBytes("1"));
+        ResultScanner scanner = table.getScanner(s);
+        try {
+            for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
+                System.out.println(new String(rr.getRow()));
+                System.out.println(new String(rr.getValue(Bytes.toBytes("MD"), Bytes.toBytes("1"))));
+            }
+        } finally {
+            scanner.close();
+        }
+    }
+
     public static void main(String[] args) {
         try {
             // System.out.println(get_MapFile("01-01-All-Data.txt"));
             // FixAlgorithm();
             //Insertmysql();
-            getlogin();
+            //getlogin();
+            getrowkey();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -22,6 +22,9 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
 
 /**
  * ++++
@@ -37,11 +40,12 @@ public class DataClass {
     }
     // hbase(main):005:0> create 'RawData','EF','LF','MF' 
     // RawData column family structure
-    // hbase(main):006:0> create 'ValidData','VD','LD','CD'
+    // hbase(main):006:0> create 'ValidData','VD','LD','MD'
     // ValidData column family structure
     // create 'FixData','FX','SC','MD'
     // FixData column family structure
 
+    
     public boolean isBlankOrNull(String str) {
         return (str == null || "".equals(str.trim()));
     }
@@ -98,6 +102,7 @@ public class DataClass {
         try {
             HTable table = new HTable(conf, tablename);
             Get get = new Get(rowkey.getBytes());
+            
             get.addFamily(CF.getBytes());
             Result rs = table.get(get);
             for (KeyValue kv : rs.raw()) {
@@ -170,6 +175,25 @@ public class DataClass {
         }
 
     }
+    
+     public void getfileNames(String tablename,String CF, String column,LinkedHashMap<String, String> arrls) throws IOException {
+        HTable table = new HTable(conf, tablename);
+        Scan s = new Scan();
+        s.addColumn(Bytes.toBytes(CF), Bytes.toBytes(column));
+        ResultScanner scanner = table.getScanner(s);
+        try {
+            for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
+                arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))),new String(rr.getRow()));
+            }
+        } finally {
+            scanner.close();
+        }
+    }
+    
+    //////////////////////////////
+    //          MY SQL         /// 
+    ///////////////////////////////
+    
     Connection connection = null;
     PreparedStatement preStat = null;
     Statement stat = null;
@@ -220,10 +244,6 @@ public class DataClass {
                 result = 0;
             }
             return result;
-
-//            preStat = connection.prepareStatement("select * from tblRegister");
-//            rs = preStat.executeQuery();
-//            System.out.println(rs);
 
         } catch (Exception e) {
             System.out.println("Connection Failed! Check output console");

@@ -13,6 +13,26 @@
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css" />
         <script type="text/javascript" src="js/behaviour.js"></script>
+        <script type="text/javascript">
+            function submitForm(val) {
+
+                if (val === 'RD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+
+                } else if (val === 'VD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                } else if (val === 'FD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                }
+
+            }
+        </script>
         <title>Dashboard Page</title>
     </head>
     <body>
@@ -23,7 +43,7 @@
                 <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
-                    Interactive Technologies Research Group
+                        Interactive Technologies Research Group
                     </div>
                 </div>
                 <!--[if !IE]>start page<![endif]-->
@@ -47,22 +67,25 @@
                                             <div class="sct_right">
                                                 <div class="sct_left">
                                                     <div class="sct_right">
+                                                        <form id="form1" method="POST" action="./Dashboard" >
+                                                            <input type="hidden" name="hdnData" id="hdnData" />
 
-                                                        <!--[if !IE]>start dashboard menu<![endif]-->
-                                                        <div class="dashboard_menu_wrapper">
+                                                            <!--[if !IE]>start dashboard menu<![endif]-->
+                                                            <div class="dashboard_menu_wrapper">
 
-                                                            <ul class="dashboard_menu">
-                                                                <li><a href="LoadData.jsp" class="d2"><span>Setup Upload Files</span></a></li>
-                                                                <li><a href="#" class="d5"><span>Raw Data</span></a></li>
-                                                                <li><a href="#" class="d4"><span>Valid Data</span></a></li>
-                                                                <li><a href="#" class="d8"><span>Fixation & Saccade Data</span></a></li>
-                                                                <li><a href="registeruser.jsp" class="d1"><span>User Profile</span></a></li>
+                                                                <ul class="dashboard_menu">
+                                                                    <li><a href="LoadData.jsp" class="d2"><span>Setup Upload Files</span></a></li>
+                                                                    <li><a href="#" onclick="submitForm('RD')"  class="d5"><span>Raw Data</span></a></li>
+                                                                    <li><a href="#" onclick="submitForm('VD')" class="d4"><span>Valid Data</span></a></li>
+                                                                    <li><a href="#" onclick="submitForm('FD')" class="d8"><span>Fixation & Saccade Data</span></a></li>
+                                                                    <li><a href="registeruser.jsp" class="d1"><span>User Profile</span></a></li>
 
-                                                            </ul>
+                                                                </ul>
 
-                                                        </div>
+                                                            </div>
 
-                                                        <!--[if !IE]>end dashboard menu<![endif]-->
+                                                            <!--[if !IE]>end dashboard menu<![endif]-->
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>

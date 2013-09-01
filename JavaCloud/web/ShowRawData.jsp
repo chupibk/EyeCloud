@@ -12,7 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
-        <title>JSP Page</title>
+        <title>Setup Files----Raw Data</title>
     </head>
     <body>
         <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("Alrd_column");
@@ -55,10 +55,11 @@
                                                 <div class="sct_right_load">
 
                                                     <form id="form1" method="POST" action="./ValidateData">
-                                                        <table><tr><td>
+                                                        <table>
+                                                            <tr><td>
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: White">
+                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent">
                                                                                 <table border="1">
                                                                                     <tr>
                                                                                         <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>

@@ -1,10 +1,11 @@
 <%-- 
-    Document   : ShowRawData
-    Created on : Jul 30, 2013, 3:24:55 PM
+    Document   : RawDataList
+    Created on : Sep 1, 2013, 2:42:12 PM
     Author     : samsalman
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html>
@@ -12,17 +13,19 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
-        <title>JSP Page</title>
+        <title>Raw Data List</title>
+       
+
     </head>
     <body>
-        
-        <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("arrColumn");
-            ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("arrValue");
+        <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("Alrd_column");
+            ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("Alrd_value");
 
-            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("arrColumn_lbl");
-            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("arrValue_lbl");
+//            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
+//            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
             //out.print(Alrd_lbl_column +" " +  );
         %>
+
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
@@ -40,7 +43,7 @@
                         <div class="section">
                             <!--[if !IE]>start title wrapper<![endif]-->
                             <div class="title_wrapper">
-                                <h2>Fixation & Saccade Data</h2>
+                                <h2>Raw Data List</h2>
                                 <span class="title_wrapper_left"></span>
                                 <span class="title_wrapper_right"></span>
                             </div>
@@ -53,11 +56,20 @@
                                         <div class="sct_right">
                                             <div class="sct_left">
                                                 <div class="sct_right_load">
-                                                    <form id="form1" method="POST" action="./ValidateData">
-                                                        <table><tr><td>
+
+                                                    <form id="form1" method="POST" action="./RawDataList">
+                                                        <table>
+                                                            <tr><td>Select File: <select style="margin-bottom: 10px" name="ddlfile" onchange="Setdropdownvalue()">
+                                                                        <c:forEach items="${arrls}" var="arrl">
+                                                                            <option value="${arrl.key}">
+                                                                            <c:out value="${arrl.value}" />
+                                                                            </option>
+                                                                        </c:forEach>
+                                                                    </select> </td> <td></td> </tr>
+                                                            <tr><td>
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 540px; background: transparent">
+                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent">
                                                                                 <table border="1">
                                                                                     <tr>
                                                                                         <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>
@@ -84,45 +96,34 @@
                                                                         </div>
                                                                     </div>
                                                                 </td>
-                                                                <td>
-                                                                    <div class="table_wrapper">
-                                                                        <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 540px; background:transparent">
-                                                                                <table border="1">
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
-                                                                                        <td> <%=Alrd_lbl_column.get(a)%>  </td>
-                                                                                        <%
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_value.size() - 1; a++) {%>
-                                                                                        <% if (Alrd_lbl_value.get(a).contains("/")) {%>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% } else {%> 
-                                                                                        <td> <%= Alrd_lbl_value.get(a)%> </td>
-                                                                                        <%
-                                                                                                }
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-
-                                                                                </table>        
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-
+                                                                <td style="vertical-align: bottom;">
+                                                                </td>                                                                    
+                                                            <div class="table_wrapper">
                                                             </tr></table>
+                                                        <div class="table_menu">
+
+                                                            <ul class="right">
+                                                                <li><span class="button approve"><span><span>Start Validating..</span></span><input id="btnvalidate" type="submit" value="Start Validating.."/></span></li>
+                                                            </ul>
+                                                        </div>
 
                                                     </form>
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div></div></div></div></div>
+                                </div>
+                                <!--[if !IE]>end section content top<![endif]-->
+                                <!--[if !IE]>start section content bottom<![endif]-->
+                                <span class="scb"><span class="scb_left"></span><span class="scb_right"></span></span>
+                                <!--[if !IE]>end section content bottom<![endif]-->
+
+                            </div> 
+
+                        </div>
+                    </div>
+                </div>
                 <div id="sidebar">
                     <div class="inner">                                     
 
@@ -165,6 +166,8 @@
                         </div>
                     </div>
                 </div>
-            </div></div>
+
+            </div> 
+        </div>
     </body>
 </html>

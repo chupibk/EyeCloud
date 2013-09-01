@@ -448,16 +448,16 @@ public class ValidateData extends HttpServlet {
             looprunner = looprunner + 1000;
             dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         } else if ("Run Fixation".equalsIgnoreCase(holdRun)) { // Run FixatIon and Saccade
-            FixAlgorithm(Efilename);
-            dc.InsertMapRecord("FixData", Efilename, "MD", "1", String.valueOf(counter));// inserting Nos of Rows of fixation
-            dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", "1", String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
+           // FixAlgorithm(Efilename);
+           // dc.InsertMapRecord("FixData", Efilename, "MD", "1", String.valueOf(counter));// inserting Nos of Rows of fixation
+           // dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", "1", String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
 
             arrColumn.clear();
             arrValue.clear();
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
-            dc.get_DataHbase_common(0, 0, "", "1", "FixData", Efilename, "MD", arrColumn, arrValue);//reading fixation
-            dc.get_DataHbase_common(0, 0, "", "1", "FixData", Efilename + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
+            dc.get_DataHbase_common(0, 0, "", "1", "FixData", "01-01-All-Data.txt", "MD", arrColumn, arrValue);//reading fixation
+            dc.get_DataHbase_common(0, 0, "", "1", "FixData", "01-01-All-Data.txt" + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
             request.setAttribute("arrColumn", arrColumn);
             request.setAttribute("arrValue", arrValue);
             request.setAttribute("arrColumn_lbl", arrColumn_lbl);
