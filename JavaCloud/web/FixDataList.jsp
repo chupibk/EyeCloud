@@ -14,7 +14,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
-        <title>Raw Data List</title>
+        <title>Fixation & Saccade Data List</title>
 
         <script type="text/javascript">
             function SetSelectedValue() {
@@ -28,8 +28,8 @@
                 document.getElementById('hdnselectvalue').value = document.getElementById('ddlfile').value;
                 document.getElementById('hdnselectText').value = document.getElementById('ddlfile').options[document.getElementById('ddlfile').selectedIndex].text;
             }
-
-            function submitForm(val) {
+            
+             function submitForm(val) {
 
                 if (val === 'RD')
                 {
@@ -51,8 +51,7 @@
                 }
 
             }
-
-
+            
             window.onload = SetSelectedValue;
         </script>
 
@@ -62,8 +61,8 @@
         <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("Alrd_column");
             ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("Alrd_value");
 
-//            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
-//            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
+            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
+            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
             //out.print(Alrd_lbl_column +" " +  );
 %>
 
@@ -71,7 +70,7 @@
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
 
-                 <div class="inner-image">
+                <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
                     <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
                         Welcome : "${username}"
@@ -91,7 +90,7 @@
                         <div class="section">
                             <!--[if !IE]>start title wrapper<![endif]-->
                             <div class="title_wrapper">
-                                <h2>Raw Data List</h2>
+                                <h2>Fixation & Saccade Data List</h2>
                                 <span class="title_wrapper_left"></span>
                                 <span class="title_wrapper_right"></span>
                             </div>
@@ -106,10 +105,9 @@
                                                 <div class="sct_right_load">
 
                                                     <form id="form1" method="POST" action="./Dashboard">
-                                                        <input type="hidden" name="hdnData" id="hdnData" />
                                                         <input id="hdnselectvalue" name="hdnselectvalue" type="hidden" />
                                                         <input id="hdnselectText" name="hdnselectText" type="hidden" />
-
+                                                        <input type="hidden" name="hdnData" id="hdnData" />
                                                         <table>
                                                             <tr><td style="float: left; width: 25%; " >Select File: <select style="margin-bottom: 10px" id="ddlfile" name="ddlfile" onchange="Setdropdownvalue()">
                                                                         <c:forEach items="${arrls}" var="arrl">
@@ -118,7 +116,7 @@
                                                                             </option>
                                                                         </c:forEach>
                                                                     </select> 
-                                                                    <span class="button approve"><span><span>Search</span></span><input name="btnRawsearch" id="btnRawsearch" type="submit" value="Raw"/></span>
+                                                                    <span class="button approve"><span><span>Search</span></span><input name="btnFixsearch" id="btnFixsearch" type="submit" value="Fix"/></span>
                                                                 </td> 
                                                                 <td>
 
@@ -127,37 +125,78 @@
 
                                                             <tr>
                                                                 <td colspan="2">
-                                                                    <div class="table_wrapper">
-                                                                        <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent">
-                                                                                <% if (Alrd_column.size() == 0) {
-                                                                                    } else {%>
-                                                                                <table border="1">
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>
-                                                                                        <td> <%=Alrd_column.get(a)%>  </td>
-                                                                                        <%
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_value.size() - 1; a++) {%>
-                                                                                        <% if (Alrd_value.get(a).contains("/")) {%>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% } else {%> 
-                                                                                        <td> <%= Alrd_value.get(a)%> </td>
-                                                                                        <%
-                                                                                                }
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
+                                                                    <table><tr><td>
+                                                                                <div class="table_wrapper">
+                                                                                    <div class="table_wrapper_inner">
 
-                                                                                </table>   
-                                                                                <%}%>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                                                                                        <div style="overflow: scroll; height: 400px; width: 540px; background: transparent">
+                                                                                            <% if (Alrd_column.size() == 0) {
+                                                                                                } else {%>
+                                                                                            <table border="1">
+                                                                                                <tr>
+                                                                                                    <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>
+                                                                                                    <td> <%=Alrd_column.get(a)%>  </td>
+                                                                                                    <%
+                                                                                                        }
+                                                                                                    %>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <% for (int a = 0; a <= Alrd_value.size() - 1; a++) {%>
+                                                                                                    <% if (Alrd_value.get(a).contains("/")) {%>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <% } else {%> 
+                                                                                                    <td> <%= Alrd_value.get(a)%> </td>
+                                                                                                    <%
+                                                                                                            }
+                                                                                                        }
+                                                                                                    %>
+                                                                                                </tr>
+
+                                                                                            </table> 
+                                                                                            <%}%> 
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="table_wrapper">
+                                                                                    <div class="table_wrapper_inner">
+
+                                                                                        <div style="overflow: scroll; height: 400px; width: 540px; background:transparent">
+                                                                                            <% if (Alrd_lbl_column.size() == 0) {
+                                                                                                } else {%>
+                                                                                            <table border="1">
+                                                                                                <tr>
+                                                                                                    <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
+                                                                                                    <td> <%=Alrd_lbl_column.get(a)%>  </td>
+                                                                                                    <%
+                                                                                                        }
+                                                                                                    %>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <% for (int a = 0; a <= Alrd_lbl_value.size() - 1; a++) {%>
+                                                                                                    <% if (Alrd_lbl_value.get(a).contains("/")) {%>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <% } else {%> 
+                                                                                                    <td> <%= Alrd_lbl_value.get(a)%> </td>
+                                                                                                    <%
+                                                                                                            }
+                                                                                                        }
+                                                                                                    %>
+                                                                                                </tr>
+
+                                                                                            </table>    
+                                                                                            <%}%>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+                                                                        </tr></table>
                                                                 </td>
                                                                 <td style="vertical-align: bottom;">
                                                                 </td>                                                                    

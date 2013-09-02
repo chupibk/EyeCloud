@@ -34,59 +34,59 @@
                 var hdnduration = '${hdnduration}';
                 var hdnlblstlname = '${hdnlblstlname}';
                 // var tt = <%=(String) request.getParameter("selectedValue")%>
-                if (hdntimestamp !== null)
+                if (hdntimestamp !== "")
                 {
                     document.form1.ddltimestamp.value = hdntimestamp;
                 }
-                if (hdnxleft !== null)
+                if (hdnxleft !== "")
                 {
                     document.form1.ddlxleft.value = hdnxleft;
                 }
-                if (hdnxright !== null)
+                if (hdnxright !== "")
                 {
                     document.form1.ddlxright.value = hdnxright;
                 }
-                if (hdnyleft !== null)
+                if (hdnyleft !== "")
                 {
                     document.form1.ddlyleft.value = hdnyleft;
                 }
-                if (hdnyright !== null)
+                if (hdnyright !== "")
                 {
                     document.form1.ddlyright.value = hdnyright;
                 }
-                if (hdndleft !== null)
+                if (hdndleft !== "")
                 {
                     document.form1.ddldistleft.value = hdndleft;
                 }
-                if (hdndright !== null)
+                if (hdndright !== "")
                 {
                     document.form1.ddldistright.value = hdndright;
                 }
-                if (hdnvleft !== null)
+                if (hdnvleft !== "")
                 {
                     document.form1.ddlvleft.value = hdnvleft;
                 }
-                if (hdnvright !== null)
+                if (hdnvright !== "")
                 {
                     document.form1.ddlvrght.value = hdnvright;
                 }
-                if (hdnstname !== null)
+                if (hdnstname !== "")
                 {
                     document.form1.ddlstmName.value = hdnstname;
                 }
-                if (hdnfilename !== null) {
+                if (hdnfilename !== "") {
                     document.form1.hdnfilename.value = hdnfilename;
                 }
-                if (hdnlblfilename !== null) {
+                if (hdnlblfilename !== "") {
                     document.form1.hdnlblfilename.value = hdnlblfilename;
                 }
-                if (hdnstartpnt !== null) {
+                if (hdnstartpnt !== "") {
                     document.form1.hdnstartpnt.value = hdnstartpnt;
                 }
-                if (hdnduration !== null) {
+                if (hdnduration !== "") {
                     document.form1.hdnduration.value = hdnduration;
                 }
-                if (hdnlblstlname !== null) {
+                if (hdnlblstlname !== "") {
                     document.form1.hdnlblstlname.value = hdnlblstlname;
                 }
 
@@ -153,9 +153,16 @@
 
                 <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
+                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                        Welcome : "${username}"
+                    </div>
+                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:50px; margin-right:-230px">
+                        <a href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out</span></a>
+                    </div>
+                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group
                     </div>
+                    
                 </div>
                 <!--[if !IE]>start page<![endif]-->
                 <div id="page">

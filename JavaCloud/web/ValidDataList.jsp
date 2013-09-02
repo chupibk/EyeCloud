@@ -1,29 +1,72 @@
 <%-- 
-    Document   : ShowValidData
-    Created on : Aug 12, 2013, 1:23:25 PM
+    Document   : RawDataList
+    Created on : Sep 1, 2013, 2:42:12 PM
     Author     : samsalman
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.ArrayList" %>
+<%@page language="java" import="java.util.*" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
-        <title>Valid Data</title>
+        <title>Raw Data List</title>
+
+        <script type="text/javascript">
+            function SetSelectedValue() {
+                var filename = '${fileName}';
+                if (filename !== "")
+                {
+                    document.getElementById('ddlfile').value = filename;
+                }
+            }
+            function Setdropdownvalue() {
+                document.getElementById('hdnselectvalue').value = document.getElementById('ddlfile').value;
+                document.getElementById('hdnselectText').value = document.getElementById('ddlfile').options[document.getElementById('ddlfile').selectedIndex].text;
+            }
+            
+            function submitForm(val) {
+
+                if (val === 'RD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+
+                } else if (val === 'VD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                } else if (val === 'FD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                }else if (val === 'kill')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                }
+
+            }
+
+            window.onload = SetSelectedValue;
+        </script>
+
+
     </head>
     <body>
-        <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("arrColumn");
-            ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("arrValue");
+        <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("Alrd_column");
+            ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("Alrd_value");
             ArrayList<String> arrTime = (ArrayList) request.getAttribute("arrTime");
 
-            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("arrColumn_lbl");
-            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("arrValue_lbl");
-
-            //out.println(session.getAttribute("hdnxleft")): 
+//            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
+//            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
+            //out.print(Alrd_lbl_column +" " +  );
 %>
+
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
@@ -48,7 +91,7 @@
                         <div class="section">
                             <!--[if !IE]>start title wrapper<![endif]-->
                             <div class="title_wrapper">
-                                <h2>Valid Data</h2>
+                                <h2>Valid Data List</h2>
                                 <span class="title_wrapper_left"></span>
                                 <span class="title_wrapper_right"></span>
                             </div>
@@ -61,14 +104,34 @@
                                         <div class="sct_right">
                                             <div class="sct_left">
                                                 <div class="sct_right_load">
-                                                    <form id="form1" method="POST" action="./ValidateData">
-                                                        <table><tr><td>
+
+                                                    <form id="form1" method="POST" action="./Dashboard">
+                                                        <input id="hdnselectvalue" name="hdnselectvalue" type="hidden" />
+                                                        <input id="hdnselectText" name="hdnselectText" type="hidden" />
+                                                         <input type="hidden" name="hdnData" id="hdnData" />
+                                                        <table>
+                                                            <tr><td style="float: left; width: 25%; " >Select File: <select style="margin-bottom: 10px" id="ddlfile" name="ddlfile" onchange="Setdropdownvalue()">
+                                                                        <c:forEach items="${arrls}" var="arrl">
+                                                                            <option value="${arrl.key}">
+                                                                                <c:out value="${arrl.value}" />
+                                                                            </option>
+                                                                        </c:forEach>
+                                                                    </select> 
+                                                                    <span class="button approve"><span><span>Search</span></span><input name="btnValidsearch" id="btnValidsearch" type="submit" value="Valid"/></span>
+                                                                </td> 
+                                                                <td>
+
+                                                                </td> </tr>
+                                                            <tr>
+                                                                <td colspan="2">
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
-
-                                                                            <div style="overflow: scroll; height: 400px; width: 580px; background: transparent">
+                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent">
+                                                                                <%if (arrTime.size() == 0) {
+                                                                                    } else {%>
                                                                                 <table border="1" style='table-layout:fixed'><tr> <td style=" vertical-align: top"> 
                                                                                             <table >
+
                                                                                                 <tr><td style='text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'>Timestamp</td> </tr>
                                                                                                 <tr>
                                                                                                     <% for (int a = 0; a <= arrTime.size() - 1; a++) {%>
@@ -78,6 +141,7 @@
                                                                                                         }
                                                                                                     %>
                                                                                                 </tr>
+
                                                                                             </table> </td> 
                                                                                         <td style=" vertical-align: top">
                                                                                             <table>
@@ -108,66 +172,34 @@
 
                                                                                             </table>        
                                                                                         </td></tr></table>
-
-
-                                                                            </div>
-                                                                            <div class="table_menu">
-
-                                                                                <ul class="right">
-                                                                                    <li><span class="button approve"><span><span>Next</span></span> <input type="submit" value="Next" name="btnNext" /></span></li>
-                                                                                </ul>
+                                                                                        <%}%>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                   
                                                                 </td>
-                                                                <td>
-                                                                    <div class="table_wrapper">
-                                                                        <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 500px; background: transparent">
-                                                                                <table border="1">
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
-                                                                                        <td> <%=Alrd_lbl_column.get(a)%>  </td>
-                                                                                        <%
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_value.size() - 1; a++) {%>
-                                                                                        <% if (Alrd_lbl_value.get(a).contains("/")) {%>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% } else {%> 
-                                                                                        <td> <%= Alrd_lbl_value.get(a)%> </td>
-                                                                                        <%
-                                                                                                }
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-
-                                                                                </table>        
-                                                                            </div>
-                                                                                                                                               <div class="table_menu">
-
-                                                                                <ul class="right">
-                                                                                    <li><span class="button approve"><span><span>Run Fixation</span></span> <input type="submit" value="Run Fixation" name="btnRun" /></span></li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    
-                                                                </td>
-
+                                                                <td style="vertical-align: bottom;">
+                                                                </td>                                                                    
+                                                            <div class="table_wrapper">
                                                             </tr></table>
 
 
                                                     </form>
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div></div></div></div></div>
+                                </div>
+                                <!--[if !IE]>end section content top<![endif]-->
+                                <!--[if !IE]>start section content bottom<![endif]-->
+                                <span class="scb"><span class="scb_left"></span><span class="scb_right"></span></span>
+                                <!--[if !IE]>end section content bottom<![endif]-->
+
+                            </div> 
+
+                        </div>
+                    </div>
+                </div>
                 <div id="sidebar">
                     <div class="inner">                                     
 
@@ -188,11 +220,11 @@
                                             <div class="sct_left">
                                                 <div class="sct_right">
                                                     <ul class="sidebar_menu">
-                                                        <li><a href="#">Dash Board</a></li>
-                                                        <li><a href="#">Raw Data</a></li>
-                                                        <li><a href="#">Valid Data</a></li>
-                                                        <li><a href="#">Fixation & Saccade Data</a></li>
-                                                        <li><a href="#">User Profile</a></li>
+                                                        <li><a href="Dashboard.jsp">Dash Board</a></li>
+                                                        <li><a href="#" onclick="submitForm('RD')"  class="d5"><span>Raw Data</span></a></li>
+                                                        <li><a href="#" onclick="submitForm('VD')" class="d4"><span>Valid Data</span></a></li>
+                                                        <li><a href="#" onclick="submitForm('FD')" class="d8"><span>Fixation & Saccade Data</span></a></li>
+                                                        <li><a href="registeruser.jsp" class="d1"><span>User Profile</span></a></li>
 
                                                     </ul>
                                                 </div>
@@ -210,6 +242,8 @@
                         </div>
                     </div>
                 </div>
-            </div></div>
+
+            </div> 
+        </div>
     </body>
 </html>

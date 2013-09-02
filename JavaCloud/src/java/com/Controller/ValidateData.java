@@ -474,7 +474,7 @@ public class ValidateData extends HttpServlet {
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
            // dc.get_DataHbase(0, 1000, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
-             dc.get_DataHbase(0, 1000, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
+             dc.get_DataHbase(0, 1000, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); // readIng Eye tracker valId data with specific column to show on page
            // dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// readIng label valId data to show on page
              dc.get_DataHbase_common(0, 0, "", "1", "ValidData", "01-LOE-1.txt", "MD", arrColumn_lbl, arrValue_lbl);// readIng label valId data to show on page
         }

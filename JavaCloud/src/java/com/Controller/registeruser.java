@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -78,6 +79,9 @@ public class registeruser extends HttpServlet {
         } else if ("login".equalsIgnoreCase(btnlogin)) { //If login button Is pressed
 
             if (dc.loginUser(txtemail, txtpass) > 0) {
+                HttpSession session = request.getSession(false);
+                session.setAttribute("username", dc.username);
+                session.setAttribute("userId", dc.loginUser(txtemail, txtpass));
                 RequestDispatcher rd = request.getRequestDispatcher("/Dashboard.jsp");
                 rd.forward(request, response);
             } else {

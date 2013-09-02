@@ -45,7 +45,6 @@ public class DataClass {
     // create 'FixData','FX','SC','MD'
     // FixData column family structure
 
-    
     public boolean isBlankOrNull(String str) {
         return (str == null || "".equals(str.trim()));
     }
@@ -102,7 +101,7 @@ public class DataClass {
         try {
             HTable table = new HTable(conf, tablename);
             Get get = new Get(rowkey.getBytes());
-            
+
             get.addFamily(CF.getBytes());
             Result rs = table.get(get);
             for (KeyValue kv : rs.raw()) {
@@ -175,47 +174,54 @@ public class DataClass {
         }
 
     }
-    
-     public void getfileNames(String tablename,String CF, String column,LinkedHashMap<String, String> arrls) throws IOException {
+
+    public void getfileNames(String tablename, String CF, String column, LinkedHashMap<String, String> arrls) throws IOException {
         HTable table = new HTable(conf, tablename);
         Scan s = new Scan();
         s.addColumn(Bytes.toBytes(CF), Bytes.toBytes(column));
         ResultScanner scanner = table.getScanner(s);
+        arrls.put("Select", "Select");
         try {
             for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
-                arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))),new String(rr.getRow()));
+                if (tablename.equals("FixData")) {
+                   if(!new String(rr.getRow()).contains("-S-")){
+                    arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow()));
+                   }
+                } else {
+                    arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow()));
+                }
+
             }
         } finally {
             scanner.close();
         }
     }
     
+    
     //////////////////////////////
     //          MY SQL         /// 
     ///////////////////////////////
-    
     Connection connection = null;
     PreparedStatement preStat = null;
     Statement stat = null;
     ResultSet rs = null;
-    
+
     public int CheckEmaIl(String email) {
-        try{
-        int ID = 0;
-        Class.forName("com.mysql.jdbc.Driver");
-        connection = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
-        preStat = connection
-                .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?");
-        preStat.setString(1, email);
-        rs = preStat.executeQuery();
-        while (rs.next()) {
-            ID= Integer.valueOf(rs.getString("Id"));
-        }
-        return ID;
-        }
-        catch(Exception e){
-        return 0;    
+        try {
+            int ID = 0;
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+            preStat = connection
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?");
+            preStat.setString(1, email);
+            rs = preStat.executeQuery();
+            while (rs.next()) {
+                ID = Integer.valueOf(rs.getString("Id"));
+            }
+            return ID;
+        } catch (Exception e) {
+            return 0;
         }
     }
 
@@ -252,25 +258,26 @@ public class DataClass {
         }
 
     }
-
+    public String username;
     public int loginUser(String email, String password) {
-        try{
-        int ID = 0;
-        Class.forName("com.mysql.jdbc.Driver");
-        connection = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
-        preStat = connection
-                .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ? and Password= ?");
-        preStat.setString(1, email);
-        preStat.setString(2, password);
-        rs = preStat.executeQuery();
-        while (rs.next()) {
-            ID= Integer.valueOf(rs.getString("Id"));
-        }
-        return ID;
-        }
-        catch(Exception e){
-        return 0;    
+        try {
+            int ID = 0;
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+            preStat = connection
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ? and Password= ?");
+            preStat.setString(1, email);
+            preStat.setString(2, password);
+            rs = preStat.executeQuery();
+            while (rs.next()) {
+                ID = Integer.valueOf(rs.getString("Id"));
+                username = rs.getString("Fullname");
+                
+            }
+            return ID;
+        } catch (Exception e) {
+            return 0;
         }
     }
 }

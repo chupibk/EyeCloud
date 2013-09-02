@@ -124,6 +124,7 @@ public class LoadData extends HttpServlet {
                             hdnpart = null;
                             arrls.clear();
                         }
+                        arrls.put("Select", "Select");
                         if (partarrls.size() != 0) { 
                             partarrls.clear();
                         }
@@ -281,7 +282,7 @@ public class LoadData extends HttpServlet {
                         Alrd_lbl_column.clear(); // clear the array
                         Alrd_lbl_value.clear(); // clear the array
                         //dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
-                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", "Rec 01-All-Data", "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
+                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", "01-01-All-Data.txt", "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
                         // get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
                        // dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value);
                          dc.get_DataHbase_common(0, 0, "", "1", "RawData", "01-LOE-1.txt", "MF", Alrd_lbl_column, Alrd_lbl_value);
