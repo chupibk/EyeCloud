@@ -12,9 +12,21 @@
         <meta http-equiv="imagetoolbar" content="no" />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
-        
+
         <title>Create Account</title>
         <script type="text/javascript">
+
+            function submitForm() {
+
+                var val = window.location.search.slice(1);
+                if (val === 'edit')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+
+                }
+            }
+
             function setvalues() {
                 var name = '${name}';
                 var email = '${email}';
@@ -70,9 +82,12 @@
                     } else if (error === "2")
                     {
                         document.getElementById('lblerror').innerHTML = 'Password should be matched!';
-                    }else if (error === "3")
+                    } else if (error === "3")
                     {
                         document.getElementById('lblerror').innerHTML = 'This account already exists!';
+                    } else if (error === "4")
+                    {
+                        document.getElementById('btnreg').innerHTML = 'Update';
                     }
                     else {
                         document.getElementById('lblerror').innerHTML = '';
@@ -80,7 +95,11 @@
 
                 }
             }
-            window.onload = setvalues;
+            window.onload = function()
+            {
+                submitForm();
+                setvalues();
+            };
         </script>
     </head>
 
@@ -91,13 +110,12 @@
                 <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
-                    Interactive Technologies Research Group
+                        Interactive Technologies Research Group
                     </div>
                 </div>
                 <!--[if !IE]>start page<![endif]-->
                 <div id="page">
                     <div class="inner-reg">
-                      
 
                         <table style="width: 60%; ">
                             <tr>
@@ -119,6 +137,7 @@
                                                         <div class="sct_left">
                                                             <div class="sct_right">
                                                                 <form id="form1" method="POST" action="./registeruser" >
+                                                                    <input type="hidden" name="hdnData" id="hdnData" />
                                                                     <center>
                                                                         <table>
                                                                             <tr><td colspan="2">
@@ -140,7 +159,7 @@
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
-                                                                            <tr><td>Full Name:</td> <td>  <span class="input_wrapper"> <input id="txtfname" name="txtfname" type="text" size="30px" /></span> </td></tr>
+                                                                            <tr><td>* Full Name:</td> <td>  <span class="input_wrapper"> <input id="txtfname" name="txtfname" type="text" size="30px" /></span> </td></tr>
                                                                             <tr><td>Country:</td> <td>  <span class="input_wrapper"> <input name="txtcountry" id="txtcountry" type="text" size="30px" /></span> </td></tr>
                                                                             <tr><td>State/Province:</td> <td>  <span class="input_wrapper"><input name="txtstate" id="txtstate" type="text" size="30px" /> </span></td></tr>
                                                                             <tr><td>City:</td> <td>  <span class="input_wrapper"> <input name="txtcity" id="txtcity" type="text" size="30px" /></span> </td></tr>
@@ -153,7 +172,7 @@
 
                                                                             <tr><td colspan="2" style="text-align: center"><label id="lblerror" name="lblerror" style="color: red" > </label></td></tr>
                                                                             <tr><td></td> <td style="text-align: right">
-                                                                                    <span class="button approve"><span><span>Register</span></span><input type="submit" value="Create" id="btncreate" name="btncreate"/></span>
+                                                                                    <span  class="button approve"><span><span id="btnreg" name="btnreg">Register</span></span><input type="submit" value="Create" id="btncreate" name="btncreate"/></span>
                                                                                 </td></tr>
                                                                         </table>
                                                                     </center>

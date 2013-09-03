@@ -314,6 +314,40 @@ public class HbaseServlet extends HttpServlet {
             scanner.close();
         }
     }
+      public static int UpdateUser_detail(String name, String Id, String pass, String country, String state,
+            String city, String address, String mobNum, String phoneNum, String postalcode) {
+        try {
+            int result = 0;
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+            preStat = connection.prepareStatement("update tblRegister set Fullname=?,Country=?,State=?,City=?,"
+                    + "Address=?,MobileNo=?,PhoneNo=?,PostalCode=?,Password=?  where Id=?");
+            preStat.setString(1, name);
+            preStat.setString(2, country);
+            preStat.setString(3, state);
+            preStat.setString(4, city);
+            preStat.setString(5, address);
+            preStat.setString(6, mobNum);
+            preStat.setString(7, phoneNum);
+            preStat.setString(8, postalcode);
+            preStat.setString(9, pass);
+            preStat.setString(10, Id);
+            preStat.executeUpdate();
+            if (preStat.getUpdateCount() == 1) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            return result;
+
+        } catch (Exception e) {
+            System.out.println("Connection Failed! Check output console");
+            e.printStackTrace();
+            return 0;
+        }
+
+    }
 
     public static void main(String[] args) {
         try {
@@ -321,7 +355,7 @@ public class HbaseServlet extends HttpServlet {
             // FixAlgorithm();
             //Insertmysql();
             //getlogin();
-            getrowkey();
+            UpdateUser_detail(null, "2", null, null, null, null, null, null, null, "2");
         } catch (Exception e) {
             e.printStackTrace();
         }

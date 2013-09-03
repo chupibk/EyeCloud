@@ -205,6 +205,7 @@ public class DataClass {
     PreparedStatement preStat = null;
     Statement stat = null;
     ResultSet rs = null;
+    public String email,username,country,state,city,address,mobileNO,phoneNo,postalcode;
 
     public int CheckEmaIl(String email) {
         try {
@@ -222,6 +223,34 @@ public class DataClass {
             return ID;
         } catch (Exception e) {
             return 0;
+        }
+    }
+    
+    public String getUserDetails(int Id) {
+        try {
+            
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+            preStat = connection
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where ID= ?");
+            preStat.setInt(1, Id);
+            rs = preStat.executeQuery();
+            while (rs.next()) {
+                email = rs.getString("Email");
+                username = rs.getString("Fullname");
+                country = rs.getString("Country");
+                state = rs.getString("State");
+                city = rs.getString("City");
+                address = rs.getString("Address");
+                mobileNO = rs.getString("MobileNo");
+                phoneNo = rs.getString("PhoneNo");
+                postalcode = rs.getString("PostalCode");
+                
+            }
+            return email;
+        } catch (Exception e) {
+            return "";
         }
     }
 
@@ -258,7 +287,42 @@ public class DataClass {
         }
 
     }
-    public String username;
+    
+      public int UpdateUser_detail(String name, String Id, String pass, String country, String state,
+            String city, String address, String mobNum, String phoneNum, String postalcode) {
+        try {
+            int result = 0;
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+            preStat = connection.prepareStatement("update tblRegister set Fullname=?,Country=?,State=?,City=?,"
+                    + "Address=?,MobileNo=?,PhoneNo=?,PostalCode=?,Password=?  where Id=?");
+            preStat.setString(1, name);
+            preStat.setString(2, country);
+            preStat.setString(3, state);
+            preStat.setString(4, city);
+            preStat.setString(5, address);
+            preStat.setString(6, mobNum);
+            preStat.setString(7, phoneNum);
+            preStat.setString(8, postalcode);
+            preStat.setString(9, pass);
+            preStat.setString(10, postalcode);
+            preStat.executeUpdate();
+            if (preStat.getUpdateCount() == 1) {
+                result = 1;
+            } else {
+                result = 0;
+            }
+            return result;
+
+        } catch (Exception e) {
+            System.out.println("Connection Failed! Check output console");
+            e.printStackTrace();
+            return 0;
+        }
+
+    }
+    
     public int loginUser(String email, String password) {
         try {
             int ID = 0;

@@ -44,7 +44,7 @@
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
-                }else if (val === 'kill')
+                } else if (val === 'kill')
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
@@ -65,24 +65,24 @@
 //            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
 //            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
             //out.print(Alrd_lbl_column +" " +  );
-%>
+        %>
 
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
 
-                 <div class="inner-image">
+                <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
                     <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
                         Welcome : "${username}"
-                    </div>
-                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:50px; margin-right:-230px">
-                        <a href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out</span></a>
+                        </br>
+                        </br>
+                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group
                     </div>
-                    
+
                 </div>
                 <!--[if !IE]>start page<![endif]-->
                 <div id="page">

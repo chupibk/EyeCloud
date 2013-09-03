@@ -14,7 +14,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
-        <title>Raw Data List</title>
+        <title>Valid Data List</title>
 
         <script type="text/javascript">
             function SetSelectedValue() {
@@ -73,11 +73,11 @@
 
                  <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                   <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
                         Welcome : "${username}"
-                    </div>
-                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:50px; margin-right:-230px">
-                        <a href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out</span></a>
+                        </br>
+                        </br>
+                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group

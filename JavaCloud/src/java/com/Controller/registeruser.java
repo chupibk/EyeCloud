@@ -48,8 +48,12 @@ public class registeruser extends HttpServlet {
         btnregister = request.getParameter("btnregister");
 
         int result = 0;
-        if (txtpass.equals(txtCpass)) { // if password is same
-            if (!txtemail.isEmpty() && !txtpass.isEmpty()) { // if required field Is not empty
+        if ("edit".equalsIgnoreCase(request.getParameter("hdnData"))) {
+            getUserDetails(request,response);
+
+
+        } else if (txtpass.equals(txtCpass)) { // if password is same
+            if (!txtemail.isEmpty() && !txtpass.isEmpty() && !txtfname.isEmpty()) { // if required field Is not empty
                 if (dc.CheckEmaIl(txtemail) != 0) { //If emaIl already exIsts
                     request.setAttribute("error", "3");
                     setAttribute(request);
@@ -61,7 +65,7 @@ public class registeruser extends HttpServlet {
                             txtcity, txtadd, txtmob,
                             txtphone, txtpostal);
 
-                    if (result == 1) {
+                    if (result == 1) { //iF user iS regIster successfully
                         RequestDispatcher rd = request.getRequestDispatcher("/loginuser.jsp");
                         rd.forward(request, response);
                     } else { //if user can not regIster
@@ -111,6 +115,26 @@ public class registeruser extends HttpServlet {
         request.setAttribute("mobile", txtmob);
         request.setAttribute("phone", txtphone);
         request.setAttribute("postal", txtpostal);
+    }
+
+    private void getUserDetails(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        Integer userid = Integer.parseInt(session.getAttribute("userId").toString());
+        dc.getUserDetails(userid);
+        request.setAttribute("name", dc.username);
+        request.setAttribute("email", dc.email);
+        request.setAttribute("country", dc.country);
+        request.setAttribute("state", dc.state);
+        request.setAttribute("city", dc.city);
+        request.setAttribute("address", dc.address);
+        request.setAttribute("mobile", dc.mobileNO);
+        request.setAttribute("phone", dc.phoneNo);
+        request.setAttribute("postal", dc.postalcode);
+        request.setAttribute("error", "4");
+        RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
+        rd.forward(request, response);
+
+
     }
 
     @Override
