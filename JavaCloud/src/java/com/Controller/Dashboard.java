@@ -4,6 +4,7 @@
  */
 package com.Controller;
 
+import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -35,11 +37,16 @@ public class Dashboard extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     }
+    String UserId;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
   
+        HttpSession session = request.getSession(false);
+        Integer ID = Integer.parseInt(session.getAttribute("userId").toString());
+        UserId = String.valueOf(ID);
+        
         String hdnData = request.getParameter("hdnData");
         String btnRawsearch = request.getParameter("btnRawsearch");
         String btnValidsearch = request.getParameter("btnValidsearch");
@@ -56,14 +63,14 @@ public class Dashboard extends HttpServlet {
             }
         }
         if ("RD".equalsIgnoreCase(hdnData)) {
-            dc.getfileNames("RawData", "MF", "1", arrls);
+            dc.getfileNames("RawData", "MF", UserId, arrls);
             request.setAttribute("arrls", arrls);
             request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", Alrd_value);
             RequestDispatcher rd = request.getRequestDispatcher("/RawDataList.jsp"); // redirecting to the next page
             rd.forward(request, response);
         } else if ("VD".equalsIgnoreCase(hdnData)) {
-            dc.getfileNames("ValidData", "MD", "1", arrls);
+            dc.getfileNames("ValidData", "MD", UserId, arrls);
             request.setAttribute("arrls", arrls);
             request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", Alrd_value);
@@ -71,7 +78,7 @@ public class Dashboard extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/ValidDataList.jsp"); // redirecting to the next page
             rd.forward(request, response);
         } else if ("FD".equalsIgnoreCase(hdnData)) {
-            dc.getfileNames("FixData", "MD", "1", arrls);
+            dc.getfileNames("FixData", "MD",UserId, arrls);
             request.setAttribute("arrls", arrls);
             request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", Alrd_value);
@@ -99,7 +106,7 @@ public class Dashboard extends HttpServlet {
 
         hdnselectvalue = request.getParameter("hdnselectvalue");
         fileName = request.getParameter("hdnselectText");
-        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", fileName, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
+        dc.get_DataHbase_common(0, 1000, "ok", UserId, "RawData", fileName, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
         request.setAttribute("fileName", hdnselectvalue);
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
@@ -112,7 +119,7 @@ public class Dashboard extends HttpServlet {
 
         hdnselectvalue = request.getParameter("hdnselectvalue");
         fileName = request.getParameter("hdnselectText");
-        dc.get_DataHbase(0, 1000, "1", "ValidData", fileName, Alrd_column, Alrd_value, arrTime);
+        dc.get_DataHbase(0, 1000, UserId, "ValidData", fileName, Alrd_column, Alrd_value, arrTime);
         request.setAttribute("fileName", hdnselectvalue);
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
@@ -126,8 +133,8 @@ public class Dashboard extends HttpServlet {
 
         hdnselectvalue = request.getParameter("hdnselectvalue");
         fileName = request.getParameter("hdnselectText");
-        dc.get_DataHbase_common(0, 0, "", "1", "FixData", fileName, "MD", Alrd_column, Alrd_value);//reading fixation
-        dc.get_DataHbase_common(0, 0, "", "1", "FixData", fileName + "-S-", "MD", arrColumn_sac, arrValue_sac);// Adding -S- in the filename to make it varry from fix and reading Saccade
+        dc.get_DataHbase_common(0, 0, "", UserId, "FixData", fileName, "MD", Alrd_column, Alrd_value);//reading fixation
+        dc.get_DataHbase_common(0, 0, "", UserId, "FixData", fileName + "-S-", "MD", arrColumn_sac, arrValue_sac);// Adding -S- in the filename to make it varry from fix and reading Saccade
         request.setAttribute("fileName", hdnselectvalue);
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page

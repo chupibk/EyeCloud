@@ -66,6 +66,7 @@ public class ValidateData extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     }
+    String UserId;
 
     public void Read_LabelData_forValdiation(String Efilename, String filename) { // Here I am reading label data for validation
         HTable table = null;
@@ -78,7 +79,7 @@ public class ValidateData extends HttpServlet {
             table = new HTable(conf, "RawData");
             for (int a = 0; a <= NosRow - 1; a++) {
                 breakLoop = false;
-                Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a)); // USER ID + filename +  nos of row
+                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // USER ID + filename +  nos of row
                 Result result = table.get(get);
                 arrColumn.clear();
                 arrValue.clear();
@@ -97,8 +98,8 @@ public class ValidateData extends HttpServlet {
                 }
             }
             table.close();
-            dc.InsertMapRecord("ValidData", Efilename, "LD", "1", filename); //Insert validData file name as row and Label data Filename as value 
-            dc.InsertMapRecord("ValidData", filename, "MD", "1", String.valueOf(counter)); // here I am storing nos of rows of ValIDData Into LD(Label Data) column FamIly
+            dc.InsertMapRecord("ValidData", Efilename, "LD", UserId, filename); //Insert validData file name as row and Label data Filename as value 
+            dc.InsertMapRecord("ValidData", filename, "MD", UserId, String.valueOf(counter)); // here I am storing nos of rows of ValIDData Into LD(Label Data) column FamIly
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +138,7 @@ public class ValidateData extends HttpServlet {
         HTable table = new HTable(conf, "ValidData");
         int count = 0;
         for (long a = 0; a <= NosRow - 1; a++) {
-            Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a)); // setting rowkey
+            Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // setting rowkey
             Result result = table.get(get);
             for (KeyValue kv : result.raw()) {
                 if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
@@ -258,7 +259,7 @@ public class ValidateData extends HttpServlet {
             table = new HTable(conf, "RawData");
             for (long a = 0; a <= NosRow - 1; a++) {
                 breakflag = false;
-                Get get = new Get(Bytes.toBytes("1" + ":" + filename + ":" + a));
+                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a));
                 Result result = table.get(get);
                 arrColumn.clear();
                 arrValue.clear();
@@ -367,7 +368,7 @@ public class ValidateData extends HttpServlet {
                 }
             }
             table.close();
-            dc.InsertMapRecord("ValidData", filename, "MD", "1", String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into MD(Map Data) column FamIly
+            dc.InsertMapRecord("ValidData", filename, "MD", UserId, String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into MD(Map Data) column FamIly
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
 
@@ -383,7 +384,7 @@ public class ValidateData extends HttpServlet {
             HTable table = new HTable(conf, tablename);
             table.setAutoFlush(false);
             table.setWriteBufferSize(1024 * 1024 * 12);
-            Put put = new Put(Bytes.toBytes("1" + ":" + rowKey + ":" + counter)); //userId + Filename+rownumber
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counter)); //userId + Filename+rownumber
             for (int a = 0; a <= arrColumn.size() - 1; a++) {
                 put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
             }
@@ -402,7 +403,7 @@ public class ValidateData extends HttpServlet {
             HTable table = new HTable(conf, tablename);
             table.setAutoFlush(false);
             table.setWriteBufferSize(1024 * 1024 * 12);
-            Put put = new Put(Bytes.toBytes("1" + ":" + rowKey + ":" + counterSaccade)); //userId + Filename+rownumber
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterSaccade)); //userId + Filename+rownumber
             for (int a = 0; a <= arrColumn.size() - 1; a++) {
                 put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
             }
@@ -420,7 +421,11 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         //out.println("System ");
+
         HttpSession session = request.getSession(false);
+        Integer ID = Integer.parseInt(session.getAttribute("userId").toString());
+        UserId = String.valueOf(ID);
+        
         String Efilename = (String) session.getAttribute("hdnfilename"); //settIng sessIons Into StrIng
         String Lfilename = (String) session.getAttribute("hdnlblfilename");
         String gxleft = (String) session.getAttribute("hdnxleft");
@@ -446,18 +451,18 @@ public class ValidateData extends HttpServlet {
         if ("Next".equalsIgnoreCase(holdNext)) { // when user clIck on next button
             loopStarter = looprunner;
             looprunner = looprunner + 1000;
-            dc.get_DataHbase(loopStarter, looprunner, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
+            dc.get_DataHbase(loopStarter, looprunner, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         } else if ("Run Fixation".equalsIgnoreCase(holdRun)) { // Run FixatIon and Saccade
-           // FixAlgorithm(Efilename);
-           // dc.InsertMapRecord("FixData", Efilename, "MD", "1", String.valueOf(counter));// inserting Nos of Rows of fixation
-           // dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", "1", String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
+             FixAlgorithm(Efilename);
+             dc.InsertMapRecord("FixData", Efilename, "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
+             dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
 
             arrColumn.clear();
             arrValue.clear();
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
-            dc.get_DataHbase_common(0, 0, "", "1", "FixData", "01-01-All-Data.txt", "MD", arrColumn, arrValue);//reading fixation
-            dc.get_DataHbase_common(0, 0, "", "1", "FixData", "01-01-All-Data.txt" + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
+            dc.get_DataHbase_common(0, 0, "", UserId, "FixData", Efilename, "MD", arrColumn, arrValue);//reading fixation
+            dc.get_DataHbase_common(0, 0, "", UserId, "FixData", Efilename + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
             request.setAttribute("arrColumn", arrColumn);
             request.setAttribute("arrValue", arrValue);
             request.setAttribute("arrColumn_lbl", arrColumn_lbl);
@@ -466,25 +471,21 @@ public class ValidateData extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/ShowFixData.jsp");
             rd.forward(request, response);
         } else {
-         //   Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
-          //  Read_LabelData_forValdiation(Efilename, Lfilename); //ReadIng label Data for valIdatIon 
+             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
+             Read_LabelData_forValdiation(Efilename, Lfilename); //ReadIng label Data for valIdatIon 
             arrColumn.clear();
             arrValue.clear();
             arrTime.clear();
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
-           // dc.get_DataHbase(0, 1000, "1", "ValidData", Efilename, arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
-             dc.get_DataHbase(0, 1000, "1", "ValidData", "01-01-All-Data.txt", arrColumn, arrValue, arrTime); // readIng Eye tracker valId data with specific column to show on page
-           // dc.get_DataHbase_common(0, 0, "", "1", "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// readIng label valId data to show on page
-             dc.get_DataHbase_common(0, 0, "", "1", "ValidData", "01-LOE-1.txt", "MD", arrColumn_lbl, arrValue_lbl);// readIng label valId data to show on page
+            dc.get_DataHbase(0, 1000, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
+            dc.get_DataHbase_common(0, 0, "", UserId, "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// readIng label valId data to show on page
         }
-
         request.setAttribute("arrColumn", arrColumn);
         request.setAttribute("arrValue", arrValue);
         request.setAttribute("arrTime", arrTime);
         request.setAttribute("arrColumn_lbl", arrColumn_lbl);
         request.setAttribute("arrValue_lbl", arrValue_lbl);
-
         RequestDispatcher rd = request.getRequestDispatcher("/ShowValidData.jsp");
         rd.forward(request, response);
     }

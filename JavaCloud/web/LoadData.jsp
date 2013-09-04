@@ -113,6 +113,7 @@
                 document.form1.hdnlblfilename.value = document.form1.loadlabel.value;
             }
 
+
             window.onload = selectedValue;
         </script>
         <style type="text/css" title="text/css">
@@ -157,7 +158,7 @@
                         Welcome : "${username}"
                         </br>
                         </br>
-                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
+                        <a style="float: right" href="Dashboard.jsp?kill" class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group
@@ -190,6 +191,7 @@
                                                             <table>
                                                                 <tbody>
                                                                     <tr>
+
                                                                 <input type="hidden" name="hdnfilename"/>
                                                                 <input type="hidden" name="hdnlblfilename"/>
                                                                 <input type="hidden" name="hdnstartpnt"/>
@@ -445,7 +447,7 @@
                                                 <div class="sct_right">
                                                     <ul class="sidebar_menu">
                                                         <li><a href="Dashboard.jsp">Dash Board</a></li>
-                                                        <li><a href="registeruser.jsp" class="d1"><span>User Profile</span></a></li>
+                                                        <li><a href="registeruser.jsp?edit" class="d1"><span>User Profile</span></a></li>
 
                                                     </ul>
                                                 </div>

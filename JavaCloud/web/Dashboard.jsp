@@ -36,6 +36,18 @@
                 }
 
             }
+            function logout_load(){
+                var val = window.location.search.slice(1);
+                if (val === 'kill')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+
+                }
+            }
+            
+            window.onload=logout_load;
+            
         </script>
         <title>Dashboard Page</title>
     </head>

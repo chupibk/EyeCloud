@@ -205,10 +205,10 @@
                                                 <div class="sct_right">
                                                     <ul class="sidebar_menu">
                                                         <li><a href="Dashboard.jsp">Dash Board</a></li>
-                                                        <li><a href="#" onclick="submitForm('RD')"  class="d5"><span>Raw Data</span></a></li>
+                                                        <li><a href="LoadData.jsp" class="d2"><span>Setup Upload Files</span></a></li>
                                                         <li><a href="#" onclick="submitForm('VD')" class="d4"><span>Valid Data</span></a></li>
                                                         <li><a href="#" onclick="submitForm('FD')" class="d8"><span>Fixation & Saccade Data</span></a></li>
-                                                        <li><a href="registeruser.jsp" class="d1"><span>User Profile</span></a></li>
+                                                        <li><a href="registeruser.jsp?edit" class="d1"><span>User Profile</span></a></li>
 
                                                     </ul>
                                                 </div>

@@ -93,6 +93,7 @@ public class LoadData extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
 
+    String UserId;
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
@@ -101,6 +102,10 @@ public class LoadData extends HttpServlet {
          * controls have become the Items of this uploader that is why I have to use if Condition to get values of each 
          * control
          */
+        HttpSession session = request.getSession(false);
+        Integer ID = Integer.parseInt(session.getAttribute("userId").toString());
+        UserId = String.valueOf(ID);
+        
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         try {
@@ -110,6 +115,7 @@ public class LoadData extends HttpServlet {
                     if ("btnload".equals(fielditem.getFieldName())) { /* If Load button of Eye tracker File is 
                      * clicked do this.
                      */
+                        System.out.print(arrls);
                         if (arrls.size() != 0) { //clear the hidden files & array if they are already set
                             hdntimestamp = null;
                             hdnxleft = null;
@@ -124,7 +130,7 @@ public class LoadData extends HttpServlet {
                             hdnpart = null;
                             arrls.clear();
                         }
-                        arrls.put("Select", "Select");
+                       
                         if (partarrls.size() != 0) { 
                             partarrls.clear();
                         }
@@ -242,8 +248,6 @@ public class LoadData extends HttpServlet {
                                 }
                             }
                         }
-
-
                     } else if ("btnlblfiles".equals(fielditem.getFieldName())) { // if its Label file
                         Iterator<FileItem> it = fields.iterator();
                         lblarrls.put("Select", "Select");
@@ -274,24 +278,19 @@ public class LoadData extends HttpServlet {
                         }
                         break;
 
-                    } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
-//                        addrawData(); // Adding raw Data from the Text File
-//                        addLabelrawData(); // Adding Label Data from the Text File
+                   } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
+                        addrawData(); // Adding raw Data from the Text File
+                        addLabelrawData(); // Adding Label Data from the Text File
                         Alrd_column.clear(); // clear the array
                         Alrd_value.clear(); // clear the array
                         Alrd_lbl_column.clear(); // clear the array
                         Alrd_lbl_value.clear(); // clear the array
-                        //dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
-                        dc.get_DataHbase_common(0, 1000, "ok", "1", "RawData", "01-01-All-Data.txt", "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
-                        // get_RawData("RawData", hdnfilename, Alrd_column, Alrd_value);
-                       // dc.get_DataHbase_common(0, 0, "", "1", "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value);
-                         dc.get_DataHbase_common(0, 0, "", "1", "RawData", "01-LOE-1.txt", "MF", Alrd_lbl_column, Alrd_lbl_value);
+                        dc.get_DataHbase_common(0, 1000, "ok", UserId, "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
+                        dc.get_DataHbase_common(0, 0, "", UserId, "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value);
                         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
                         request.setAttribute("Alrd_value", Alrd_value);  // setting array List for forwarding data to next page
                         request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);  // setting array List for forwarding data to next page
                         request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);  // setting array List for forwarding data to next page
-
-                        HttpSession session = request.getSession(false);
                         session.setAttribute("hdnxleft", hdnxleft);  // setting session
                         session.setAttribute("hdnyleft", hdnyleft);
                         session.setAttribute("hdnxright", hdnxright);
@@ -359,7 +358,6 @@ public class LoadData extends HttpServlet {
                     } else if ("txtmstm".equals(fielditem.getFieldName())) {
                         mstm = fielditem.getString();
                     }
-
                 }
             }
             List lstpart = null;
@@ -418,7 +416,7 @@ public class LoadData extends HttpServlet {
                 HTable table = new HTable(conf, "RawData");
                 table.setAutoFlush(false);
                 table.setWriteBufferSize(1024 * 1024 * 12);
-                Put put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); //setting rowkey in this format userID + FIleName + RowNumber
+                Put put = new Put(Bytes.toBytes(UserId + ":" + hdnfilename + ":" + countrow)); //setting rowkey in this format userID + FIleName + RowNumber
                 for (int a = 0; a <= strArr.length - 1; a++) { // run the loop untl Str arry has value
                     for (int b = countcoulmn; b <= list.size() - 1; b++) { // run the loop untl list has value
                         if (list.get(b).equals(strArr[a])) { // here I checked if in str arry there are header like list header then dont do anythng
@@ -430,7 +428,7 @@ public class LoadData extends HttpServlet {
                             if (put.size() != 0) {
                                 countrow++; // incrment the row
                                 table.put(put);
-                                put = new Put(Bytes.toBytes("1" + ":" + hdnfilename + ":" + countrow)); //INIALIZE NEW PUT WITH THIS ROWKEY userID + FIleName + RowNumber
+                                put = new Put(Bytes.toBytes(UserId + ":" + hdnfilename + ":" + countrow)); //INIALIZE NEW PUT WITH THIS ROWKEY userID + FIleName + RowNumber
                             }
 
                         } else {
@@ -442,7 +440,7 @@ public class LoadData extends HttpServlet {
                 }
                 table.flushCommits();
                 table.close();
-                dc.InsertMapRecord("RawData", hdnfilename, "MF", "1", String.valueOf(countrow)); //Insert total nos of rows into the Raw data with the name of eye tracker file  under MF column family
+                dc.InsertMapRecord("RawData", hdnfilename, "MF", UserId, String.valueOf(countrow)); //Insert total nos of rows into the Raw data with the name of eye tracker file  under MF column family
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -461,7 +459,7 @@ public class LoadData extends HttpServlet {
                 HTable table = new HTable(conf, "RawData");
                 table.setAutoFlush(false);
                 table.setWriteBufferSize(1024 * 1024 * 12);
-                Put put = new Put(Bytes.toBytes("1" + ":" + hdnlblfilename + ":" + countrow)); // userID + FIleName + RowNumber
+                Put put = new Put(Bytes.toBytes(UserId + ":" + hdnlblfilename + ":" + countrow)); // userID + FIleName + RowNumber
                 for (int a = 0; a <= strArr.length - 1; a++) {
                     for (int b = countcoulmn; b <= list.size() - 1; b++) {
                         if (list.get(b).equals(strArr[a])) {
@@ -474,7 +472,7 @@ public class LoadData extends HttpServlet {
                             if (put.size() != 0) {
                                 countrow++;
                                 table.put(put);
-                                put = new Put(Bytes.toBytes("1" + ":" + hdnlblfilename + ":" + countrow)); // userID + FIleName + RowNumber
+                                put = new Put(Bytes.toBytes(UserId + ":" + hdnlblfilename + ":" + countrow)); // userID + FIleName + RowNumber
                             }
 
                         } else {
@@ -486,8 +484,8 @@ public class LoadData extends HttpServlet {
                 }
                 table.flushCommits();
                 table.close();
-                dc.InsertMapRecord("RawData", hdnfilename, "LF", "1", hdnlblfilename); //Insert RawData file name under LF Column family to link label file name to the user
-                dc.InsertMapRecord("RawData", hdnlblfilename, "MF", "1", String.valueOf(countrow)); //Insert total nos of rows into the Label data with the name of label file under MF column family 1  is userID
+                dc.InsertMapRecord("RawData", hdnfilename, "LF", UserId, hdnlblfilename); //Insert RawData file name under LF Column family to link label file name to the user
+                dc.InsertMapRecord("RawData", hdnlblfilename, "MF", UserId, String.valueOf(countrow)); //Insert total nos of rows into the Label data with the name of label file under MF column family with  is userID
 
             }
         } catch (IOException e) {

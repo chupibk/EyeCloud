@@ -184,9 +184,9 @@ public class DataClass {
         try {
             for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
                 if (tablename.equals("FixData")) {
-                   if(!new String(rr.getRow()).contains("-S-")){
-                    arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow()));
-                   }
+                    if (!new String(rr.getRow()).contains("-S-")) {
+                        arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow()));
+                    }
                 } else {
                     arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow()));
                 }
@@ -196,8 +196,6 @@ public class DataClass {
             scanner.close();
         }
     }
-    
-    
     //////////////////////////////
     //          MY SQL         /// 
     ///////////////////////////////
@@ -205,7 +203,7 @@ public class DataClass {
     PreparedStatement preStat = null;
     Statement stat = null;
     ResultSet rs = null;
-    public String email,username,country,state,city,address,mobileNO,phoneNo,postalcode;
+    public String email, username, country, state, city, address, mobileNO, phoneNo, postalcode;
 
     public int CheckEmaIl(String email) {
         try {
@@ -225,10 +223,10 @@ public class DataClass {
             return 0;
         }
     }
-    
+
     public String getUserDetails(int Id) {
         try {
-            
+
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager
                     .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
@@ -246,7 +244,7 @@ public class DataClass {
                 mobileNO = rs.getString("MobileNo");
                 phoneNo = rs.getString("PhoneNo");
                 postalcode = rs.getString("PostalCode");
-                
+
             }
             return email;
         } catch (Exception e) {
@@ -287,8 +285,8 @@ public class DataClass {
         }
 
     }
-    
-      public int UpdateUser_detail(String name, String Id, String pass, String country, String state,
+
+    public int UpdateUser_detail(String name, String Id, String pass, String country, String state,
             String city, String address, String mobNum, String phoneNum, String postalcode) {
         try {
             int result = 0;
@@ -306,7 +304,7 @@ public class DataClass {
             preStat.setString(7, phoneNum);
             preStat.setString(8, postalcode);
             preStat.setString(9, pass);
-            preStat.setString(10, postalcode);
+            preStat.setString(10, Id);
             preStat.executeUpdate();
             if (preStat.getUpdateCount() == 1) {
                 result = 1;
@@ -322,7 +320,7 @@ public class DataClass {
         }
 
     }
-    
+
     public int loginUser(String email, String password) {
         try {
             int ID = 0;
@@ -337,7 +335,7 @@ public class DataClass {
             while (rs.next()) {
                 ID = Integer.valueOf(rs.getString("Id"));
                 username = rs.getString("Fullname");
-                
+
             }
             return ID;
         } catch (Exception e) {

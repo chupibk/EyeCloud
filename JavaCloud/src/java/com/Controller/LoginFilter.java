@@ -29,11 +29,57 @@ public class LoginFilter implements Filter {
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        // If you have any <init-param> in web.xml, then you could get them
-        // here by config.getInitParameter("name") and assign it as field.
+        AddIntolist();
+        
+    }
+    
+    private void AddIntolist(){
         ar.add("/JavaCloud/loginuser.jsp");
         ar.add("/JavaCloud/registeruser");
         ar.add("/JavaCloud/registeruser.jsp");
+        ar.add("/JavaCloud/css/admin-login.css");
+        ar.add("/JavaCloud/css/layout/login/login_wrapper_bg.gif");
+        ar.add("/JavaCloud/css/layout/login/form_bg.gif");
+        ar.add("/JavaCloud/css/layout/login/submit_left.gif");
+        ar.add("/JavaCloud/css/layout/login/logo.png");
+        ar.add("/JavaCloud/css/layout/login/submit_middle.gif");
+        ar.add("/JavaCloud/img/logo1.png");
+        ar.add("/JavaCloud/css/layout/login/submit_right.gif");
+        ar.add("/JavaCloud/css/admin.css");
+        ar.add("/JavaCloud/css/tables.css");
+        ar.add("/JavaCloud/css/forms.css");
+        ar.add("/JavaCloud/css/dashboard.css");
+        ar.add("/JavaCloud/css/layout/site/tables/approve_middle.gif");
+        ar.add("/JavaCloud/css/general.css");
+        ar.add("/JavaCloud/css/layout/site/tables/approve_left.gif");
+        ar.add("/JavaCloud/css/layout/site/content_bottom.gif");
+        ar.add("/JavaCloud/css/layout/site/title_wrapper_right.png");
+        ar.add("/JavaCloud/css/layout/site/sct_right.gif");
+        ar.add("/JavaCloud/css/layout/site/scb.png");
+        ar.add("/JavaCloud/css/layout/site/title_wrapper_right2.png");
+        ar.add("/JavaCloud/css/layout/site/sidebar_menu_bg.gif");
+        ar.add("/JavaCloud/css/layout/site/scb2.png");
+        ar.add("/JavaCloud/css/pagination.css");
+        ar.add("/JavaCloud/css/layout/site/content_bottom.gif");
+        ar.add("/JavaCloud/css/layout/site/title_wrapper_left.png");
+        ar.add("/JavaCloud/css/layout/site/tables/approve_middle.gif");
+        ar.add("/JavaCloud/css/layout/site/tables/approve_left.gif");
+        ar.add("/JavaCloud/css/layout/site/title_wrapper_left2.png");
+        ar.add("/JavaCloud/css/layout/site/sct_left_right2.gif");
+        ar.add("/JavaCloud/css/layout/site/scb_left2.png");
+        ar.add("/JavaCloud/css/layout/site/content_top.png");
+        ar.add("/JavaCloud/css/layout/site/sct_left.gif");
+        ar.add("/JavaCloud/css/layout/site/title_wrapper_left2.png");
+        ar.add("/JavaCloud/css/layout/site/sidebar_lk_bg.gif");
+        ar.add("/JavaCloud/css/layout/site/sct_left_right.gif");
+        ar.add("/JavaCloud/css/layout/site/title_wrapper_middle.png");
+        ar.add("/JavaCloud/css/layout/site/tables/approve_right.gif");
+        ar.add("/JavaCloud/css/layout/site/scb_left.png");
+        ar.add("/JavaCloud/css/layout/site/scb_right.png");
+        ar.add("/JavaCloud/css/layout/site/scb_right2.png");
+        ar.add("/JavaCloud/css/layout/site/sct_left2.gif");
+        ar.add("/JavaCloud/css/layout/site/sct_right2.gif");
+
     }
 
     @Override
@@ -45,6 +91,8 @@ public class LoginFilter implements Filter {
 
         if (ar.contains(request.getRequestURI())) {
             allowedRequest = true;
+        } else {
+            System.out.println(request.getRequestURI());
         }
 
         if (!allowedRequest) {

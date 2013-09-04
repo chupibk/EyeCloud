@@ -16,7 +16,7 @@
         <title>Create Account</title>
         <script type="text/javascript">
 
-            function submitForm() {
+            function submitFormByQuery() {
 
                 var val = window.location.search.slice(1);
                 if (val === 'edit')
@@ -26,6 +26,17 @@
 
                 }
             }
+
+            function submitForm(val) {
+
+                if (val === 'kill')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                }
+
+            }
+
 
             function setvalues() {
                 var name = '${name}';
@@ -38,6 +49,8 @@
                 var phone = '${phone}';
                 var postal = '${postal}';
                 var error = '${error}';
+                var success = '${success}';
+                var btnlabel = '${btnlabel}'
 
                 if (name !== null) {
                     var elem = document.getElementById("txtfname");
@@ -85,19 +98,41 @@
                     } else if (error === "3")
                     {
                         document.getElementById('lblerror').innerHTML = 'This account already exists!';
-                    } else if (error === "4")
+                    } else if (error === "5")
                     {
-                        document.getElementById('btnreg').innerHTML = 'Update';
+                        document.getElementById('lblerror').innerHTML = 'Something went wrong, Please try again to register!';
+                    } else if (error === "6")
+                    {
+                        document.getElementById('lblerror').innerHTML = 'Something went wrong, Please try again to update your profile!';
                     }
                     else {
                         document.getElementById('lblerror').innerHTML = '';
                     }
 
+                    if (success !== null) {
+                        if (success === "1")
+                        {
+                            document.getElementById('lblsuccess').innerHTML = 'Your profile is successfully updated!';
+                        }
+                        else {
+                            document.getElementById('lblsuccess').innerHTML = '';
+                        }
+                    }
+
+                    if (btnlabel !== null) {
+                        if (btnlabel === "1")
+                        {
+                            document.getElementById('btnreg').innerHTML = 'Update';
+                        }
+                    }
+
+
                 }
+
             }
             window.onload = function()
             {
-                submitForm();
+                submitFormByQuery();
                 setvalues();
             };
         </script>
@@ -109,9 +144,23 @@
             <div id="content">
                 <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
-                        Interactive Technologies Research Group
+                    <%
+
+
+                        if ("edit".equalsIgnoreCase(String.valueOf(session.getAttribute("hdnData")))) {%>
+                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                        Welcome : "${username}"
+                        </br>
+                        </br>
+                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
+                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
+                        Interactive Technologies Research Group
+                    </div>                        
+                    <% } else {%>  <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
+                        Interactive Technologies Research Group
+                    </div>  <%}%>
+
                 </div>
                 <!--[if !IE]>start page<![endif]-->
                 <div id="page">
@@ -170,9 +219,9 @@
                                                                             <tr><td>Postal Code:</td> <td> <span class="input_wrapper"> <input name="txtpostal" id="txtpostal" type="text" size="30px" /></span></td></tr>
                                                                             <br/>
 
-                                                                            <tr><td colspan="2" style="text-align: center"><label id="lblerror" name="lblerror" style="color: red" > </label></td></tr>
+                                                                            <tr><td colspan="2" style="text-align: center"><label id="lblerror" name="lblerror" style="color: red" > </label><label id="lblsuccess" name="lblsuccess" style="color: green" > </label></td></tr>
                                                                             <tr><td></td> <td style="text-align: right">
-                                                                                    <span  class="button approve"><span><span id="btnreg" name="btnreg">Register</span></span><input type="submit" value="Create" id="btncreate" name="btncreate"/></span>
+                                                                                    <span  class="button approve"><span><span id="btnreg" value="test" name="btnreg">Register</span></span><input type="submit" value="Create" id="btncreate" name="btncreate"/></span>
                                                                                 </td></tr>
                                                                         </table>
                                                                     </center>
@@ -195,6 +244,45 @@
                         </table>
 
 
+                    </div>
+                </div>
+
+                <div id="sidebar">
+                    <div class="inner">                                     
+
+                        <div class="section">
+                            <!--[if !IE]>start title wrapper<![endif]-->
+                            <div class="title_wrapper">
+                                <h2>Menu</h2>
+                                <span class="title_wrapper_left"></span>
+                                <span class="title_wrapper_right"></span>
+                            </div>
+                            <!--[if !IE]>end title wrapper<![endif]-->
+                            <!--[if !IE]>start section content<![endif]-->
+                            <div class="section_content">
+                                <!--[if !IE]>start section content top<![endif]-->
+                                <div class="sct">
+                                    <div class="sct_left">
+                                        <div class="sct_right">
+                                            <div class="sct_left">
+                                                <div class="sct_right">
+                                                    <ul class="sidebar_menu">
+                                                        <li><a href="Dashboard.jsp">Dash Board</a></li>
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--[if !IE]>end section content top<![endif]-->
+                                <!--[if !IE]>start section content bottom<![endif]-->
+                                <span class="scb"><span class="scb_left"></span><span class="scb_right"></span></span>
+                                <!--[if !IE]>end section content bottom<![endif]-->
+
+                            </div>
+                            <!--[if !IE]>end section content<![endif]-->
+                        </div>
                     </div>
                 </div>
             </div>

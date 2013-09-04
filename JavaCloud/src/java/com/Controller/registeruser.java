@@ -28,6 +28,8 @@ public class registeruser extends HttpServlet {
     DataClass dc = new DataClass();
     String txtfname, txtemail, txtpass, txtCpass, txtcountry, txtcity, txtadd,
             txtphone, txtmob, txtpostal, txtstate, btnlogin, btnregister;
+    boolean flagupdate = false;
+    int result = 0;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -46,35 +48,25 @@ public class registeruser extends HttpServlet {
         txtstate = request.getParameter("txtstate");
         btnlogin = request.getParameter("btnlogin");
         btnregister = request.getParameter("btnregister");
-
-        int result = 0;
-        if ("edit".equalsIgnoreCase(request.getParameter("hdnData"))) {
-            getUserDetails(request,response);
-
+        if ("kill".equalsIgnoreCase(request.getParameter("hdnData"))) {
+            request.getSession().invalidate();
+            response.sendRedirect(request.getContextPath() + "/loginuser.jsp");
+        } else if ("edit".equalsIgnoreCase(request.getParameter("hdnData"))) { // users wants to see hIs profIle
+            HttpSession session = request.getSession(false);
+            session.setAttribute("hdnData", "edit");
+            getUserDetails(request, response);
+            flagupdate = true;
+            
 
         } else if (txtpass.equals(txtCpass)) { // if password is same
             if (!txtemail.isEmpty() && !txtpass.isEmpty() && !txtfname.isEmpty()) { // if required field Is not empty
-                if (dc.CheckEmaIl(txtemail) != 0) { //If emaIl already exIsts
-                    request.setAttribute("error", "3");
-                    setAttribute(request);
-                    RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
-                    rd.forward(request, response);
-                } else {
-                    result = dc.RegIsteruser_mysql(txtfname, txtemail,
-                            txtpass, txtcountry, txtstate,
-                            txtcity, txtadd, txtmob,
-                            txtphone, txtpostal);
-
-                    if (result == 1) { //iF user iS regIster successfully
-                        RequestDispatcher rd = request.getRequestDispatcher("/loginuser.jsp");
-                        rd.forward(request, response);
-                    } else { //if user can not regIster
-                        setAttribute(request);
-                        RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
-                        rd.forward(request, response);
-                    }
+                if (flagupdate) { // users wants to update his profle
+                    UpdateUser(request, response);
+                } else { // users wants to register
+                    registerUser(request, response);
                 }
-            } else {
+
+            } else { // requIre fIeld Is empty
                 request.setAttribute("error", "1");
                 setAttribute(request);
                 RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
@@ -82,13 +74,14 @@ public class registeruser extends HttpServlet {
             }
         } else if ("login".equalsIgnoreCase(btnlogin)) { //If login button Is pressed
 
-            if (dc.loginUser(txtemail, txtpass) > 0) {
+            int loginUser=dc.loginUser(txtemail, txtpass);
+            if (loginUser > 0) { // successfull logiN
                 HttpSession session = request.getSession(false);
                 session.setAttribute("username", dc.username);
-                session.setAttribute("userId", dc.loginUser(txtemail, txtpass));
+                session.setAttribute("userId", loginUser);
                 RequestDispatcher rd = request.getRequestDispatcher("/Dashboard.jsp");
                 rd.forward(request, response);
-            } else {
+            } else { // there Is some error In logIn
                 request.setAttribute("error", "1");
                 RequestDispatcher rd = request.getRequestDispatcher("/loginuser.jsp");
                 rd.forward(request, response);
@@ -97,8 +90,52 @@ public class registeruser extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
             rd.forward(request, response);
 
-        } else {
+        } else { // if password doesnt match wIth confIrm password
             request.setAttribute("error", "2");
+            setAttribute(request);
+            RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
+            rd.forward(request, response);
+        }
+    }
+
+    private void registerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (dc.CheckEmaIl(txtemail) != 0) { //If emaIl already exIsts
+            request.setAttribute("error", "3");
+            setAttribute(request);
+            RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
+            rd.forward(request, response);
+        } else {
+            result = dc.RegIsteruser_mysql(txtfname, txtemail,
+                    txtpass, txtcountry, txtstate,
+                    txtcity, txtadd, txtmob,
+                    txtphone, txtpostal);
+
+            if (result == 1) { //iF user iS regIster successfully
+                RequestDispatcher rd = request.getRequestDispatcher("/loginuser.jsp");
+                rd.forward(request, response);
+            } else { //if user can not regIster
+                setAttribute(request);
+                request.setAttribute("error", "5");
+                RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
+                rd.forward(request, response);
+            }
+        }
+
+    }
+
+    private void UpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        String Id = String.valueOf(session.getAttribute("userId"));
+        result = dc.UpdateUser_detail(txtfname, Id, txtpass, txtcountry, txtstate, txtcity, txtadd, txtmob, txtphone, txtpostal);
+        if (result == 1) {
+            session.setAttribute("username", txtfname);
+            request.setAttribute("success", "1");
+            request.setAttribute("error", "0");
+            setAttribute(request);
+            RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
+            rd.forward(request, response);
+        } else {
+            request.setAttribute("error", "6");
             setAttribute(request);
             RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
             rd.forward(request, response);
@@ -115,12 +152,18 @@ public class registeruser extends HttpServlet {
         request.setAttribute("mobile", txtmob);
         request.setAttribute("phone", txtphone);
         request.setAttribute("postal", txtpostal);
+        if(flagupdate){
+            request.setAttribute("btnlabel", "1");
+            request.setAttribute("hdnData", "edit");
+            
+        }
     }
 
-    private void getUserDetails(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+    private void getUserDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         Integer userid = Integer.parseInt(session.getAttribute("userId").toString());
         dc.getUserDetails(userid);
+        
         request.setAttribute("name", dc.username);
         request.setAttribute("email", dc.email);
         request.setAttribute("country", dc.country);
@@ -130,10 +173,9 @@ public class registeruser extends HttpServlet {
         request.setAttribute("mobile", dc.mobileNO);
         request.setAttribute("phone", dc.phoneNo);
         request.setAttribute("postal", dc.postalcode);
-        request.setAttribute("error", "4");
+        request.setAttribute("btnlabel", "1");
         RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
         rd.forward(request, response);
-
 
     }
 
