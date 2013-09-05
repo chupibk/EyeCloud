@@ -34,43 +34,43 @@
                 var hdnduration = '${hdnduration}';
                 var hdnlblstlname = '${hdnlblstlname}';
                 // var tt = <%=(String) request.getParameter("selectedValue")%>
-                if (hdntimestamp !== "")
+                if (hdntimestamp !== null)
                 {
                     document.form1.ddltimestamp.value = hdntimestamp;
                 }
-                if (hdnxleft !== "")
+                if (hdnxleft !== null)
                 {
                     document.form1.ddlxleft.value = hdnxleft;
                 }
-                if (hdnxright !== "")
+                if (hdnxright !== null)
                 {
                     document.form1.ddlxright.value = hdnxright;
                 }
-                if (hdnyleft !== "")
+                if (hdnyleft !== null)
                 {
                     document.form1.ddlyleft.value = hdnyleft;
                 }
-                if (hdnyright !== "")
+                if (hdnyright !== null)
                 {
                     document.form1.ddlyright.value = hdnyright;
                 }
-                if (hdndleft !== "")
+                if (hdndleft !== null)
                 {
                     document.form1.ddldistleft.value = hdndleft;
                 }
-                if (hdndright !== "")
+                if (hdndright !== null)
                 {
                     document.form1.ddldistright.value = hdndright;
                 }
-                if (hdnvleft !== "")
+                if (hdnvleft !== null)
                 {
                     document.form1.ddlvleft.value = hdnvleft;
                 }
-                if (hdnvright !== "")
+                if (hdnvright !== null)
                 {
                     document.form1.ddlvrght.value = hdnvright;
                 }
-                if (hdnstname !== "")
+                if (hdnstname !== null)
                 {
                     document.form1.ddlstmName.value = hdnstname;
                 }

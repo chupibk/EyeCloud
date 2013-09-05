@@ -64,7 +64,7 @@ import org.apache.hadoop.hbase.util.Bytes;
  */
 @WebServlet(name = "LoadData", urlPatterns = {"/LoadData"})
 public class LoadData extends HttpServlet {
-    
+
     // Declaring & Initializing Variables
     private static final long serialVersionUID = 1L;
     static String hdnlblfilename = "", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
@@ -82,7 +82,7 @@ public class LoadData extends HttpServlet {
     ArrayList<String> Alrd_lbl_value = new ArrayList<String>();
     ArrayList<String> Alrd_lbl_column = new ArrayList<String>();
     // StringBuffer largeStr= new StringBuffer();
-    String largeStr = null, largeStr_lbl = null;
+    String largeStr = null, largeStr_lbl = null, largeStr_part;
     DataClass dc = new DataClass();
     private static Configuration conf = null;
 
@@ -92,12 +92,12 @@ public class LoadData extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
-
     String UserId;
+
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
-        
+
         /*I have used Appache File Uploader for uploading Files bcoz of this all the 
          * controls have become the Items of this uploader that is why I have to use if Condition to get values of each 
          * control
@@ -105,7 +105,7 @@ public class LoadData extends HttpServlet {
         HttpSession session = request.getSession(false);
         Integer ID = Integer.parseInt(session.getAttribute("userId").toString());
         UserId = String.valueOf(ID);
-        
+
         FileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         try {
@@ -113,8 +113,8 @@ public class LoadData extends HttpServlet {
             for (FileItem fielditem : fields) {
                 if (fielditem.isFormField()) {
                     if ("btnload".equals(fielditem.getFieldName())) { /* If Load button of Eye tracker File is 
-                     * clicked do this.
-                     */
+                         * clicked do this.
+                         */
                         System.out.print(arrls);
                         if (arrls.size() != 0) { //clear the hidden files & array if they are already set
                             hdntimestamp = null;
@@ -130,13 +130,7 @@ public class LoadData extends HttpServlet {
                             hdnpart = null;
                             arrls.clear();
                         }
-                       
-                        if (partarrls.size() != 0) { 
-                            partarrls.clear();
-                        }
-                        if (partarrlsvalue.size() != 0) {
-                            partarrlsvalue.clear();
-                        }
+
                         if (lblarrls.size() != 0) {
                             lblarrls.clear();
                         }
@@ -153,7 +147,7 @@ public class LoadData extends HttpServlet {
                                     if (str != null) { //If files is selected
                                         largeStr = fileItem.getString(); //set textfile to string 
                                         String[] strArr = str.split("	");
-                                        for (int a = 0; a <= strArr.length - 1; a++) { 
+                                        for (int a = 0; a <= strArr.length - 1; a++) {
                                             arrls.put(strArr[a], strArr[a]); // SETTING THE FIRST LINE OF TEXT FILE(HEADER) IN hashmap
                                             request.setAttribute("fileload", "0");
                                         }
@@ -168,86 +162,49 @@ public class LoadData extends HttpServlet {
                         }
 
                     } else if ("btnpart".equals(fielditem.getFieldName())) { // read participant excel file  
+                        if (partarrls.size() != 0) {
+                            partarrls.clear();
+                        }
+                        if (partarrlsvalue.size() != 0) {
+                            partarrlsvalue.clear();
+                        }
                         Iterator<FileItem> it = fields.iterator();
                         partcountrow = 0;
                         while (it.hasNext()) {
                             FileItem fileItem = it.next();
-                            System.out.println(fileItem.getName());
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
                                 //Get the workbook instance for XLS file 
-                                if (fileItem.getName().endsWith("xlsx")) { // when its xlsx file
-                                    XSSFWorkbook workbook = new XSSFWorkbook(fileItem.getInputStream());
-                                    //Get first sheet from the workbook
-                                    XSSFSheet sheet = workbook.getSheetAt(0);
-                                    //Iterate through each rows from first sheet
-                                    Iterator<Row> rowIterator = sheet.iterator();
-                                    partarrls.put("Select", "Select");
-                                    while (rowIterator.hasNext()) {
-                                        Row row = rowIterator.next();
-                                        //For each row, iterate through each columns
-                                        Iterator<Cell> cellIterator = row.cellIterator();
-                                        while (cellIterator.hasNext()) {
-                                            Cell cell = cellIterator.next();
-                                            if (partcountrow == 0) {
-                                                partarrls.put(cell.getStringCellValue(), cell.getStringCellValue()); //Set only the columns name
-                                                strholdexcel.add(cell.getStringCellValue());
-                                            } else {
-                                                switch (cell.getCellType()) {
-                                                    case Cell.CELL_TYPE_NUMERIC: // if its numeric value set them in numeric sections
-                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
-                                                        break;
-                                                    case Cell.CELL_TYPE_STRING: // if its numeric value set them in string sections
-                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
-                                                        break;
+                                BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
+                                String str;
+                                LineNumberReader ln = new LineNumberReader(br);
+                                partarrls.put("Select", "Select");
+                                while ((str = ln.readLine()) != null) {
 
-                                                }
+                                    if (str != null) {
+                                        //If files is selected
+                                        String[] strArr = str.split("	");
+                                        for (int a = 0; a <= strArr.length - 1; a++) {
+                                            if (partcountrow == 0) {
+                                                partarrls.put(strArr[a], strArr[a]); //Set only the columns name
+                                                strholdexcel.add(strArr[a]);
+                                            } else {
+                                                partarrlsvalue.put(strholdexcel.get(partcountcell), strArr[a]);
                                                 partcountcell++;
                                             }
-
                                         }
-                                        partcountcell = 0;
-                                        partcountrow++;
-
+                                    } else {
+                                        request.setAttribute("fileload", "1");
+                                        break;
                                     }
-                                } else { // when its xls file
-                                    HSSFWorkbook workbook = new HSSFWorkbook(fileItem.getInputStream());
-                                    //Get first System.out.println("xlsx");sheet from the workbook
-                                    HSSFSheet sheet = workbook.getSheetAt(0);
-                                    //Iterate through each rows from first sheet
-                                    Iterator<Row> rowIterator = sheet.iterator();
-                                    partarrls.put("Select", "Select");
-                                    while (rowIterator.hasNext()) {
-                                        Row row = rowIterator.next();
-                                        //For each row, iterate through each columns
-                                        Iterator<Cell> cellIterator = row.cellIterator();
-                                        while (cellIterator.hasNext()) {
-                                            Cell cell = cellIterator.next();
-                                            if (partcountrow == 0) {
-                                                partarrls.put(cell.getStringCellValue(), cell.getStringCellValue());
-                                                strholdexcel.add(cell.getStringCellValue());
-                                                //    hold  =(String) strholdexcel.get(0);
-                                            } else {
-
-                                                switch (cell.getCellType()) {
-                                                    case Cell.CELL_TYPE_NUMERIC: // if its numeric value set them in numeric sections
-                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), String.valueOf(cell.getNumericCellValue()));
-                                                        break;
-                                                    case Cell.CELL_TYPE_STRING: // if its numeric value set them in string sections
-                                                        partarrlsvalue.put(strholdexcel.get(partcountcell), cell.getStringCellValue());
-                                                        break;
-
-                                                }
-                                                partcountcell++;
-                                            }
-
-                                        }
-                                        partcountcell = 0;
-                                        partcountrow++;
-                                    }
+                                    //holdloop++;
+                                    partcountcell = 0;
+                                    partcountrow++;
                                 }
+                                br.close();
                             }
                         }
+
                     } else if ("btnlblfiles".equals(fielditem.getFieldName())) { // if its Label file
                         Iterator<FileItem> it = fields.iterator();
                         lblarrls.put("Select", "Select");
@@ -278,7 +235,7 @@ public class LoadData extends HttpServlet {
                         }
                         break;
 
-                   } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
+                    } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
                         addrawData(); // Adding raw Data from the Text File
                         addLabelrawData(); // Adding Label Data from the Text File
                         Alrd_column.clear(); // clear the array
@@ -362,9 +319,11 @@ public class LoadData extends HttpServlet {
             }
             List lstpart = null;
             if (hdnpart != null && !hdnpart.isEmpty()) { // set list to show the participant list
+                System.out.println(partarrlsvalue);
                 request.setAttribute("selectedpart", hdnpart);
                 lstpart = (List) partarrlsvalue.get(hdnpart);
             } else {
+                System.out.println(partarrlsvalue);
                 request.setAttribute("selectedpart", "ID");
                 lstpart = (List) partarrlsvalue.get("ID");
             }
