@@ -111,7 +111,7 @@
                                                         <input id="hdnselectText" name="hdnselectText" type="hidden" />
 
                                                         <table>
-                                                            <tr><td style="float: left; width: 25%; " >Select File: <select style="margin-bottom: 10px" id="ddlfile" name="ddlfile" onchange="Setdropdownvalue()">
+                                                            <tr><td style="float: left; width: 30%; " >Select File: <select style="margin-bottom: 10px" id="ddlfile" name="ddlfile" onchange="Setdropdownvalue()">
                                                                         <c:forEach items="${arrls}" var="arrl">
                                                                             <option value="${arrl.key}">
                                                                                 <c:out value="${arrl.value}" />

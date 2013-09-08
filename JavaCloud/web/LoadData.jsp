@@ -146,8 +146,9 @@
 
     <body>  
 
-        <% String fileload = (String) request.getAttribute("fileload");%>
-        <% String filelabel = (String) request.getAttribute("filelabel");%>
+        <% String fileload = (String) request.getAttribute("fileload");
+         String filelabel = (String) request.getAttribute("filelabel");
+        String filepart = (String) request.getAttribute("filepart");%>
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
@@ -202,10 +203,15 @@
                                                                     <label class="cabinet">  <input type="file" class="file" name="file1"/> </label>
                                                                     <span class="button approve"><span><span>Load</span></span>  <input type="submit" name="btnload" id="btnload" onclick="Sethdnfield()" value="Load file" style="margin-bottom: 10px"/> </span>
                                                                     <br/></td>
-                                                                <td colspan="3"> <% if (fileload == "1") {
-                                                                        out.print("Please Select File to Load");
+                                                                <td colspan="3"> <%
 
-                                                                    } else {
+                                                                    if (fileload == "1") {
+                                                                        out.print("Please Select File to Load!");
+
+                                                                    } else if (fileload == "2") {
+                                                                        out.print("Only txt file is accepted!");
+
+                                                                    } else if (fileload == "0") {
                                                                         out.print("");
 
                                                                     }%>  </td>
@@ -310,7 +316,18 @@
                                                                                     <option value="${partarrl.key}" ${partarrl.key == selectedpart ? 'selected="selected"' : ''}>
 
                                                                                         <c:out value="${partarrl.value}" /></option>
-                                                                                </c:forEach></select> </td> 
+                                                                                </c:forEach></select> </td>  <td colspan="2" style="vertical-align: bottom"> <%
+
+                                                                                    if (filepart == "1") {
+                                                                                        out.print("Please Select File to Load!");
+
+                                                                                    } else if (filepart == "2") {
+                                                                                        out.print("Only txt file is accepted!");
+
+                                                                                    } else if (filepart == "0") {
+                                                                                        out.print("");
+
+                                                                                    }%>  </td>
 
                                                                     <td style="vertical-align: top"> 
                                                                         <table border="1">
@@ -401,7 +418,10 @@
                                                                     <td style="vertical-align: top "><% if (filelabel == "1") {
                                                                             out.print("Please Select File to Load");
 
-                                                                        } else {
+                                                                        } else if (filelabel == "2") {
+                                                                            out.print("Only txt file is accepted!");
+
+                                                                        } else if (filelabel == "0") {
                                                                             out.print("");
 
                                                                         }%> </td>

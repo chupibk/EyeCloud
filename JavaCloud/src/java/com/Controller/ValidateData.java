@@ -117,7 +117,8 @@ public class ValidateData extends HttpServlet {
     public float VT_Degree(int x1, int y1, int x2, int y2, float d1, float d2, int dur) {
         float cent = pixalToCenti(x1, y1, x2, y2);
         float degree;
-        degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
+        //degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
+        degree = (float) (2 * (Math.atan(cent / (2 * d1))));
         return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
     }
 
@@ -425,7 +426,7 @@ public class ValidateData extends HttpServlet {
         HttpSession session = request.getSession(false);
         Integer ID = Integer.parseInt(session.getAttribute("userId").toString());
         UserId = String.valueOf(ID);
-        
+
         String Efilename = (String) session.getAttribute("hdnfilename"); //settIng sessIons Into StrIng
         String Lfilename = (String) session.getAttribute("hdnlblfilename");
         String gxleft = (String) session.getAttribute("hdnxleft");
@@ -453,9 +454,9 @@ public class ValidateData extends HttpServlet {
             looprunner = looprunner + 1000;
             dc.get_DataHbase(loopStarter, looprunner, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
         } else if ("Run Fixation".equalsIgnoreCase(holdRun)) { // Run FixatIon and Saccade
-             FixAlgorithm(Efilename);
-             dc.InsertMapRecord("FixData", Efilename, "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
-             dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
+            FixAlgorithm(Efilename);
+            dc.InsertMapRecord("FixData", Efilename, "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
+            dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
 
             arrColumn.clear();
             arrValue.clear();
@@ -471,8 +472,8 @@ public class ValidateData extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/ShowFixData.jsp");
             rd.forward(request, response);
         } else {
-             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
-             Read_LabelData_forValdiation(Efilename, Lfilename); //ReadIng label Data for valIdatIon 
+            Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
+            Read_LabelData_forValdiation(Efilename, Lfilename); //ReadIng label Data for valIdatIon 
             arrColumn.clear();
             arrValue.clear();
             arrTime.clear();

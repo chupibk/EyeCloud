@@ -133,8 +133,8 @@ public class Dashboard extends HttpServlet {
 
         hdnselectvalue = request.getParameter("hdnselectvalue");
         fileName = request.getParameter("hdnselectText");
-        dc.get_DataHbase_common(0, 0, "", UserId, "FixData", fileName, "MD", Alrd_column, Alrd_value);//reading fixation
-        dc.get_DataHbase_common(0, 0, "", UserId, "FixData", fileName + "-S-", "MD", arrColumn_sac, arrValue_sac);// Adding -S- in the filename to make it varry from fix and reading Saccade
+        dc.get_DataHbase_common(0, 0, "fix", UserId, "FixData", fileName, "MD", Alrd_column, Alrd_value);//reading fixation
+        dc.get_DataHbase_common(0, 0, "sac", UserId, "FixData", fileName + "-S-", "MD", arrColumn_sac, arrValue_sac);// Adding -S- in the filename to make it varry from fix and reading Saccade
         request.setAttribute("fileName", hdnselectvalue);
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page

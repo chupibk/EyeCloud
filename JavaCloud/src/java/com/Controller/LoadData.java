@@ -84,6 +84,7 @@ public class LoadData extends HttpServlet {
     // StringBuffer largeStr= new StringBuffer();
     String largeStr = null, largeStr_lbl = null, largeStr_part;
     DataClass dc = new DataClass();
+    boolean msgloadflag = false;
     private static Configuration conf = null;
 
     static {
@@ -115,7 +116,8 @@ public class LoadData extends HttpServlet {
                     if ("btnload".equals(fielditem.getFieldName())) { /* If Load button of Eye tracker File is 
                          * clicked do this.
                          */
-                        System.out.print(arrls);
+
+
                         if (arrls.size() != 0) { //clear the hidden files & array if they are already set
                             hdntimestamp = null;
                             hdnxleft = null;
@@ -139,26 +141,38 @@ public class LoadData extends HttpServlet {
                             FileItem fileItem = it.next();
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
-                                BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
-                                String str;
-                                LineNumberReader ln = new LineNumberReader(br);
-                                while (ln.getLineNumber() == 0) {
-                                    str = ln.readLine();
-                                    if (str != null) { //If files is selected
-                                        largeStr = fileItem.getString(); //set textfile to string 
-                                        String[] strArr = str.split("	");
-                                        for (int a = 0; a <= strArr.length - 1; a++) {
-                                            arrls.put(strArr[a], strArr[a]); // SETTING THE FIRST LINE OF TEXT FILE(HEADER) IN hashmap
+                               // if (fileItem.getName().endsWith("txt")) {
+                                    BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
+                                    String str;
+                                    LineNumberReader ln = new LineNumberReader(br);
+                                    while (ln.getLineNumber() == 0) {
+                                        str = ln.readLine();
+                                        if (str != null) { //If files is selected
+                                            msgloadflag = true;
                                             request.setAttribute("fileload", "0");
+                                            largeStr = fileItem.getString(); //set textfile to string 
+                                            String[] strArr = str.split("	");
+                                            for (int a = 0; a <= strArr.length - 1; a++) {
+                                                arrls.put(strArr[a], strArr[a]); // SETTING THE FIRST LINE OF TEXT FILE(HEADER) IN hashmap
+
+                                            }
+
+                                        } else {
+                                            request.setAttribute("fileload", "1"); //if file is not selected
+                                            break;
                                         }
-                                    } else {
-                                        request.setAttribute("fileload", "1");
-                                        break;
+                                        //holdloop++;
                                     }
-                                    //holdloop++;
-                                }
-                                br.close();
+
+                                    br.close();
+                                    
+//                                } else {
+//                                    if (!msgloadflag) {
+//                                        request.setAttribute("fileload", "2"); //if file txt is not selected
+//                                    }
+//                                }
                             }
+
                         }
 
                     } else if ("btnpart".equals(fielditem.getFieldName())) { // read participant excel file  
@@ -175,33 +189,40 @@ public class LoadData extends HttpServlet {
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
                                 //Get the workbook instance for XLS file 
-                                BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
-                                String str;
-                                LineNumberReader ln = new LineNumberReader(br);
-                                partarrls.put("Select", "Select");
-                                while ((str = ln.readLine()) != null) {
+                             //   if (fileItem.getName().endsWith("txt")) {
+                                    BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
+                                    String str;
+                                    LineNumberReader ln = new LineNumberReader(br);
+                                    partarrls.put("Select", "Select");
+                                    while ((str = ln.readLine()) != null) {
 
-                                    if (str != null) {
-                                        //If files is selected
-                                        String[] strArr = str.split("	");
-                                        for (int a = 0; a <= strArr.length - 1; a++) {
-                                            if (partcountrow == 0) {
-                                                partarrls.put(strArr[a], strArr[a]); //Set only the columns name
-                                                strholdexcel.add(strArr[a]);
-                                            } else {
-                                                partarrlsvalue.put(strholdexcel.get(partcountcell), strArr[a]);
-                                                partcountcell++;
+                                        if (str != null) { //If files is selected
+
+                                            request.setAttribute("filepart", "0");
+                                            String[] strArr = str.split("	");
+                                            for (int a = 0; a <= strArr.length - 1; a++) {
+                                                if (partcountrow == 0) {
+                                                    partarrls.put(strArr[a], strArr[a]); //Set only the columns name
+                                                    strholdexcel.add(strArr[a]);
+                                                } else {
+                                                    partarrlsvalue.put(strholdexcel.get(partcountcell), strArr[a]);
+                                                    partcountcell++;
+                                                }
                                             }
+                                        } else {
+                                            request.setAttribute("filepart", "1");
+                                            break;
                                         }
-                                    } else {
-                                        request.setAttribute("fileload", "1");
-                                        break;
+                                        //holdloop++;
+                                        partcountcell = 0;
+                                        partcountrow++;
                                     }
-                                    //holdloop++;
-                                    partcountcell = 0;
-                                    partcountrow++;
-                                }
-                                br.close();
+                                    br.close();
+                                   
+//                                } else {
+//                                    request.setAttribute("filepart", "2"); //if file txt is not selected
+//                                   
+//                                }
                             }
                         }
 
@@ -212,24 +233,30 @@ public class LoadData extends HttpServlet {
                             FileItem fileItem = it.next();
                             boolean isFormField = fileItem.isFormField();
                             if (!isFormField) {
-                                BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
-                                String str;
-                                LineNumberReader ln = new LineNumberReader(br);
-                                while (ln.getLineNumber() == 0) {
-                                    str = ln.readLine();
-                                    if (str != null) {
-                                        largeStr_lbl = fileItem.getString();
-                                        String[] strArr = str.split("	");
-                                        for (int a = 0; a <= strArr.length - 1; a++) {
-                                            lblarrls.put(strArr[a], strArr[a]);
-                                            request.setAttribute("filelabel", "0");
+                               // if (fileItem.getName().endsWith("txt")) {
+                                    BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream()));
+                                    String str;
+                                    LineNumberReader ln = new LineNumberReader(br);
+                                    while (ln.getLineNumber() == 0) {
+                                        str = ln.readLine();
+                                        if (str != null) {
+                                            largeStr_lbl = fileItem.getString();
+                                            String[] strArr = str.split("	");
+                                            for (int a = 0; a <= strArr.length - 1; a++) {
+                                                lblarrls.put(strArr[a], strArr[a]);
+                                                request.setAttribute("filelabel", "0");
+                                            }
+                                        } else {
+                                            request.setAttribute("filelabel", "1");
+                                            break;
                                         }
-                                    } else {
-                                        request.setAttribute("filelabel", "1");
-                                        break;
                                     }
-                                }
-                                br.close();
+                                    br.close();
+                                   
+//                                } else {
+//                                    request.setAttribute("filelabel", "2"); //if file txt is not selected
+//                                  
+//                                }
                             }
 
                         }

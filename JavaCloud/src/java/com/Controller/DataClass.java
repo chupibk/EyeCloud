@@ -4,7 +4,11 @@
  */
 package com.Controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.hadoop.conf.Configuration;
@@ -133,8 +137,25 @@ public class DataClass {
 
     //This funcation is just like get_DataHbase but just contain some other setup
     public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
+        System.out.println(System.getProperty("user.dir")); 
         HTable table = null;
+        boolean flagcolumn = false, flagline = false;
+        String holdvalue = "";
+        
+        File file;
+        if (flag.equals("fix")) { // for writing into textfile
+            URL url = getClass().getResource("/download/fix.txt");
+            file = new File(url.getPath());
+             
+        } else {
+            URL url = getClass().getResource("/download/sac.txt");
+            file = new File(url.getPath());
+        }
         try {
+            FileWriter fileWriter = new FileWriter(file); // puting file into filewriter
+
+            // Always wrap FileWriter in BufferedWriter.
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             if (flag.equals("ok")) // if its not a lable data
             {
             } else {
@@ -155,20 +176,48 @@ public class DataClass {
                     if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
                         ArrayRD_Column.add(new String(kv.getQualifier()));
                         hold_a++;
+                        if (flag.equals("fix") || flag.equals("sac")) { // checking here if it is fix or sac then write into the text file
+                            bufferedWriter.write(new String(kv.getQualifier()) + "\t");
+                        }
                     } else if (hold_b == 0) {
                         ArrayRD_Value.add("/");
+                        flagcolumn = true; // if all the columns are written into the file THEN MAKE VAriable trUE
+                        flagline = true; // SETting varaible to true for new line
                         hold_b = 1;
+                        if (flag.equals("fix") || flag.equals("sac")) {
+                            bufferedWriter.newLine();
+                        }
                     } else {
+
                         if (hold_a == hold_b) {
                             ArrayRD_Value.add("/");
                             hold_b = 0;
+                            if (flag.equals("fix") || flag.equals("sac")) { 
+                                bufferedWriter.newLine(); // adding new line into the textfile
+                            }
                         }
                         hold_b++;
+                        flagcolumn = true;
                     }
                     ArrayRD_Value.add(new String(kv.getValue()));
+                    if (flag.equals("fix") || flag.equals("sac")) { 
+                        if (flagcolumn) { // if all the columns are written on the file
+                            bufferedWriter.write(holdvalue); // write string variable into the file
+                            if (flagline) { // adding new line ONCE
+                                bufferedWriter.newLine();
+                                flagline = false;
+                            }
+                            bufferedWriter.write(new String(kv.getValue()) + "\t"); // now simply writing value into the file
+                            holdvalue = "";
+                        } else { // adding values into the string varaible untill all the columNs are written in the file
+                            holdvalue += new String(kv.getValue()) + "\t";
+                        }
+                    }
                 }
             }
             table.close();
+            bufferedWriter.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
