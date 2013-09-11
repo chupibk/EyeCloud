@@ -39,15 +39,23 @@ public class DataClass {
 
     private static Configuration conf = null;
 
+    public DataClass() {
+    }
+
     static {
         conf = HBaseConfiguration.create();
     }
-    // hbase(main):005:0> create 'RawData','EF','LF','MF' 
-    // RawData column family structure
-    // hbase(main):006:0> create 'ValidData','VD','LD','MD'
-    // ValidData column family structure
-    // create 'FixData','FX','SC','MD'
-    // FixData column family structure
+    String holdpath;
+
+    public DataClass(String holdpath) {
+        this.holdpath = holdpath;
+
+
+    }
+    // create 'RawData','EF','LF','MF' --------RawData table & column family structure
+    // create 'ValidData','VD','LD','MD' ------ValidData table & column family structure
+    // create 'FixData','FX','SC','MD' --------FixData table & column family structure
+    // create 'EyeFeature', 'FS','MD' ---------- Eyefeature table & column family structure
 
     public boolean isBlankOrNull(String str) {
         return (str == null || "".equals(str.trim()));
@@ -134,22 +142,65 @@ public class DataClass {
         }
 
     }
+        public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
+        HTable table = null;
+        try {
+            if (flag.equals("ok")) // if its not a lable data
+            {
+            } else {
+                loopStarter = 0;
+                String NosRow = get_MapFile(tablename, rowkey, Columnfly);// LD for label data
+                loopruner = Integer.valueOf(NosRow);
+            }
+            table = new HTable(conf, tablename);
+
+            List<Get> Rowlist = new ArrayList<Get>();
+            for (long a = loopStarter; a <= loopruner - 1; a++) {
+                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
+            }
+            int hold_a = 0, hold_b = 0;
+            Result[] result = table.get(Rowlist);
+            for (Result r : result) {
+                for (KeyValue kv : r.raw()) {
+                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
+                        ArrayRD_Column.add(new String(kv.getQualifier()));
+                        hold_a++;
+                    } else if (hold_b == 0) {
+                        ArrayRD_Value.add("/");
+                        hold_b = 1;
+                    } else {
+                        if (hold_a == hold_b) {
+                            ArrayRD_Value.add("/");
+                            hold_b = 0;
+                        }
+                        hold_b++;
+                    }
+                    ArrayRD_Value.add(new String(kv.getValue()));
+                }
+            }
+            table.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     //This funcation is just like get_DataHbase but just contain some other setup
-    public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
-        System.out.println(System.getProperty("user.dir")); 
+    public void get_DataHbase_WriteTextFile(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
+
         HTable table = null;
         boolean flagcolumn = false, flagline = false;
         String holdvalue = "";
-        
+
         File file;
+
         if (flag.equals("fix")) { // for writing into textfile
-            URL url = getClass().getResource("/download/fix.txt");
-            file = new File(url.getPath());
-             
+
+            file = new File(this.holdpath + "download/" + "fix.txt"); //wrItIng fIxaTIon fIle 
+
         } else {
-            URL url = getClass().getResource("/download/sac.txt");
-            file = new File(url.getPath());
+
+            file = new File(this.holdpath + "download/" + "sac.txt"); //wrItIng Saccade fIle 
         }
         try {
             FileWriter fileWriter = new FileWriter(file); // puting file into filewriter
@@ -192,7 +243,7 @@ public class DataClass {
                         if (hold_a == hold_b) {
                             ArrayRD_Value.add("/");
                             hold_b = 0;
-                            if (flag.equals("fix") || flag.equals("sac")) { 
+                            if (flag.equals("fix") || flag.equals("sac")) {
                                 bufferedWriter.newLine(); // adding new line into the textfile
                             }
                         }
@@ -200,7 +251,7 @@ public class DataClass {
                         flagcolumn = true;
                     }
                     ArrayRD_Value.add(new String(kv.getValue()));
-                    if (flag.equals("fix") || flag.equals("sac")) { 
+                    if (flag.equals("fix") || flag.equals("sac")) {
                         if (flagcolumn) { // if all the columns are written on the file
                             bufferedWriter.write(holdvalue); // write string variable into the file
                             if (flagline) { // adding new line ONCE

@@ -1,43 +1,76 @@
 <%-- 
-    Document   : ShowRawData
-    Created on : Jul 30, 2013, 3:24:55 PM
+    Document   : RawDataList
+    Created on : Sep 1, 2013, 2:42:12 PM
     Author     : samsalman
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.ArrayList" %>
+<%@page language="java" import="java.util.*" %>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin.css"  />
-        <title>Fixation & Saccade Data</title>
+        <title>Eye Feature List</title>
+
         <script type="text/javascript">
+            function SetSelectedValue() {
+                var filename = '${fileName}';
+                if (filename !== "")
+                {
+                    document.getElementById('ddlfile').value = filename;
+                }
+            }
+            function Setdropdownvalue() {
+                document.getElementById('hdnselectvalue').value = document.getElementById('ddlfile').value;
+                document.getElementById('hdnselectText').value = document.getElementById('ddlfile').options[document.getElementById('ddlfile').selectedIndex].text;
+            }
+
             function submitForm(val) {
 
-                if (val === 'DF')
+                if (val === 'RD')
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
-                } else if (val === 'DS')
+
+                } else if (val === 'VD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                } else if (val === 'FD')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                } else if (val === 'EF')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                } else if (val === 'kill')
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
                 }
 
             }
+
+
+            window.onload = SetSelectedValue;
         </script>
+
+
     </head>
     <body>
+        <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("Alrd_column");
+            ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("Alrd_value");
 
-        <%  ArrayList<String> Alrd_column = (ArrayList) request.getAttribute("arrColumn");
-            ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("arrValue");
-
-            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("arrColumn_lbl");
-            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("arrValue_lbl");
+//            ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
+//            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
             //out.print(Alrd_lbl_column +" " +  );
-        %>
+%>
+
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
@@ -48,7 +81,7 @@
                         Welcome : "${username}"
                         </br>
                         </br>
-                        <a style="float: right" href="Dashboard.jsp?kill" class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
+                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group
@@ -62,7 +95,7 @@
                         <div class="section">
                             <!--[if !IE]>start title wrapper<![endif]-->
                             <div class="title_wrapper">
-                                <h2>Fixation & Saccade Data</h2>
+                                <h2>Eye Feature List</h2>
                                 <span class="title_wrapper_left"></span>
                                 <span class="title_wrapper_right"></span>
                             </div>
@@ -75,16 +108,34 @@
                                         <div class="sct_right">
                                             <div class="sct_left">
                                                 <div class="sct_right_load">
-                                                    <form id="form1" method="POST" action="./ValidateData">
-                                                        <input type="hidden" name="hdnData" id="hdnData" />
-                                                        <table><tr><td>
-                                                                    <% if (Alrd_value.size() != 0) {%>
-                                                                    <a href="#" onclick="submitForm('DF')">Download Fixation</a>
 
-                                                                    <%}%>
+                                                    <form id="form1" method="POST" action="./Dashboard">
+                                                        <input type="hidden" name="hdnData" id="hdnData" />
+                                                        <input id="hdnselectvalue" name="hdnselectvalue" type="hidden" />
+                                                        <input id="hdnselectText" name="hdnselectText" type="hidden" />
+
+                                                        <table>
+                                                            <tr><td style="float: left; width: 30%; " >Select File: <select style="margin-bottom: 10px" id="ddlfile" name="ddlfile" onchange="Setdropdownvalue()">
+                                                                        <c:forEach items="${arrls}" var="arrl">
+                                                                            <option value="${arrl.key}">
+                                                                                <c:out value="${arrl.value}" />
+                                                                            </option>
+                                                                        </c:forEach>
+                                                                    </select> 
+                                                                    <span class="button approve"><span><span>Search</span></span><input name="btnEFsearch" id="btnEFsearch" type="submit" value="EyeFeature"/></span>
+                                                                </td> 
+                                                                <td>
+
+                                                                </td> </tr>
+
+
+                                                            <tr>
+                                                                <td colspan="2">
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 450px; background: transparent">
+                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent">
+                                                                                <% if (Alrd_column.size() == 0) {
+                                                                                    } else {%>
                                                                                 <table border="1">
                                                                                     <tr>
                                                                                         <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>
@@ -106,60 +157,37 @@
                                                                                         %>
                                                                                     </tr>
 
-                                                                                </table>        
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <% if (Alrd_value.size() != 0) {%>
-
-                                                                    <a href="#" onclick="submitForm('DS')">Download Saccade</a>
-                                                                    <%}%>
-                                                                    <div class="table_wrapper">
-                                                                        <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 620px; background:transparent">
-                                                                                <table border="1">
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
-                                                                                        <td> <%=Alrd_lbl_column.get(a)%>  </td>
-                                                                                        <%
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_value.size() - 1; a++) {%>
-                                                                                        <% if (Alrd_lbl_value.get(a).contains("/")) {%>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% } else {%> 
-                                                                                        <td> <%= Alrd_lbl_value.get(a)%> </td>
-                                                                                        <%
-                                                                                                }
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-
                                                                                 </table>   
-                                                                                <div class="table_menu">
-
-                                                                                    <ul class="right">
-                                                                                        <li><span class="button approve"><span><span>Show Eye Feature</span></span><input id="btnEyeF" type="submit" value="EyeFeature"/></span></li>
-                                                                                    </ul>
-                                                                                </div>
+                                                                                <%}%>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </td>
+                                                                <td style="vertical-align: bottom;">
+                                                                </td>                                                                    
+                                                            <div class="table_wrapper">
+                                                                </tr>
 
-                                                            </tr></table>
+                                                        </table>
+
 
                                                     </form>
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div></div></div></div></div>
+                                </div>
+                                <!--[if !IE]>end section content top<![endif]-->
+                                <!--[if !IE]>start section content bottom<![endif]-->
+                                <span class="scb"><span class="scb_left"></span><span class="scb_right"></span></span>
+                                <!--[if !IE]>end section content bottom<![endif]-->
+
+                            </div> 
+
+                        </div>
+                    </div>
+                </div>
                 <div id="sidebar">
                     <div class="inner">                                     
 
@@ -181,6 +209,9 @@
                                                 <div class="sct_right">
                                                     <ul class="sidebar_menu">
                                                         <li><a href="Dashboard.jsp">Dash Board</a></li>
+                                                        <li><a href="LoadData.jsp" class="d2"><span>Setup Upload Files</span></a></li>
+                                                        <li><a href="#" onclick="submitForm('VD')" class="d4"><span>Valid Data</span></a></li>
+                                                        <li><a href="#" onclick="submitForm('FD')" class="d8"><span>Fixation & Saccade Data</span></a></li>
                                                         <li><a href="registeruser.jsp?edit" class="d1"><span>User Profile</span></a></li>
 
                                                     </ul>
@@ -199,6 +230,8 @@
                         </div>
                     </div>
                 </div>
-            </div></div>
+
+            </div> 
+        </div>
     </body>
 </html>

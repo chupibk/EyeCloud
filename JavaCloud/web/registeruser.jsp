@@ -197,6 +197,7 @@
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
+                                                                            <tr><td>* Full Name:</td> <td>  <span class="input_wrapper"> <input id="txtfname" name="txtfname" type="text" size="30px" /></span> </td></tr>
                                                                             <tr><td>* Email:</td> <td> <span class="input_wrapper"> <input name="txtemail" id="txtemail" type="text" size="30px" /> </span></td></tr>
                                                                             <tr><td>* Password: </td> <td>  <span class="input_wrapper"><input name="txtpass" type="password" size="30px"/></span> </td></tr>
                                                                             <tr><td>* Confirm Password: </td> <td> <span class="input_wrapper"><input name="txtCpass" type="password" size="30px"/> </span></td></tr>
@@ -208,7 +209,7 @@
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
-                                                                            <tr><td>* Full Name:</td> <td>  <span class="input_wrapper"> <input id="txtfname" name="txtfname" type="text" size="30px" /></span> </td></tr>
+                                                                            
                                                                             <tr><td>Country:</td> <td>  <span class="input_wrapper"> <input name="txtcountry" id="txtcountry" type="text" size="30px" /></span> </td></tr>
                                                                             <tr><td>State/Province:</td> <td>  <span class="input_wrapper"><input name="txtstate" id="txtstate" type="text" size="30px" /> </span></td></tr>
                                                                             <tr><td>City:</td> <td>  <span class="input_wrapper"> <input name="txtcity" id="txtcity" type="text" size="30px" /></span> </td></tr>

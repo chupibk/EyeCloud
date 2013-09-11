@@ -28,8 +28,8 @@
                 document.getElementById('hdnselectvalue').value = document.getElementById('ddlfile').value;
                 document.getElementById('hdnselectText').value = document.getElementById('ddlfile').options[document.getElementById('ddlfile').selectedIndex].text;
             }
-            
-             function submitForm(val) {
+
+            function submitForm(val) {
 
                 if (val === 'RD')
                 {
@@ -44,14 +44,22 @@
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
-                }else if (val === 'kill')
+                } else if (val === 'kill')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                } else if (val === 'DF')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                } else if (val === 'DS')
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
                 }
 
             }
-            
+
             window.onload = SetSelectedValue;
         </script>
 
@@ -72,7 +80,7 @@
 
                 <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                   <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
                         Welcome : "${username}"
                         </br>
                         </br>
@@ -81,7 +89,7 @@
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group
                     </div>
-                    
+
                 </div>
                 <!--[if !IE]>start page<![endif]-->
                 <div id="page">
@@ -118,8 +126,12 @@
                                                                     </select> 
                                                                     <span class="button approve"><span><span>Search</span></span><input name="btnFixsearch" id="btnFixsearch" type="submit" value="Fix"/></span>
                                                                 </td> 
-                                                                <td>
-
+                                                                <td style="float: left; width: 60%; margin-left: 40px" >
+                                                                    <br/>&nbsp;&nbsp;&nbsp;
+                                                                    <% if (Alrd_value.size() != 0) {%>
+                                                                    <a href="#" onclick="submitForm('DF')">Download Fixation</a>
+                                                                    <a style="margin-left: 65%" href="#" onclick="submitForm('DS')">Download Saccade</a>
+                                                                    <%}%>
                                                                 </td> </tr>
 
 
@@ -129,7 +141,7 @@
                                                                                 <div class="table_wrapper">
                                                                                     <div class="table_wrapper_inner">
 
-                                                                                        <div style="overflow: scroll; height: 400px; width: 540px; background: transparent">
+                                                                                        <div style="overflow: scroll; height: 400px; width: 450px; background: transparent">
                                                                                             <% if (Alrd_column.size() == 0) {
                                                                                                 } else {%>
                                                                                             <table border="1">
@@ -164,7 +176,7 @@
                                                                                 <div class="table_wrapper">
                                                                                     <div class="table_wrapper_inner">
 
-                                                                                        <div style="overflow: scroll; height: 400px; width: 540px; background:transparent">
+                                                                                        <div style="overflow: scroll; height: 400px; width: 620px; background:transparent">
                                                                                             <% if (Alrd_lbl_column.size() == 0) {
                                                                                                 } else {%>
                                                                                             <table border="1">
@@ -198,8 +210,7 @@
 
                                                                         </tr></table>
                                                                 </td>
-                                                                <td style="vertical-align: bottom;">
-                                                                </td>                                                                    
+
                                                             <div class="table_wrapper">
                                                                 </tr>
 

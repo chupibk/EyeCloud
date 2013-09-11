@@ -119,15 +119,19 @@ public class HbaseServlet extends HttpServlet {
     public static int FIXATION_DURATION_THRESHOLD = 100; // Millisecond
     public static float VELOCITY_THRESHOLD = 75;
     public static float Missing_Time_THRESHOLD = 100;// Millisecond
+    static ArrayList<String> arrDist = new ArrayList<String>();
+    static ArrayList<String> arrX = new ArrayList<String>();
+    static ArrayList<String> arrY = new ArrayList<String>();
+    static ArrayList<String> arrT = new ArrayList<String>();
+    static ArrayList<String> arrXsac = new ArrayList<String>();
+    static ArrayList<String> arrYsac = new ArrayList<String>();
+    static ArrayList<String> arrColumn = new ArrayList<String>();
+    static ArrayList<String> arrValue = new ArrayList<String>();
+    static ArrayList<String> arrTime = new ArrayList<String>();
+    static ArrayList<String> arrColumn_lbl = new ArrayList<String>();
+    static ArrayList<String> arrValue_lbl = new ArrayList<String>();
 
-//    public static float pixalToCenti(int x1, int y1, int x2, int y2) {
-//        float x;
-//        float y;
-//        x = Math.abs((float) (x1 - x2)) * SCREEN_WIDTH / RESOLUTION_WIDTH;
-//        y = Math.abs((float) (y1 - y2)) * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
-//        return (float) Math.sqrt(x * x + y * y);
-//    }
-    public static float pixalToCenti(int x1, int y1, int x2, int y2) {
+    public static float pixalToCenti(int x1, int y1, int x2, int y2) { //this function convert pixal to centimeter
         float xf1, xf2, yf1, yf2;
         xf1 = (float) x1 * SCREEN_WIDTH / RESOLUTION_WIDTH;
         xf2 = (float) x2 * SCREEN_WIDTH / RESOLUTION_WIDTH;
@@ -139,100 +143,9 @@ public class HbaseServlet extends HttpServlet {
     public static float VT_Degree(int x1, int y1, int x2, int y2, float d1, float d2, int dur) {
         float cent = pixalToCenti(x1, y1, x2, y2);
         float degree;
-        degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
+        //degree = (float) (2 * (Math.atan((cent / 2) / (d1))));
+        degree = (float) (2 * (Math.atan(cent / (2 * d1))));
         return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
-    }
-    static ArrayList<String> arrDist = new ArrayList<String>();
-    static ArrayList<String> arrX = new ArrayList<String>();
-    static ArrayList<String> arrY = new ArrayList<String>();
-    static ArrayList<String> arrT = new ArrayList<String>();
-    static ArrayList<String> arrXsac = new ArrayList<String>();
-    static ArrayList<String> arrYsac = new ArrayList<String>();
-
-    public static void FixAlgorithm() throws IOException {
-        boolean sacFlag = false;
-        long NosRow = Integer.valueOf(get_MapFile("ValidData", "Rec 01-All-Data", "MD"));
-        System.out.println(NosRow);
-        HTable table = new HTable(conf, "ValidData");
-        int count = 0;
-        for (long a = 0; a <= NosRow - 1; a++) {
-            Get get = new Get(Bytes.toBytes("1" + ":" + "Rec 01-All-Data" + ":" + a));
-            Result result = table.get(get);
-            for (KeyValue kv : result.raw()) {
-                if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
-                    arrDist.add(new String(kv.getValue()));
-                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
-                    arrX.add(new String(kv.getValue()));
-                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
-                    arrY.add(new String(kv.getValue()));
-                } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
-                    String time = new String(kv.getValue());
-                    time = time.replace("\n", "");
-                    arrT.add(time);
-                    count++;
-
-                    if (count == 2) {
-                        int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
-
-                        if (durtmp <= Missing_Time_THRESHOLD) {
-                            float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
-                                    Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
-                                    Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
-                                    Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
-
-                            if (tmp <= VELOCITY_THRESHOLD) {
-                                if (sacFlag == true) {
-                                    System.out.println("Saccade X " + arrXsac.get(0) + "\t" + arrXsac.get(countxySac - 1) + "\t" + durationSac);
-                                    System.out.println("Saccade Y " + arrYsac.get(0) + "\t" + arrYsac.get(countxySac - 1) + "\t" + durationSac);
-                                    arrXsac.clear();
-                                    arrYsac.clear();
-                                    sacFlag = false;
-                                    countxySac = 0;
-                                    durationSac = 0;
-                                }
-                                putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
-                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)));
-
-                            } else {
-                                if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-                                    System.out.println((float) sumX / countxy
-                                            + "\t" + (float) sumY / countxy + "\t" + duration);
-                                    countxy = 0;
-                                    sumX = 0;
-                                    sumY = 0;
-                                    duration = 0;
-
-                                }
-                                sacFlag = true;
-                                arrXsac.add(arrX.get(0));
-                                arrYsac.add(arrY.get(0));
-                                durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
-                                countxySac++;
-
-                            }
-                            count = 1;
-                            arrDist.remove(0);
-                            arrX.remove(0);
-                            arrY.remove(0);
-                            arrT.remove(0);
-
-                        } else {
-                            System.out.println("test");
-                        }
-                    }
-                }
-
-            }
-
-        }
-        if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-            System.out.println((float) sumX / countxy
-                    + "\t" + (float) sumY / countxy + "\t" + duration);
-            countxy = 0;
-            sumX = 0;
-            sumY = 0;
-            duration = 0;
-        }
     }
 
     public static void putXY(int x, int y, int time) {
@@ -252,6 +165,231 @@ public class HbaseServlet extends HttpServlet {
     static PreparedStatement preStat = null;
     static Statement stat = null;
     static ResultSet rs = null;
+    static Boolean FlagSccade;
+    static long counter = 0, counterSaccade = 0, counterEF = 0;
+    static String UserId = "1";
+    static int FixCount = 0, SacCount = 0, timeInterval = 0,timeIntervalToIncrement=0;
+
+    public static void addData_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
+
+        try {
+            HTable table = new HTable(conf, tablename);
+            table.setAutoFlush(false);
+            table.setWriteBufferSize(1024 * 1024 * 12);
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counter)); //userId + Filename+rownumber
+            for (int a = 0; a <= arrColumn.size() - 1; a++) {
+                put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
+            }
+            table.put(put);
+            counter++;
+            table.flushCommits();
+            table.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addScade_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
+
+        try {
+            HTable table = new HTable(conf, tablename);
+            table.setAutoFlush(false);
+            table.setWriteBufferSize(1024 * 1024 * 12);
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterSaccade)); //userId + Filename+rownumber
+            for (int a = 0; a <= arrColumn.size() - 1; a++) {
+                put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
+            }
+            table.put(put);
+            counterSaccade++;
+            table.flushCommits();
+            table.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    static boolean IsStartTimefix = true, IsStartTimeSac = true;
+    static String startTimefix, startTimeSac;
+
+    public static void FixAlgorithm(String filename) throws IOException {
+        FlagSccade = false;
+        boolean IsrowsToAdd = true;
+        arrDist.clear();
+        arrX.clear();
+        arrY.clear();
+        arrT.clear();
+        counter = 0;
+        counterSaccade = 0;
+        long looprunner = 0, loopStarter = 0;
+        long rowsTorun_fix = 0;
+        timeInterval = 2000;
+        timeIntervalToIncrement=2000;
+        rowsTorun_fix = Math.round(timeInterval * 120 / 1000);
+        looprunner = rowsTorun_fix;
+        long NosRow = Integer.valueOf(get_MapFile("ValidData", filename, "MD")); // Getting total nos of value
+        HTable table = new HTable(conf, "ValidData");
+        int count = 0;
+        //  for (long z = loopStarter; z <= NosRow - 1; z++) 
+        while (loopStarter <= NosRow) {
+
+            for (long a = loopStarter; a <= looprunner - 1; a++) {
+                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // setting rowkey
+                Result result = table.get(get);
+                for (KeyValue kv : result.raw()) {
+                    if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
+                        arrDist.add(new String(kv.getValue())); //adding AvgDist into arraylist
+                    } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
+                        arrX.add(new String(kv.getValue())); //adding AvgGxleft into arraylist
+                    } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
+                        arrY.add(new String(kv.getValue())); //adding AvgGyleft into arraylist
+                    } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
+                        String time = new String(kv.getValue()); //adding timestamp into arraylist
+                        time = time.replace("\n", ""); // remove \n frm the timestamp
+                        arrT.add(time);
+                        count++;
+                        if (count == 2) {
+                            int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)); // difference of time
+                            if (durtmp <= Missing_Time_THRESHOLD) {
+                                float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                        Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
+                                        Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
+                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); // setting velocity into the var
+
+                                if (tmp <= VELOCITY_THRESHOLD) {
+                                    if (FlagSccade == true) {
+                                        IsStartTimeSac = true;
+                                        addfix_Sac_IntoHbase(filename); // This time adding saccade into hbase                                    
+                                    }
+                                    if (IsStartTimefix) {
+                                        startTimefix = arrT.get(0);
+                                        IsStartTimefix = false;
+                                    }
+                                    putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                            Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); //passing parameter
+                                    FlagSccade = false;
+                                } else {
+                                    if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+                                        IsStartTimefix = true;
+                                        addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase
+                                    }
+                                    if (IsStartTimeSac) {
+                                        startTimeSac = arrT.get(0);
+                                        IsStartTimeSac = false;
+                                    }
+                                    FlagSccade = true;
+                                    arrXsac.add(arrX.get(0));
+                                    arrYsac.add(arrY.get(0));
+                                    durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+                                    countxySac++;
+                                }
+                            }
+                            count = 1;
+                            arrDist.remove(0);
+                            arrX.remove(0);
+                            arrY.remove(0);
+                            arrT.remove(0);
+                        }
+                    }
+                }
+            }
+            if ((loopStarter + rowsTorun_fix) > NosRow && IsrowsToAdd) {
+
+                loopStarter = loopStarter + 1;
+                looprunner = NosRow;
+                IsrowsToAdd = false;
+            } else {
+                loopStarter = looprunner;
+                looprunner = looprunner + rowsTorun_fix;
+            }
+            if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+                addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase last time
+            }
+            addingEyeFeature_inHbase("EyeFeature",filename,FixCount,SacCount,timeIntervalToIncrement); // adding numbers of fixatIon and saccade In eyeFeature table
+            FixCount=0;
+            SacCount=0;
+
+        }
+
+    }
+
+    public static void addfix_Sac_IntoHbase(String filename) {
+        if (FlagSccade == true) { // when its Saccade
+            IsStartTimeSac = true;
+            arrColumn.add("StartTimeStamp");
+            arrValue.add(startTimeSac);
+            arrColumn.add("XsacBeginning");
+            arrValue.add(arrXsac.get(0));
+            arrColumn.add("XsacEnd");
+            arrValue.add(arrXsac.get(countxySac - 1));
+            arrColumn.add("SumDuration");
+            arrValue.add(String.valueOf(durationSac));
+            arrColumn.add("YsacBeginning");
+            arrValue.add(arrYsac.get(0));
+            arrColumn.add("YsacEnd");
+            arrValue.add(arrYsac.get(countxySac - 1));
+            SacCount = SacCount + 1;
+            addScade_inHbase("FixData", filename + "-S-", "SC", arrColumn, arrValue);// Inserting Saccade with adding "S" in file name
+            arrXsac.clear();
+            arrYsac.clear();
+            countxySac = 0;
+            durationSac = 0;
+        } else { // When Its fixation
+            IsStartTimefix = true;
+            arrColumn.clear();
+            arrValue.clear();
+            arrColumn.add("StartTimeStamp");
+            arrValue.add(startTimefix);
+            arrColumn.add("SumX");
+            arrValue.add(String.valueOf(sumX / countxy));
+            arrColumn.add("SumY");
+            arrValue.add(String.valueOf(sumY / countxy));
+            arrColumn.add("SumDuration");
+            arrValue.add(String.valueOf(duration));
+            FixCount = FixCount + 1;
+            addData_inHbase("FixData", filename, "FX", arrColumn, arrValue); /// Inserting Fixtation
+            arrColumn.clear();
+            arrValue.clear();
+        }
+        countxy = 0;
+        sumX = 0;
+        sumY = 0;
+        duration = 0;
+
+    }
+
+    public static void addingEyeFeature_inHbase(String tablename, String rowKey, int FixCount, int SacCount, int time) {
+        try {
+            HTable table = new HTable(conf, tablename);
+            table.setAutoFlush(false);
+            table.setWriteBufferSize(1024 * 1024 * 12);
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterEF)); //userId + Filename+rownumber
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("GivenTime"), Bytes.toBytes(String.valueOf(time)));
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersOfFixation"), Bytes.toBytes(String.valueOf(FixCount)));
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersOfSaccade"), Bytes.toBytes(String.valueOf(SacCount)));
+            
+            table.put(put);
+            counterEF++;
+            timeIntervalToIncrement = timeIntervalToIncrement + timeInterval;
+            table.flushCommits();
+            table.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void InsertMapRecord(String tablename, String rowkey, String CF, String qualifier, String value) { // TO Insert one record
+
+        try {
+            HTable table = new HTable(conf, tablename);
+            Put put = new Put(Bytes.toBytes(rowkey));
+            put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+            table.put(put);
+            table.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public static void getlogin() throws SQLException {
         connection = DriverManager
@@ -314,7 +452,8 @@ public class HbaseServlet extends HttpServlet {
             scanner.close();
         }
     }
-      public static int UpdateUser_detail(String name, String Id, String pass, String country, String state,
+
+    public static int UpdateUser_detail(String name, String Id, String pass, String country, String state,
             String city, String address, String mobNum, String phoneNum, String postalcode) {
         try {
             int result = 0;
@@ -352,10 +491,12 @@ public class HbaseServlet extends HttpServlet {
     public static void main(String[] args) {
         try {
             // System.out.println(get_MapFile("01-01-All-Data.txt"));
-            // FixAlgorithm();
-            //Insertmysql();
-            //getlogin();
-            UpdateUser_detail(null, "2", null, null, null, null, null, null, null, "2");
+            FixAlgorithm("Rec 01-All-Data.txt");
+            InsertMapRecord("FixData", "Rec 01-All-Data.txt", "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
+            InsertMapRecord("FixData", "Rec 01-All-Data.txt" + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
+            InsertMapRecord("EyeFeature", "Rec 01-All-Data.txt", "MD", UserId, String.valueOf(counterEF));// inserting Nos of Rows of fixation
+            System.out.println("done");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

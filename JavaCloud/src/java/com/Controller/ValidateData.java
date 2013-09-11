@@ -4,7 +4,11 @@
  */
 package com.Controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -55,8 +59,11 @@ public class ValidateData extends HttpServlet {
     ArrayList<String> arrColumn_lbl = new ArrayList<String>();
     ArrayList<String> arrValue_lbl = new ArrayList<String>();
     DataClass dc = new DataClass();
-    long loopStarter, looprunner = 1000;
+    long loopStarter, looprunner = 1000, counter = 0, counterSaccade = 0, counterEF = 0;
     private static Configuration conf = null;
+    boolean IsStartTimefix = true, IsStartTimeSac = true;
+    String startTimefix, startTimeSac;
+    int FixCount = 0, SacCount = 0, timeInterval = 0, timeIntervalToIncrement = 0, sample_rate = 0;
 
     static {
         conf = HBaseConfiguration.create();
@@ -132,116 +139,165 @@ public class ValidateData extends HttpServlet {
 
     public void FixAlgorithm(String filename) throws IOException {
         FlagSccade = false;
-        //   boolean sacFlag = false;
+        boolean IsrowsToAdd = true;
+        arrDist.clear();
+        arrX.clear();
+        arrY.clear();
+        arrT.clear();
         counter = 0;
+        counterEF = 0;
         counterSaccade = 0;
+        long looprunner = 0, loopStarter = 0;
+        long rowsTorun_fix = 0;
+        timeIntervalToIncrement = timeInterval;
+        rowsTorun_fix = Math.round(timeInterval * sample_rate / 1000);
+        looprunner = rowsTorun_fix;
         long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", filename, "MD")); // Getting total nos of value
         HTable table = new HTable(conf, "ValidData");
         int count = 0;
-        for (long a = 0; a <= NosRow - 1; a++) {
-            Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // setting rowkey
-            Result result = table.get(get);
-            for (KeyValue kv : result.raw()) {
-                if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
-                    arrDist.add(new String(kv.getValue())); //adding AvgDist into arraylist
-                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
-                    arrX.add(new String(kv.getValue())); //adding AvgGxleft into arraylist
-                } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
-                    arrY.add(new String(kv.getValue())); //adding AvgGyleft into arraylist
-                } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
-                    String time = new String(kv.getValue()); //adding timestamp into arraylist
-                    time = time.replace("\n", ""); // remove \n frm the timestamp
-                    arrT.add(time);
-                    count++;
-                    if (count == 2) {
-                        int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)); // difference of time
-                        if (durtmp <= Missing_Time_THRESHOLD) {
-                            float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
-                                    Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
-                                    Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
-                                    Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); // setting velocity into the var
+        while (loopStarter <= NosRow) {
+            for (long a = loopStarter; a <= looprunner - 1; a++) {
+                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // setting rowkey
+                Result result = table.get(get);
+                for (KeyValue kv : result.raw()) {
+                    if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
+                        arrDist.add(new String(kv.getValue())); //adding AvgDist into arraylist
+                    } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
+                        arrX.add(new String(kv.getValue())); //adding AvgGxleft into arraylist
+                    } else if (Bytes.toString(kv.getQualifier()).equals("AvgGyleft")) {
+                        arrY.add(new String(kv.getValue())); //adding AvgGyleft into arraylist
+                    } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
+                        String time = new String(kv.getValue()); //adding timestamp into arraylist
+                        time = time.replace("\n", ""); // remove \n frm the timestamp
+                        arrT.add(time);
+                        count++;
+                        if (count == 2) {
+                            int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)); // difference of time
+                            if (durtmp <= Missing_Time_THRESHOLD) {
+                                float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                        Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
+                                        Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
+                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); // setting velocity into the var
 
-                            if (tmp <= VELOCITY_THRESHOLD) {
-                                if (FlagSccade == true) {
-                                    addfix_Sac_IntoHbase(filename); // This time adding saccade into hbase
-                                    arrXsac.clear();
-                                    arrYsac.clear();
-                                    //  sacFlag = false;
-                                    countxySac = 0;
-                                    durationSac = 0;
+                                if (tmp <= VELOCITY_THRESHOLD) {
+                                    if (FlagSccade == true) {
+                                        IsStartTimeSac = true;
+                                        addfix_Sac_IntoHbase(filename); // This time adding saccade into hbase                                    
+                                    }
+                                    if (IsStartTimefix) {
+                                        startTimefix = arrT.get(0);
+                                        IsStartTimefix = false;
+                                    }
+                                    putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                                            Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); //passing parameter
+                                    FlagSccade = false;
+                                } else {
+                                    if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+                                        IsStartTimefix = true;
+                                        addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase
+                                    }
+                                    if (IsStartTimeSac) {
+                                        startTimeSac = arrT.get(0);
+                                        IsStartTimeSac = false;
+                                    }
+                                    FlagSccade = true;
+                                    arrXsac.add(arrX.get(0));
+                                    arrYsac.add(arrY.get(0));
+                                    durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
+                                    countxySac++;
                                 }
-                                putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
-                                        Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); //passing parameter
-                                FlagSccade = false;
-                            } else {
-                                if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-
-                                    addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase
-                                }
-                                FlagSccade = true;
-                                // sacFlag = true;
-                                arrXsac.add(arrX.get(0));
-                                arrYsac.add(arrY.get(0));
-                                durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
-                                countxySac++;
                             }
                             count = 1;
                             arrDist.remove(0);
                             arrX.remove(0);
                             arrY.remove(0);
                             arrT.remove(0);
-
                         }
                     }
                 }
-
             }
+            if ((loopStarter + rowsTorun_fix) > NosRow && IsrowsToAdd) {
+
+                loopStarter = loopStarter + 1;
+                looprunner = NosRow;
+                IsrowsToAdd = false;
+            } else {
+                loopStarter = looprunner;
+                looprunner = looprunner + rowsTorun_fix;
+            }
+            if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
+                addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase last time
+            }
+            addingEyeFeature_inHbase("EyeFeature", filename, FixCount, SacCount, timeIntervalToIncrement); // adding numbers of fixatIon and saccade In eyeFeature table
+            FixCount = 0;
+            SacCount = 0;
 
         }
-        if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-            addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase last time
-        }
+
     }
 
     public void addfix_Sac_IntoHbase(String filename) {
         if (FlagSccade == true) { // when its Saccade
-            arrColumn.add("XsacStart");
+            IsStartTimeSac = true;
+            arrColumn.add("StartTimeStamp");
+            arrValue.add(startTimeSac);
+            arrColumn.add("XsacBeginning");
             arrValue.add(arrXsac.get(0));
             arrColumn.add("XsacEnd");
             arrValue.add(arrXsac.get(countxySac - 1));
-            arrColumn.add("XsacDur");
+            arrColumn.add("SumDuration");
             arrValue.add(String.valueOf(durationSac));
-            arrColumn.add("YsacStart");
+            arrColumn.add("YsacBeginning");
             arrValue.add(arrYsac.get(0));
             arrColumn.add("YsacEnd");
             arrValue.add(arrYsac.get(countxySac - 1));
-            arrColumn.add("YsacDur");
-            arrValue.add(String.valueOf(durationSac));
+            SacCount = SacCount + 1;
             addScade_inHbase("FixData", filename + "-S-", "SC", arrColumn, arrValue);// Inserting Saccade with adding "S" in file name
             arrXsac.clear();
             arrYsac.clear();
             countxySac = 0;
             durationSac = 0;
         } else { // When Its fixation
+            IsStartTimefix = true;
             arrColumn.clear();
             arrValue.clear();
-            arrColumn.add("sumX");
+            arrColumn.add("StartTimeStamp");
+            arrValue.add(startTimefix);
+            arrColumn.add("SumX");
             arrValue.add(String.valueOf(sumX / countxy));
-            arrColumn.add("sumY");
+            arrColumn.add("SumY");
             arrValue.add(String.valueOf(sumY / countxy));
-            arrColumn.add("sumDur");
+            arrColumn.add("SumDuration");
             arrValue.add(String.valueOf(duration));
+            FixCount = FixCount + 1;
             addData_inHbase("FixData", filename, "FX", arrColumn, arrValue); /// Inserting Fixtation
-
             arrColumn.clear();
             arrValue.clear();
-
         }
         countxy = 0;
         sumX = 0;
         sumY = 0;
         duration = 0;
 
+    }
+
+    public void addingEyeFeature_inHbase(String tablename, String rowKey, int FixCount, int SacCount, int time) {
+        try {
+            HTable table = new HTable(conf, tablename);
+            table.setAutoFlush(false);
+            table.setWriteBufferSize(1024 * 1024 * 12);
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterEF)); //userId + Filename+rownumber
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("GivenTime"), Bytes.toBytes(String.valueOf(time)));
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersOfFixation"), Bytes.toBytes(String.valueOf(FixCount)));
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersOfSaccade"), Bytes.toBytes(String.valueOf(SacCount)));
+            table.put(put);
+            counterEF++;
+            timeIntervalToIncrement = timeIntervalToIncrement + timeInterval;
+            table.flushCommits();
+            table.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void Read_RawData_forValidation(String filename, String gxleft, String gxright,
@@ -377,7 +433,6 @@ public class ValidateData extends HttpServlet {
         }
 
     }
-    long counter = 0, counterSaccade = 0;
 
     public void addData_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
 
@@ -420,7 +475,7 @@ public class ValidateData extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        PrintWriter out = response.getWriter();
+
         //out.println("System ");
 
         HttpSession session = request.getSession(false);
@@ -442,35 +497,50 @@ public class ValidateData extends HttpServlet {
         FIXATION_DURATION_THRESHOLD = Integer.parseInt(session.getAttribute("fxdr").toString());
         VELOCITY_THRESHOLD = Integer.parseInt(session.getAttribute("velth").toString());
         Missing_Time_THRESHOLD = Integer.parseInt(session.getAttribute("mstm").toString());
+        sample_rate = Integer.parseInt(session.getAttribute("rate").toString());
+        timeInterval = Integer.parseInt(session.getAttribute("timeInterval").toString());
 
+        String hdnData = request.getParameter("hdnData");
         arrColumn.clear();
         arrValue.clear();
         arrTime.clear();
+        String btnNext = request.getParameter("btnNext");
+        String btnRun = request.getParameter("btnRun");
+        String btnEyeF = request.getParameter("btnEyeF");
 
-        String holdNext = request.getParameter("btnNext");
-        String holdRun = request.getParameter("btnRun");
-        if ("Next".equalsIgnoreCase(holdNext)) { // when user clIck on next button
+        if ("Next".equalsIgnoreCase(btnNext)) { // when user clIck on next button
             loopStarter = looprunner;
             looprunner = looprunner + 1000;
             dc.get_DataHbase(loopStarter, looprunner, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
-        } else if ("Run Fixation".equalsIgnoreCase(holdRun)) { // Run FixatIon and Saccade
+        } else if ("Run Fixation".equalsIgnoreCase(btnRun)) { // Run FixatIon and Saccade
             FixAlgorithm(Efilename);
+            DataClass dc = new DataClass(getServletContext().getRealPath("/"));
             dc.InsertMapRecord("FixData", Efilename, "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
             dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
-
             arrColumn.clear();
             arrValue.clear();
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
-            dc.get_DataHbase_common(0, 0, "", UserId, "FixData", Efilename, "MD", arrColumn, arrValue);//reading fixation
-            dc.get_DataHbase_common(0, 0, "", UserId, "FixData", Efilename + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
+            dc.get_DataHbase_WriteTextFile(0, 0, "fix", UserId, "FixData", Efilename, "MD", arrColumn, arrValue);//reading fixation
+            dc.get_DataHbase_WriteTextFile(0, 0, "sac", UserId, "FixData", Efilename + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
             request.setAttribute("arrColumn", arrColumn);
             request.setAttribute("arrValue", arrValue);
             request.setAttribute("arrColumn_lbl", arrColumn_lbl);
             request.setAttribute("arrValue_lbl", arrValue_lbl);
-
             RequestDispatcher rd = request.getRequestDispatcher("/ShowFixData.jsp");
             rd.forward(request, response);
+        } else if ("EyeFeature".equalsIgnoreCase(btnEyeF)) { // If It Is fIxatIon FIle
+            arrColumn.clear();
+            arrValue.clear();
+            dc.get_DataHbase_common(0, 1000, "", UserId, "EyeFeature", Efilename, "MD", arrColumn, arrValue); // getting raw data from Hbase
+            request.setAttribute("Alrd_column", arrColumn); // setting array List for forwarding data to next page
+            request.setAttribute("Alrd_value", arrValue);
+            RequestDispatcher rd = request.getRequestDispatcher("/ShowEyeFeature.jsp"); // redirecting to the next page
+            rd.forward(request, response);
+        } else if ("DF".equalsIgnoreCase(hdnData)) { // If It Is fIxatIon FIle
+            DownloadFile(response, hdnData); // download FixatIon FILe
+        } else if ("DS".equalsIgnoreCase(hdnData)) { // If It Is saccade FIle
+            DownloadFile(response, hdnData); // download saccade FILe
         } else {
             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
             Read_LabelData_forValdiation(Efilename, Lfilename); //ReadIng label Data for valIdatIon 
@@ -489,6 +559,33 @@ public class ValidateData extends HttpServlet {
         request.setAttribute("arrValue_lbl", arrValue_lbl);
         RequestDispatcher rd = request.getRequestDispatcher("/ShowValidData.jsp");
         rd.forward(request, response);
+    }
+
+    private void DownloadFile(HttpServletResponse response, String filetype) throws FileNotFoundException, IOException {
+        response.setContentType("text/plain");
+        File file;
+        if (filetype.equals("DF")) {
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=Fixation.txt");
+            file = new File(getServletContext().getRealPath("/") + "download/" + "fix.txt");
+        } else {
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=Saccade.txt");
+            file = new File(getServletContext().getRealPath("/") + "download/" + "sac.txt");
+        }
+
+        FileInputStream fileIn = new FileInputStream(file);
+        //ServletOutputStream out = response.getOutputStream();
+        OutputStream out = response.getOutputStream();
+
+        byte[] outputByte = new byte[4096];
+        int byteRead;
+        while ((byteRead = fileIn.read(outputByte, 0, 4096)) != -1) {
+            out.write(outputByte, 0, byteRead);
+        }
+        fileIn.close();
+        out.flush();
+        out.close();
     }
 
     /**

@@ -91,8 +91,6 @@ public class LoginFilter implements Filter {
 
         if (ar.contains(request.getRequestURI())) {
             allowedRequest = true;
-        } else {
-            System.out.println(request.getRequestURI());
         }
 
         if (!allowedRequest) {
