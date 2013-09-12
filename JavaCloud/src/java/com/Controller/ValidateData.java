@@ -74,43 +74,46 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
     }
     String UserId;
+    
+    // uncomment it FOR reading from rawData table for Label text fIle, valIdatIng It and adding them
+    // Into ValidData table
 
-    public void Read_LabelData_forValdiation(String Efilename, String filename) { // Here I am reading label data for validation
-        HTable table = null;
-        try {
-
-            counter = 0;
-            int begin, end;
-            long NosRow = Integer.valueOf(dc.get_MapFile("RawData", filename, "MF"));
-            boolean breakLoop;
-            table = new HTable(conf, "RawData");
-            for (int a = 0; a <= NosRow - 1; a++) {
-                breakLoop = false;
-                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // USER ID + filename +  nos of row
-                Result result = table.get(get);
-                arrColumn.clear();
-                arrValue.clear();
-                for (KeyValue kv : result.raw()) { //adding column and values
-                    arrColumn.add(new String(kv.getQualifier()));
-                    arrValue.add(new String(kv.getValue()));
-                }
-                begin = arrColumn.indexOf("Begin Time - msec");
-                end = arrColumn.indexOf("End Time - msec");
-                if ((arrValue.get(begin).equals("") && arrValue.get(end).equals(""))) // If row is blank or contains garbage
-                {
-                    breakLoop = true;
-                }
-                if (!breakLoop) {
-                    addData_inHbase("ValidData", filename, "LD", arrColumn, arrValue);
-                }
-            }
-            table.close();
-            dc.InsertMapRecord("ValidData", Efilename, "LD", UserId, filename); //Insert validData file name as row and Label data Filename as value 
-            dc.InsertMapRecord("ValidData", filename, "MD", UserId, String.valueOf(counter)); // here I am storing nos of rows of ValIDData Into LD(Label Data) column FamIly
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void Read_LabelData_forValdiation(String Efilename, String filename) { // Here I am reading label data for validation
+//        HTable table = null;
+//        try {
+//
+//            counter = 0;
+//            int begin, end;
+//            long NosRow = Integer.valueOf(dc.get_MapFile("RawData", filename, "MF"));
+//            boolean breakLoop;
+//            table = new HTable(conf, "RawData");
+//            for (int a = 0; a <= NosRow - 1; a++) {
+//                breakLoop = false;
+//                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // USER ID + filename +  nos of row
+//                Result result = table.get(get);
+//                arrColumn.clear();
+//                arrValue.clear();
+//                for (KeyValue kv : result.raw()) { //adding column and values
+//                    arrColumn.add(new String(kv.getQualifier()));
+//                    arrValue.add(new String(kv.getValue()));
+//                }
+//                begin = arrColumn.indexOf("Begin Time - msec");
+//                end = arrColumn.indexOf("End Time - msec");
+//                if ((arrValue.get(begin).equals("") && arrValue.get(end).equals(""))) // If row is blank or contains garbage
+//                {
+//                    breakLoop = true;
+//                }
+//                if (!breakLoop) {
+//                    addData_inHbase("ValidData", filename, "LD", arrColumn, arrValue);
+//                }
+//            }
+//            table.close();
+//            dc.InsertMapRecord("ValidData", Efilename, "LD", UserId, filename); //Insert validData file name as row and Label data Filename as value 
+//            dc.InsertMapRecord("ValidData", filename, "MD", UserId, String.valueOf(counter)); // here I am storing nos of rows of ValIDData Into LD(Label Data) column FamIly
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public float pixalToCenti(int x1, int y1, int x2, int y2) { //this function convert pixal to centimeter
         float xf1, xf2, yf1, yf2;
@@ -288,8 +291,8 @@ public class ValidateData extends HttpServlet {
             table.setWriteBufferSize(1024 * 1024 * 12);
             Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterEF)); //userId + Filename+rownumber
             put.add(Bytes.toBytes("FS"), Bytes.toBytes("GivenTime"), Bytes.toBytes(String.valueOf(time)));
-            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersOfFixation"), Bytes.toBytes(String.valueOf(FixCount)));
-            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersOfSaccade"), Bytes.toBytes(String.valueOf(SacCount)));
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersofFixation"), Bytes.toBytes(String.valueOf(FixCount)));
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersofSaccade"), Bytes.toBytes(String.valueOf(SacCount)));
             table.put(put);
             counterEF++;
             timeIntervalToIncrement = timeIntervalToIncrement + timeInterval;
@@ -302,10 +305,8 @@ public class ValidateData extends HttpServlet {
 
     public void Read_RawData_forValidation(String filename, String gxleft, String gxright,
             String gyleft, String gyright, String dleft, String dright) {
-
         HTable table = null;
         try {
-
             counter = 0;
             long NosRow = Integer.valueOf(dc.get_MapFile("RawData", filename, "MF"));
             int vLindex, vRindex, dLindex, dRindex, gpXLindex,
@@ -517,6 +518,7 @@ public class ValidateData extends HttpServlet {
             DataClass dc = new DataClass(getServletContext().getRealPath("/"));
             dc.InsertMapRecord("FixData", Efilename, "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
             dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
+            dc.InsertMapRecord("EyeFeature", Efilename, "MD", UserId, String.valueOf(counterEF));// inserting Nos of Rows of fixation
             arrColumn.clear();
             arrValue.clear();
             arrColumn_lbl.clear();
@@ -532,7 +534,7 @@ public class ValidateData extends HttpServlet {
         } else if ("EyeFeature".equalsIgnoreCase(btnEyeF)) { // If It Is fIxatIon FIle
             arrColumn.clear();
             arrValue.clear();
-            dc.get_DataHbase_common(0, 1000, "", UserId, "EyeFeature", Efilename, "MD", arrColumn, arrValue); // getting raw data from Hbase
+            dc.get_DataHbase_common(0, 0, "", UserId, "EyeFeature", Efilename, "MD", arrColumn, arrValue); // getting raw data from Hbase
             request.setAttribute("Alrd_column", arrColumn); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", arrValue);
             RequestDispatcher rd = request.getRequestDispatcher("/ShowEyeFeature.jsp"); // redirecting to the next page
@@ -543,14 +545,14 @@ public class ValidateData extends HttpServlet {
             DownloadFile(response, hdnData); // download saccade FILe
         } else {
             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
-            Read_LabelData_forValdiation(Efilename, Lfilename); //ReadIng label Data for valIdatIon 
+           // Read_LabelData_forValdiation(Efilename, Lfilename); // uncomment It for ReadIng label Data from RawData table for valIdatIng It 
             arrColumn.clear();
             arrValue.clear();
             arrTime.clear();
             arrColumn_lbl.clear();
             arrValue_lbl.clear();
             dc.get_DataHbase(0, 1000, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
-            dc.get_DataHbase_common(0, 0, "", UserId, "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// readIng label valId data to show on page
+           // dc.get_DataHbase_common(0, 0, "", UserId, "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// uncommentIng for readIng label valId data to show on page
         }
         request.setAttribute("arrColumn", arrColumn);
         request.setAttribute("arrValue", arrValue);

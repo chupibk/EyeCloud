@@ -145,7 +145,7 @@ public class DataClass {
         public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
         try {
-            if (flag.equals("ok")) // if its not a lable data
+            if (flag.equals("ok")) // if specified looprunner value Is assIgned
             {
             } else {
                 loopStarter = 0;

@@ -33,6 +33,7 @@
                 var hdnstartpnt = '${hdnstartpnt}';
                 var hdnduration = '${hdnduration}';
                 var hdnlblstlname = '${hdnlblstlname}';
+                var error='${error}';
                 // var tt = <%=(String) request.getParameter("selectedValue")%>
                 if (hdntimestamp !== null)
                 {
@@ -89,21 +90,29 @@
                 if (hdnlblstlname !== "") {
                     document.form1.hdnlblstlname.value = hdnlblstlname;
                 }
+                
+                if (error !== null) {
+                    if (error === "0")
+                    { alert('Please select all the required fields!'); }else{
+                        
+                    }
+                }
+                
 
             }
 
             function  Setdropdownvalue() {
-                document.form2.hdntimestamp.value = document.form1.ddltimestamp.value;
-                document.form2.hdnxleft.value = document.form1.ddlxleft.value;
-                document.form2.hdnxright.value = document.form1.ddlxright.value;
-                document.form2.hdnyleft.value = document.form1.ddlyleft.value;
-                document.form2.hdnyright.value = document.form1.ddlyright.value;
-                document.form2.hdndleft.value = document.form1.ddldistleft.value;
-                document.form2.hdndright.value = document.form1.ddldistright.value;
-                document.form2.hdnvleft.value = document.form1.ddlvleft.value;
-                document.form2.hdnvright.value = document.form1.ddlvrght.value;
-                document.form2.hdnstname.value = document.form1.ddlstmName.value;
-                document.form2.hdnpart.value = document.form2.ddlpart.value;
+                document.form1.hdntimestamp.value = document.form1.ddltimestamp.value;
+                document.form1.hdnxleft.value = document.form1.ddlxleft.value;
+                document.form1.hdnxright.value = document.form1.ddlxright.value;
+                document.form1.hdnyleft.value = document.form1.ddlyleft.value;
+                document.form1.hdnyright.value = document.form1.ddlyright.value;
+                document.form1.hdndleft.value = document.form1.ddldistleft.value;
+                document.form1.hdndright.value = document.form1.ddldistright.value;
+                document.form1.hdnvleft.value = document.form1.ddlvleft.value;
+                document.form1.hdnvright.value = document.form1.ddlvrght.value;
+                document.form1.hdnstname.value = document.form1.ddlstmName.value;
+                document.form1.hdnpart.value = document.form2.ddlpart.value;
             }
 
             function Sethdnfield() {
@@ -112,7 +121,6 @@
             function  setlblhdnfield() {
                 document.form1.hdnlblfilename.value = document.form1.loadlabel.value;
             }
-
 
             window.onload = selectedValue;
         </script>
@@ -196,15 +204,28 @@
                                                                 <input type="hidden" name="hdnstartpnt"/>
                                                                 <input type="hidden" name="hdnduration"/>
                                                                 <input type="hidden" name="hdnlblstlname"/>
+                                                                <input type="hidden" name="hdntimestamp"/>
+                                                                <input type="hidden" name="hdnxleft"/>
+                                                                <input type="hidden" name="hdnxright"/>
+                                                                <input type="hidden" name="hdnyleft"/>
+                                                                <input type="hidden" name="hdnyright"/>
+                                                                <input type="hidden" name="hdndleft"/>
+                                                                <input type="hidden" name="hdndright"/>
+                                                                <input type="hidden" name="hdnvleft"/>
+                                                                <input type="hidden" name="hdnvright"/>
+                                                                <input type="hidden" name="hdnstname"/>
+                                                                <input type="hidden" name="hdnpart"/>
                                                                 <tr>
-                                                                    <td style="width: 50%;vertical-align: bottom;" ><img id="imgstep1" width="16%" height="30%" src="img/step1_1.gif" />
+                                                                    <td style="width: 50%;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                        <img style="margin-top: 6%" id="imgstep1" width="10%" height="20%" src="img/step1_1.gif" />
                                                                         Select Eye Tracking Folder: 
                                                                         <label class="cabinet" style="vertical-align: bottom;">  <input type="file" class="file" name="file1"/> </label>
-                                                                        <span class="button approve" style="margin-top: 10%"><span><span>Load</span></span>  <input style="vertical-align: bottom;"  type="submit" name="btnload" id="btnload" onclick="Sethdnfield()" value="Load file" style="margin-bottom: 10px"/> </span>
+                                                                        <span class="button approve" style="margin-top: 11%"><span><span>Load</span></span>  <input style="vertical-align: bottom;"  type="submit" name="btnload" id="btnload" onclick="Sethdnfield()" value="Load file" style="margin-bottom: 10px"/> </span>
                                                                     </td>
-                                                                    <td style="vertical-align: top">
+                                                                    <td style="vertical-align: bottom">
+                                                                         <img id="imgstep2" width="50%" src="img/step2.gif" /> 
                                                                         <% if (fileload == "0") {%>
-                                                                        <table border="1">
+                                                                        <table border="1" >
                                                                             <tr>
                                                                                 <td style="font-size:12px;"> ${hdnfilename}</td>
                                                                             </tr>    
@@ -223,7 +244,7 @@
                                                                             }%>
                                                                     </td>
                                                                     <td> 
-                                                                        <img id="imgstep2" width="20%" src="img/step2.gif" />  </td>
+                                                                        </td>
                                                                 <br/><br/><br/>
                                                                 </tr>
 
@@ -268,7 +289,7 @@
                                                                                     <c:out value="${arrl.value}" /></option>
                                                                             </c:forEach></select> 
                                                                         <br/>
-                                                                        Distance Left: <select name="ddldistleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
+                                                                       * Distance Left: <select name="ddldistleft" style="margin-bottom: 10px" onchange="Setdropdownvalue()">
 
                                                                             <c:forEach items="${arrls}" var="arrl">
                                                                                 <option value="${arrl.key}">
@@ -306,17 +327,7 @@
                                                                             <!--                                                                            Load Participant identity Excel file: 
                                                                                                                                                         <label class="cabinet">  <input type="file" name="loadpart" class="file" /> </label><span class="button approve"><span><span>Load</span></span>  <input type="submit" name="btnpart" value="Load" onclick="Setdropdownvalue()" style="margin-bottom: 10px" /></span>-->
                                                                             <br/>
-                                                                            <input type="hidden" name="hdntimestamp"/>
-                                                                            <input type="hidden" name="hdnxleft"/>
-                                                                            <input type="hidden" name="hdnxright"/>
-                                                                            <input type="hidden" name="hdnyleft"/>
-                                                                            <input type="hidden" name="hdnyright"/>
-                                                                            <input type="hidden" name="hdndleft"/>
-                                                                            <input type="hidden" name="hdndright"/>
-                                                                            <input type="hidden" name="hdnvleft"/>
-                                                                            <input type="hidden" name="hdnvright"/>
-                                                                            <input type="hidden" name="hdnstname"/>
-                                                                            <input type="hidden" name="hdnpart"/>
+
                                                                             <!--                                                                            Participant ID: <select name="ddlpart" style="margin-bottom: 10px" onchange="Setdropdownvalue(), this.form.submit()">
                                                                             
                                                                             <c:forEach items="${partarrls}" var="partarrl">
@@ -421,12 +432,12 @@
                                                                             Fixation Duration Threshold: <input type="text" name="txtfxdr" size="10px" value="100" style="margin-bottom: 10px" /><br/>
                                                                             Velocity Threshold: <input type="text" name="txtvelth" size="10px" value="75" style="margin-bottom: 10px" /> <br/>
                                                                             Missing Time Threshold: <input type="text" name="txtmstm" size="10px" value="100" style="margin-bottom: 10px" /> <br/>
-                                                                            Time Interval: <input type="text" name="txtTimeInterval" size="10px" value="100" style="margin-bottom: 10px" /> <br/>
-                                                                            Sample Rate: <input type="text" name="txtrate" size="10px" value="100" style="margin-bottom: 10px" /> 
+                                                                            Time Interval: <input type="text" name="txtTimeInterval" size="10px" value="2000" style="margin-bottom: 10px" /> <br/>
+                                                                            Sample Rate: <input type="text" name="txtrate" size="10px" value="120" style="margin-bottom: 10px" /> 
                                                                             <br/>
                                                                         </div>
                                                                         <br/><br/>
-                                                                        <span class="button approve"><span><span>Start</span></span> <input type="submit" name="btnsave" value="Save and Start" style="margin-bottom: 10px" />
+                                                                        <span class="button approve"><span><span>Start</span></span> <input  type="submit" name="btnsave" value="Save and Start" style="margin-bottom: 10px" /></span><img style="margin-right: 5%; margin-top: -3%"  id="imgstep3" width="15%" height="12%"  src="img/step3.gif" />
                                                                     </td>
                                                                     <!--                                                                    <td style="vertical-align: top "><% if (filelabel == "1") {
                                                                             out.print("Please Select File to Load");

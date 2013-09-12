@@ -44,7 +44,11 @@
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
-                } else if (val === 'kill')
+                }  else if (val === 'EF')
+                {
+                    document.getElementById('hdnData').value = val;
+                    document.getElementById('form1').submit();
+                }else if (val === 'kill')
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
@@ -258,6 +262,7 @@
                                                         <li><a href="LoadData.jsp" class="d2"><span>Setup Upload Files</span></a></li>
                                                         <li><a href="#" onclick="submitForm('RD')"  class="d5"><span>Raw Data</span></a></li>
                                                         <li><a href="#" onclick="submitForm('VD')" class="d4"><span>Valid Data</span></a></li>
+                                                        <li><a href="#" onclick="submitForm('EF')" class="d8"><span>Eye Feature</span></a></li>
                                                         <li><a href="registeruser.jsp?edit" class="d1"><span>User Profile</span></a></li>
 
                                                     </ul>

@@ -23,23 +23,23 @@
             ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("arrValue_lbl");
 
             //out.println(session.getAttribute("hdnxleft")): 
-%>
+        %>
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
 
-                 <div class="inner-image">
+                <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
                     <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
                         Welcome : "${username}"
                         </br>
                         </br>
-                       <a style="float: right" href="Dashboard.jsp?kill" class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
+                        <a style="float: right" href="Dashboard.jsp?kill" class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group
                     </div>
-                    
+
                 </div>
                 <!--[if !IE]>start page<![endif]-->
                 <div id="page">
@@ -66,7 +66,7 @@
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
 
-                                                                            <div style="overflow: scroll; height: 400px; width: 580px; background: transparent">
+                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent">
                                                                                 <table border="1" style='table-layout:fixed'><tr> <td style=" vertical-align: top"> 
                                                                                             <table >
                                                                                                 <tr><td style='text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'>Timestamp</td> </tr>
@@ -112,51 +112,53 @@
 
                                                                             </div>
                                                                             <div class="table_menu">
-
-                                                                                <ul class="right">
-                                                                                    <li><span class="button approve"><span><span>Next</span></span> <input type="submit" value="Next" name="btnNext" /></span></li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                   
-                                                                </td>
-                                                                <td>
-                                                                    <div class="table_wrapper">
-                                                                        <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 500px; background: transparent">
-                                                                                <table border="1">
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
-                                                                                        <td> <%=Alrd_lbl_column.get(a)%>  </td>
-                                                                                        <%
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% for (int a = 0; a <= Alrd_lbl_value.size() - 1; a++) {%>
-                                                                                        <% if (Alrd_lbl_value.get(a).contains("/")) {%>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <% } else {%> 
-                                                                                        <td> <%= Alrd_lbl_value.get(a)%> </td>
-                                                                                        <%
-                                                                                                }
-                                                                                            }
-                                                                                        %>
-                                                                                    </tr>
-
-                                                                                </table>        
-                                                                            </div>
-                                                                                                                                               <div class="table_menu">
-
-                                                                                <ul class="right">
+                                                                                <ul class="right"  >
                                                                                     <li><span class="button approve"><span><span>Run Fixation</span></span> <input type="submit" value="Run Fixation" name="btnRun" /></span></li>
                                                                                 </ul>
+
+                                                                                <ul class="right" style="margin-right: 5%">
+                                                                                    <li><span class="button approve"><span><span>Next</span></span> <input type="submit" value="Next" name="btnNext" /></span></li>
+                                                                                </ul>
+                                                                                
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                    
+
+                                                                </td>
+                                                                <td>
+                                                                    <!--                                                                    <div class="table_wrapper">
+                                                                                                                                            <div class="table_wrapper_inner">
+                                                                                                                                                <div style="overflow: scroll; height: 400px; width: 500px; background: transparent">
+                                                                                                                                                    <table border="1">
+                                                                                                                                                        <tr>
+                                                                    <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
+                                                                    <td> <%=Alrd_lbl_column.get(a)%>  </td>
+                                                                    <%
+                                                                        }
+                                                                    %>
+                                                                </tr>
+                                                                <tr>
+                                                                    <% for (int a = 0; a <= Alrd_lbl_value.size() - 1; a++) {%>
+                                                                    <% if (Alrd_lbl_value.get(a).contains("/")) {%>
+                                                                </tr>
+                                                                <tr>
+                                                                    <% } else {%> 
+                                                                    <td> <%= Alrd_lbl_value.get(a)%> </td>
+                                                                    <%
+                                                                            }
+                                                                        }
+                                                                    %>
+                                                                </tr>
+
+                                                            </table>        
+                                                        </div>
+                                                                                                                           <div class="table_menu">
+
+                                                           
+                                                        </div>
+                                                    </div>
+                                                </div>-->
+
                                                                 </td>
 
                                                             </tr></table>
@@ -188,7 +190,7 @@
                                             <div class="sct_left">
                                                 <div class="sct_right">
                                                     <ul class="sidebar_menu">
-                                                         <li><a href="Dashboard.jsp">Dash Board</a></li>
+                                                        <li><a href="Dashboard.jsp">Dash Board</a></li>
                                                         <li><a href="registeruser.jsp?edit" class="d1"><span>User Profile</span></a></li>
 
                                                     </ul>

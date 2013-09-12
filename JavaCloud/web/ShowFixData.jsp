@@ -141,19 +141,17 @@
                                                                                     </tr>
 
                                                                                 </table>   
-                                                                                <div class="table_menu">
-
-                                                                                    <ul class="right">
-                                                                                        <li><span class="button approve"><span><span>Show Eye Feature</span></span><input id="btnEyeF" type="submit" value="EyeFeature"/></span></li>
-                                                                                    </ul>
-                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </td>
 
                                                             </tr></table>
-
+                                                        <div class="table_menu">
+                                                            <ul class="right">
+                                                                <li><span class="button approve"><span><span>Show Eye Feature</span></span><input id="btnEyeF" name="btnEyeF" type="submit" value="EyeFeature"/></span></li>
+                                                            </ul>
+                                                        </div>
                                                     </form>
                                                 </div>
                                             </div>
