@@ -35,6 +35,7 @@ public class LoginFilter implements Filter {
     
     private void AddIntolist(){
         ar.add("/JavaCloud/loginuser.jsp");
+        ar.add("/JavaCloud/password.jsp");
         ar.add("/JavaCloud/registeruser");
         ar.add("/JavaCloud/registeruser.jsp");
         ar.add("/JavaCloud/css/admin-login.css");

@@ -442,4 +442,25 @@ public class DataClass {
             return 0;
         }
     }
+    
+     public String recoverPassword(String email) {
+        try {
+            String pass = "";
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+            preStat = connection
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?");
+            preStat.setString(1, email);
+            rs = preStat.executeQuery();
+            while (rs.next()) {
+                
+                pass = rs.getString("Password");
+
+            }
+            return pass;
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }

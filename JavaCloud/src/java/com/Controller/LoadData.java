@@ -65,7 +65,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 @WebServlet(name = "LoadData", urlPatterns = {"/LoadData"})
 public class LoadData extends HttpServlet {
 
-    // Declaring & Initializing all the Variables
+    // Declaring & Initializing all the Variables, arraylist, and hashmap 
     private static final long serialVersionUID = 1L;
     static String hdnlblfilename = "", hdnfilename = "", hdntimestamp = null, hdnxleft = null, hdnxright = null, hdnyleft = null, hdnyright = null,
             hdndleft = null, hdndright = null, hdnvleft = null, hdnvright = null, hdnstname = null, hdnpart = null,
@@ -256,7 +256,7 @@ public class LoadData extends HttpServlet {
                     } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
                         if (!hdnxleft.isEmpty() && !hdnxleft.equals("") && !hdnyleft.isEmpty() && !hdnyleft.equals("") && !hdntimestamp.isEmpty() && !hdntimestamp.equals("") 
                                 && !hdnstname.isEmpty() && !hdnstname.equals("") && !hdndleft.isEmpty() && !hdndleft.equals("")) { // checking if all the required fields are selected
-                            addrawData(); // Adding raw Data from the Text File
+                            addrawData(); // Adding raw Data into Hbase database from the Text File
                             //addLabelrawData(); // uncomment it FOR Adding Label Data from the Text File
                             Alrd_column.clear(); // clear the array
                             Alrd_value.clear(); // clear the array
@@ -306,60 +306,60 @@ public class LoadData extends HttpServlet {
                             request.setAttribute("hdnvleft", hdnvleft);//setting attribute to forward to the next page
                             request.setAttribute("hdnvright", hdnvright);//setting attribute to forward to the next page
                             request.setAttribute("hdnstname", hdnstname);//setting attribute to forward to the next page
-                            RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp"); // redirecting to the next page
+                            RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp"); // redirecting to the same page incase of error
                             rd.forward(request, response);
                         }
 
                     }
-                    if ("hdntimestamp".equals(fielditem.getFieldName())) { //setting hidden fields values to show it back to the user
+                    if ("hdntimestamp".equals(fielditem.getFieldName())) { // checking if condition & setting hidden fields hdntimestamp values to show it back to the user
                         hdntimestamp = fielditem.getString();
-                    } else if ("hdnxleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdnxleft".equals(fielditem.getFieldName())) { // checking if condition & setting hidden fields hdnxleft values to show it back to the user
                         hdnxleft = fielditem.getString();
-                    } else if ("hdnxright".equals(fielditem.getFieldName())) {
+                    } else if ("hdnxright".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdnxright values to show it back to the user
                         hdnxright = fielditem.getString();
-                    } else if ("hdnyleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdnyleft".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdnyleft values to show it back to the user
                         hdnyleft = fielditem.getString();
-                    } else if ("hdnyright".equals(fielditem.getFieldName())) {
+                    } else if ("hdnyright".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdnyright values to show it back to the user
                         hdnyright = fielditem.getString();
-                    } else if ("hdndleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdndleft".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdndleft values to show it back to the user
                         hdndleft = fielditem.getString();
-                    } else if ("hdndright".equals(fielditem.getFieldName())) {
+                    } else if ("hdndright".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdndright values to show it back to the user
                         hdndright = fielditem.getString();
-                    } else if ("hdnvleft".equals(fielditem.getFieldName())) {
+                    } else if ("hdnvleft".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdnvleft values to show it back to the user
                         hdnvleft = fielditem.getString();
-                    } else if ("hdnvright".equals(fielditem.getFieldName())) {
+                    } else if ("hdnvright".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdnvright values to show it back to the user
                         hdnvright = fielditem.getString();
-                    } else if ("hdnstname".equals(fielditem.getFieldName())) {
+                    } else if ("hdnstname".equals(fielditem.getFieldName())) { // checking if condition & setting hidden fields hdnstname values to show it back to the user
                         hdnstname = fielditem.getString();
-                    } else if ("hdnpart".equals(fielditem.getFieldName())) {
-                        hdnpart = fielditem.getString();
-                    } else if ("hdnfilename".equals(fielditem.getFieldName())) {
+                    } else if ("hdnfilename".equals(fielditem.getFieldName())) {// checking if condition & setting hidden fields hdnfilename values to show it back to the user
                         hdnfilename = fielditem.getString();
-                    } else if ("hdnlblfilename".equals(fielditem.getFieldName())) {
-                        hdnlblfilename = fielditem.getString();
-                    } else if ("hdnstartpnt".equals(fielditem.getFieldName())) {
-                        hdnstartpnt = fielditem.getString();
-                    } else if ("hdnduration".equals(fielditem.getFieldName())) {
-                        hdnduration = fielditem.getString();
-                    } else if ("hdnlblstlname".equals(fielditem.getFieldName())) {
-                        hdnlblstlname = fielditem.getString();
-                    } else if ("txtxscreen".equals(fielditem.getFieldName())) {
+//                    } else if ("hdnpart".equals(fielditem.getFieldName())) {  //uncomment it if you want to want to work on label & participant file
+//                        hdnpart = fielditem.getString();
+//                    } else if ("hdnlblfilename".equals(fielditem.getFieldName())) { // here I am doiNg the same checkg the condition &  storing the 
+//                        hdnlblfilename = fielditem.getString();                     // values into the varaiable
+//                    } else if ("hdnstartpnt".equals(fielditem.getFieldName())) {
+//                        hdnstartpnt = fielditem.getString();
+//                    } else if ("hdnduration".equals(fielditem.getFieldName())) {
+//                        hdnduration = fielditem.getString();
+//                    } else if ("hdnlblstlname".equals(fielditem.getFieldName())) {
+//                        hdnlblstlname = fielditem.getString();
+                    } else if ("txtxscreen".equals(fielditem.getFieldName())) { // checking if condition & setting txtxscreen values to the variable to pass to the session
                         xscreen = fielditem.getString();
-                    } else if ("txtyscreen".equals(fielditem.getFieldName())) {
+                    } else if ("txtyscreen".equals(fielditem.getFieldName())) {// checking if condition & setting txtyscreen values to the variable to pass to the session
                         yscreen = fielditem.getString();
-                    } else if ("txtxresol".equals(fielditem.getFieldName())) {
+                    } else if ("txtxresol".equals(fielditem.getFieldName())) {// checking if condition & setting txtxresol values to the variable to pass to the session
                         xresol = fielditem.getString();
-                    } else if ("txtyresol".equals(fielditem.getFieldName())) {
+                    } else if ("txtyresol".equals(fielditem.getFieldName())) {// checking if condition & setting txtyresol values to the variable to pass to the session
                         yresol = fielditem.getString();
-                    } else if ("txtfxdr".equals(fielditem.getFieldName())) {
+                    } else if ("txtfxdr".equals(fielditem.getFieldName())) { // checking if condition & setting txtfxdr values to the variable to pass to the session
                         fxdr = fielditem.getString();
-                    } else if ("txtvelth".equals(fielditem.getFieldName())) {
+                    } else if ("txtvelth".equals(fielditem.getFieldName())) { // checking if condition & setting txtvelth values to the variable to pass to the session
                         velth = fielditem.getString();
-                    } else if ("txtmstm".equals(fielditem.getFieldName())) {
+                    } else if ("txtmstm".equals(fielditem.getFieldName())) { // checking if condition & setting txtmstm values to the variable to pass to the session
                         mstm = fielditem.getString();
-                    } else if ("txtTimeInterval".equals(fielditem.getFieldName())) {
+                    } else if ("txtTimeInterval".equals(fielditem.getFieldName())) { // checking if condition & setting txtTimeInterval values to the variable to pass to the session
                         txtTimeInterval = fielditem.getString();
-                    } else if ("txtrate".equals(fielditem.getFieldName())) {
+                    } else if ("txtrate".equals(fielditem.getFieldName())) { // checking if condition & setting txtrate value to the variable to pass to the session
                         txtrate = fielditem.getString();
                     }
                 }
@@ -399,7 +399,7 @@ public class LoadData extends HttpServlet {
             request.setAttribute("hdnvright", hdnvright);//setting attribute to forward to the next page
             request.setAttribute("hdnstname", hdnstname);//setting attribute to forward to the next page
 
-            RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp"); // showing load data page agaiN
             rd.forward(request, response);
             //	out.println("</tr>");
             //out.println("</table>");

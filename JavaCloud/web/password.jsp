@@ -14,18 +14,31 @@
         <title>Login Panel</title>
         <link media="screen" rel="stylesheet" type="text/css" href="css/admin-login.css"  />
         <script type="text/javascript">
-           
+
             function setvalues() {
                 var error = '${error}';
+                var email='${txtemail}';
+                var pass = '${password}';
+                
+                 if (email !== null) {
+                    var elem = document.getElementById("txtemail");
+                    elem.value = email;
+                }
 
                 if (error !== null) {
                     if (error === "1")
                     {
-                        document.getElementById('lblerror').innerHTML = 'Password or Email is incorrect!';
+                        document.getElementById('lblerror').innerHTML = 'Email is incorrect!';
                     }
                     else {
                         document.getElementById('lblerror').innerHTML = '';
                     }
+                }
+
+                if (pass === '') {
+                    document.getElementById('lblpass').innerHTML = '';
+                } else {
+                    document.getElementById('lblpass').innerHTML = 'Your Password Is:  ' + "${password}";
                 }
             }
             window.onload = setvalues;
@@ -35,7 +48,8 @@
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="login_wrapper">			
-
+                <% String pass = String.valueOf(request.getAttribute("password"));
+                    System.out.println(pass);%>
                 <!--[if !IE]>start login<![endif]-->
                 <form id="form1" method="POST" action="./registeruser">
                     <fieldset>
@@ -50,20 +64,19 @@
                                         <input name="txtemail" id="txtemail" type="text" />
                                     </span>
                                 </label>
-                                <label>
-                                    <strong>Password:</strong>
-                                    <span class="input_wrapper">
-                                        <input name="txtpass" id="txtpass" type="password" />
-                                    </span>
-                                    <a href="password.jsp" style="float: right"><span>Forgot Password?</span></a>
+
+                                <label id="lblpass">
+                                    <strong> </strong>
+
                                 </label>
+
                                 <center>
-                                    <label id="lblerror" name="lblerror" style="color: red;margin-top: -3%" > </label>
+                                    <label id="lblerror" name="lblerror" style="color: red" > </label>
                                 </center>
                                 <ul class="form_menu">
-                                    <li><span class="button"><span><span>Login</span></span><input type="submit" value="login" name="btnlogin"/></span></li>
+                                    <li><span class="button"><span><span>Submit</span></span><input type="submit" value="submit" name="btnsubmit"/></span></li>
 
-                                    <li><span class="button"><span><span>Register</span></span><input type="submit" value="register" name="btnregister"/></span></li>
+                                    <li><span class="button"><a href="loginuser.jsp"><span><span>Login</span></span></a></span></li>
                                 </ul>
 
                             </div>

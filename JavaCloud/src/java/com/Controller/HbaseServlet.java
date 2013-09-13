@@ -36,6 +36,10 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.util.Date;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.KeyGenerator;
+import sun.misc.BASE64Encoder;
 
 /**
  *
@@ -487,15 +491,43 @@ public class HbaseServlet extends HttpServlet {
         }
 
     }
+    
+  private static void encrypt()
+{
+    try
+    {
+    String plainData="salm",cipherText,decryptedText;
+    KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+    keyGen.init(128);
+    SecretKey secretKey = keyGen.generateKey();
+    Cipher aesCipher = Cipher.getInstance("AES");
+    aesCipher.init(Cipher.ENCRYPT_MODE,secretKey);
+    byte[] byteDataToEncrypt = plainData.getBytes();
+    byte[] byteCipherText = aesCipher.doFinal(byteDataToEncrypt);
+    cipherText = new BASE64Encoder().encode(byteCipherText);
+    aesCipher.init(Cipher.DECRYPT_MODE,secretKey,aesCipher.getParameters());
+    byte[] byteDecryptedText = aesCipher.doFinal(byteCipherText);
+    decryptedText = new String(byteDecryptedText);
+    System.out.println("\n Plain Data : "+plainData+" \n Cipher Data : "+cipherText+" \n Decrypted Data : "+decryptedText);
+    }
+    catch(Exception e)
+    {
+         
+    }
+}
+
+
+
 
     public static void main(String[] args) {
         try {
             // System.out.println(get_MapFile("01-01-All-Data.txt"));
-            FixAlgorithm("Rec 01-All-Data.txt");
-            InsertMapRecord("FixData", "Rec 01-All-Data.txt", "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
-            InsertMapRecord("FixData", "Rec 01-All-Data.txt" + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
-            InsertMapRecord("EyeFeature", "Rec 01-All-Data.txt", "MD", UserId, String.valueOf(counterEF));// inserting Nos of Rows of fixation
-            System.out.println("done");
+//            FixAlgorithm("Rec 01-All-Data.txt");
+//            InsertMapRecord("FixData", "Rec 01-All-Data.txt", "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
+//            InsertMapRecord("FixData", "Rec 01-All-Data.txt" + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
+//            InsertMapRecord("EyeFeature", "Rec 01-All-Data.txt", "MD", UserId, String.valueOf(counterEF));// inserting Nos of Rows of fixation
+//            System.out.println("done");
+            encrypt();
 
         } catch (Exception e) {
             e.printStackTrace();
