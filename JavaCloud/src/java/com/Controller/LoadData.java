@@ -143,7 +143,7 @@ public class LoadData extends HttpServlet {
                                 String str;
                                 LineNumberReader ln = new LineNumberReader(br); // to get total line Number of Buffer reader
                                 while (ln.getLineNumber() == 0) { // runniNG loop only one tIme to get the column name from the text FIle
-                                    str = ln.readLine(); // reading one liNe & storIng Into the 
+                                    str = ln.readLine(); // reading one liNe & storIng Into the variable 
                                     if (str != null) { //If files is selected
                                         request.setAttribute("fileload", "0"); // if iS SELECTEd to upload
                                         largeStr = fileItem.getString(); //set textfile to string 

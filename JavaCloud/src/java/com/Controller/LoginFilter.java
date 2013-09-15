@@ -25,11 +25,14 @@ import javax.servlet.http.HttpSession;
 @WebFilter("/*")
 public class LoginFilter implements Filter {
 
+    // ThIs LogIn FIlter Is used to Check If user Is LogIn or Not.. EveryTIme the Servlet & jsp Page Is requested, request 
+    // come here to check If user Is logIned & then It procesed.
     ArrayList<String> ar = new ArrayList<String>();
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        AddIntolist();
+        AddIntolist(); // here I am addIng all the pages, Images, and etc storIng Into arrayLIst to skIp them 
+        // from the logIn FIlter
         
     }
     
@@ -85,26 +88,26 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
-        HttpSession session = request.getSession(false);
+        HttpServletRequest request = (HttpServletRequest) req; // gettIng Instance of Request
+        HttpServletResponse response = (HttpServletResponse) res; // gettIng Instance of Response
+        HttpSession session = request.getSession(false); // // gettIng Instance of sessIon
         boolean allowedRequest = false;
 
-        if (ar.contains(request.getRequestURI())) {
-            allowedRequest = true;
+        if (ar.contains(request.getRequestURI())) { //checkIng If request come from what pages
+            allowedRequest = true; // If the request come from the pages whIch exIsts In the ArrayLIst
         }
 
-        if (!allowedRequest) {
+        if (!allowedRequest) { // If reqUest Is not allowed & user Is not logIn then pass the request to the loginuser.jsp page
             if (session == null || session.getAttribute("username") == null) {
                 response.sendRedirect(request.getContextPath() + "/loginuser.jsp");
                 return;
             } else {
-                chain.doFilter(req, res);
+                chain.doFilter(req, res); // otherwIse keep usIng the allowed pages
                 return;
             }
         } else {
 
-            chain.doFilter(req, res);
+            chain.doFilter(req, res); // otherwIse keep usIng the allowed pages
             return;
 
         }

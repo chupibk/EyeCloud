@@ -43,6 +43,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "ValidateData", urlPatterns = {"/ValidateData"})
 public class ValidateData extends HttpServlet {
 
+    //declarIng all the publIc varIables
     private int sumX, sumY;
     private int countxy = 0, duration = 0, countxySac = 0, durationSac = 0;
     private Integer RESOLUTION_WIDTH, RESOLUTION_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -65,8 +66,9 @@ public class ValidateData extends HttpServlet {
     String startTimefix, startTimeSac;
     int FixCount = 0, SacCount = 0, timeInterval = 0, timeIntervalToIncrement = 0, sample_rate = 0;
 
+    // 
     static {
-        conf = HBaseConfiguration.create();
+        conf = HBaseConfiguration.create(); // storing Hbase configuration instance In conf varIable
     }
 
     @Override
@@ -116,12 +118,12 @@ public class ValidateData extends HttpServlet {
 //    }
 
     public float pixalToCenti(int x1, int y1, int x2, int y2) { //this function convert pixal to centimeter
-        float xf1, xf2, yf1, yf2;
+        float xf1, xf2, yf1, yf2; 
         xf1 = (float) x1 * SCREEN_WIDTH / RESOLUTION_WIDTH;
         xf2 = (float) x2 * SCREEN_WIDTH / RESOLUTION_WIDTH;
         yf1 = (float) y1 * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
         yf2 = (float) y2 * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
-        return (float) Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        return (float) Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)); //makIng square root by gIven varIables
     }
 
     public float VT_Degree(int x1, int y1, int x2, int y2, float d1, float d2, int dur) {
@@ -132,37 +134,38 @@ public class ValidateData extends HttpServlet {
         return (float) ((degree / (2 * Math.PI))) * 360; // it should be in mili second
     }
 
-    public void putXY(int x, int y, int time) { //setting and incrementing value 
-        countxy++;
+    public void putXY(int x, int y, int time) { //setting and incrementing value for FIxatIon 
+        countxy++; // countIng as many tIme thIs FuncatIon Is called
         sumX += x;
         sumY += y;
         duration += time;
     }
     Boolean FlagSccade;
 
+    //here FIxatIon & Saccade AlgorIthm 
     public void FixAlgorithm(String filename) throws IOException {
-        FlagSccade = false;
-        boolean IsrowsToAdd = true;
-        arrDist.clear();
-        arrX.clear();
-        arrY.clear();
-        arrT.clear();
-        counter = 0;
-        counterEF = 0;
-        counterSaccade = 0;
+        FlagSccade = false; // settIng Saccade flag to false
+        boolean IsrowsToAdd = true; // thIs varIable Is to check wheater Rows to Add or not
+        arrDist.clear(); // clearIng all arrayLIst
+        arrX.clear();// clearIng all arrayLIst
+        arrY.clear();// clearIng all arrayLIst
+        arrT.clear();// clearIng all arrayLIst
+        counter = 0; // makIng counter to 0
+        counterEF = 0;// makIng counterEF to 0
+        counterSaccade = 0;// makIng counterSaccade to 0
         long looprunner = 0, loopStarter = 0;
         long rowsTorun_fix = 0;
-        timeIntervalToIncrement = timeInterval;
-        rowsTorun_fix = Math.round(timeInterval * sample_rate / 1000);
-        looprunner = rowsTorun_fix;
-        long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", filename, "MD")); // Getting total nos of value
-        HTable table = new HTable(conf, "ValidData");
+        timeIntervalToIncrement = timeInterval;// settIng TIme Interval to Increment
+        rowsTorun_fix = Math.round(timeInterval * sample_rate / 1000); //CalculatIng rows to run by tHIs formula 
+        looprunner = rowsTorun_fix; // assIgIng rowsTorun_fix to looprunner to run the loop
+        long NosRow = Integer.valueOf(dc.get_MapFile("ValidData", filename, "MD")); // Getting total nos of record
+        HTable table = new HTable(conf, "ValidData"); // assIgIng tablename and confIguratIon 
         int count = 0;
-        while (loopStarter <= NosRow) {
-            for (long a = loopStarter; a <= looprunner - 1; a++) {
+        while (loopStarter <= NosRow) { // run loop untIl nos of Row
+            for (long a = loopStarter; a <= looprunner - 1; a++) { // run loop UntIll loopRunner
                 Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // setting rowkey
-                Result result = table.get(get);
-                for (KeyValue kv : result.raw()) {
+                Result result = table.get(get); // gettIng data from Hbase by GIVEn get
+                for (KeyValue kv : result.raw()) {// runnINg loop untIll result has value
                     if (Bytes.toString(kv.getQualifier()).equals("AvgDist")) {
                         arrDist.add(new String(kv.getValue())); //adding AvgDist into arraylist
                     } else if (Bytes.toString(kv.getQualifier()).equals("AvgGxleft")) {
@@ -172,68 +175,69 @@ public class ValidateData extends HttpServlet {
                     } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) {
                         String time = new String(kv.getValue()); //adding timestamp into arraylist
                         time = time.replace("\n", ""); // remove \n frm the timestamp
-                        arrT.add(time);
-                        count++;
+                        arrT.add(time); //addIng tIme to the ArrayLIst tIme
+                        count++; // IncrementIng count
                         if (count == 2) {
                             int durtmp = Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)); // difference of time
-                            if (durtmp <= Missing_Time_THRESHOLD) {
-                                float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
+                            if (durtmp <= Missing_Time_THRESHOLD) { // checKIng the dIfference of TIme Is Greater then or equal to gIven the TIme threshold
+                                float tmp = VT_Degree(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)), //calculatIng VelcoITY
                                         Integer.parseInt(arrX.get(1)), Integer.parseInt(arrY.get(1)),
                                         Integer.parseInt(arrDist.get(0)), Integer.parseInt(arrDist.get(1)),
                                         Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); // setting velocity into the var
 
-                                if (tmp <= VELOCITY_THRESHOLD) {
-                                    if (FlagSccade == true) {
-                                        IsStartTimeSac = true;
+                                if (tmp <= VELOCITY_THRESHOLD) { // checkIng the velocIty degree Is less than or equal to the GIven VELOCITY_THRESHOLD
+                                    //IF Its VELOCITY_THRESHOLD Is greater or equal to the calculated velocIty then add FIXATION else Add Saccade
+                                    if (FlagSccade == true) { // IF flagSaccde Is true than Add Saccade Into database
+                                        IsStartTimeSac = true; // MakIng It to true to check the TIme when Start TIME saccade Is Started
                                         addfix_Sac_IntoHbase(filename); // This time adding saccade into hbase                                    
                                     }
-                                    if (IsStartTimefix) {
-                                        startTimefix = arrT.get(0);
-                                        IsStartTimefix = false;
-                                    }
+                                    if (IsStartTimefix) { //If Its true then
+                                        startTimefix = arrT.get(0);// set startTimefix to the start TIme of the FIXATION
+                                        IsStartTimefix = false; //settIng It false so that we can only recIeve startIng TIME
+                                    } 
                                     putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
-                                            Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); //passing parameter
+                                            Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); //addIng & IncrementIng FIxatIon 
                                     FlagSccade = false;
                                 } else {
-                                    if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-                                        IsStartTimefix = true;
+                                    if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) { //checkIng DuratION IS GEater than FIXATION_DURATION_THRESHOLD
+                                        IsStartTimefix = true; //settIng IsStartTimefix to true so that we can 1st tIme of the FIXatIon
                                         addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase
                                     }
-                                    if (IsStartTimeSac) {
-                                        startTimeSac = arrT.get(0);
-                                        IsStartTimeSac = false;
+                                    if (IsStartTimeSac) { // If Its true then 
+                                        startTimeSac = arrT.get(0); // // set startTimeSac to the start TIme of the saccade
+                                        IsStartTimeSac = false;//settIng It false so that we can only recIeve startIng TIME
                                     }
                                     FlagSccade = true;
-                                    arrXsac.add(arrX.get(0));
-                                    arrYsac.add(arrY.get(0));
-                                    durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0));
-                                    countxySac++;
+                                    arrXsac.add(arrX.get(0)); // addIng 1st value of gazepoInt x Into arrXsac
+                                    arrYsac.add(arrY.get(0));  // addIng 1st value of gazepoInt x Into arrYsac
+                                    durationSac += Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0)); //IncrementIng duratIon By makIng dIfference of arrT1 and arrT2
+                                    countxySac++; // IncrementIng countxySac
                                 }
                             }
                             count = 1;
-                            arrDist.remove(0);
-                            arrX.remove(0);
-                            arrY.remove(0);
-                            arrT.remove(0);
+                            arrDist.remove(0); // remove 1st value from arrDist
+                            arrX.remove(0);// remove 1st value from arrX
+                            arrY.remove(0);// remove 1st value from arrY
+                            arrT.remove(0);// remove 1st value from arrT
                         }
                     }
                 }
             }
-            if ((loopStarter + rowsTorun_fix) > NosRow && IsrowsToAdd) {
+            if ((loopStarter + rowsTorun_fix) > NosRow && IsrowsToAdd) { // checkIng If loopstarter and rowsTorun_fix become more than NosRow and Its IsrowsToAdd then
 
-                loopStarter = loopStarter + 1;
-                looprunner = NosRow;
-                IsrowsToAdd = false;
+                loopStarter = loopStarter + 1; // Just Increment loopStarter wIth 1
+                looprunner = NosRow; // set looprunner to NosRow
+                IsrowsToAdd = false; // make IsrowsToAdd to false so that ThIs pIece of Code should not run agaIn
             } else {
-                loopStarter = looprunner;
-                looprunner = looprunner + rowsTorun_fix;
+                loopStarter = looprunner; // settIng loopStarter to Looprunner
+                looprunner = looprunner + rowsTorun_fix; //InCremenTIng looprunner wIth rowsTorun_fix
             }
             if (countxy > 0 && duration > FIXATION_DURATION_THRESHOLD) {
-                addfix_Sac_IntoHbase(filename); // This time adding fixation into hbase last time
+                addfix_Sac_IntoHbase(filename); // This time adding fixation or saccade into hbase last time
             }
             addingEyeFeature_inHbase("EyeFeature", filename, FixCount, SacCount, timeIntervalToIncrement); // adding numbers of fixatIon and saccade In eyeFeature table
-            FixCount = 0;
-            SacCount = 0;
+            FixCount = 0; // settIng FixCount to 0 so that Next TIme we have refreshed value
+            SacCount = 0; // settIng SacCount to 0 so that Next TIme we have refreshed value
 
         }
 
@@ -241,40 +245,40 @@ public class ValidateData extends HttpServlet {
 
     public void addfix_Sac_IntoHbase(String filename) {
         if (FlagSccade == true) { // when its Saccade
-            IsStartTimeSac = true;
-            arrColumn.add("StartTimeStamp");
-            arrValue.add(startTimeSac);
-            arrColumn.add("XsacBeginning");
-            arrValue.add(arrXsac.get(0));
-            arrColumn.add("XsacEnd");
-            arrValue.add(arrXsac.get(countxySac - 1));
-            arrColumn.add("SumDuration");
-            arrValue.add(String.valueOf(durationSac));
-            arrColumn.add("YsacBeginning");
-            arrValue.add(arrYsac.get(0));
-            arrColumn.add("YsacEnd");
-            arrValue.add(arrYsac.get(countxySac - 1));
-            SacCount = SacCount + 1;
+            IsStartTimeSac = true; //settIng It to True
+            arrColumn.add("StartTimeStamp"); // addIng StartTimeStamp column INto the arrColumn arrayLIst
+            arrValue.add(startTimeSac); // addIng startTimeSac value INto the arrValue arrayLIst
+            arrColumn.add("XsacBeginning"); // addIng XsacBeginning column INto the arrColumn arrayLIst
+            arrValue.add(arrXsac.get(0)); // addIng zero Index value of  arrXsac INto the arrValue arrayLIst
+            arrColumn.add("XsacEnd"); // addIng XsacEnd column INto the arrColumn arrayLIst
+            arrValue.add(arrXsac.get(countxySac - 1)); // addIng last Index value of  arrXsac INto the arrValue arrayLIst
+            arrColumn.add("SumDuration"); // addIng SumDuration column INto the arrColumn arrayLIst
+            arrValue.add(String.valueOf(durationSac)); // addIng durationSac value INto the arrValue arrayLIst
+            arrColumn.add("YsacBeginning"); // addIng YsacBeginning column INto the arrColumn arrayLIst
+            arrValue.add(arrYsac.get(0)); // addIng zero Index value of  arrYsac INto the arrValue arrayLIst
+            arrColumn.add("YsacEnd"); // addIng YsacEnd column INto the arrColumn arrayLIst
+            arrValue.add(arrYsac.get(countxySac - 1));// addIng last Index value of  arrYsac INto the arrValue arrayLIst
+            SacCount = SacCount + 1; //IncremenTIng SacCount wIth 1
             addScade_inHbase("FixData", filename + "-S-", "SC", arrColumn, arrValue);// Inserting Saccade with adding "S" in file name
-            arrXsac.clear();
-            arrYsac.clear();
-            countxySac = 0;
+            arrXsac.clear(); //clearIng arrXsac
+            arrYsac.clear(); //clearIng arrYsac
+            countxySac = 0; 
             durationSac = 0;
         } else { // When Its fixation
-            IsStartTimefix = true;
-            arrColumn.clear();
+            IsStartTimefix = true; 
+            arrColumn.clear(); 
             arrValue.clear();
-            arrColumn.add("StartTimeStamp");
-            arrValue.add(startTimefix);
-            arrColumn.add("SumX");
-            arrValue.add(String.valueOf(sumX / countxy));
-            arrColumn.add("SumY");
-            arrValue.add(String.valueOf(sumY / countxy));
-            arrColumn.add("SumDuration");
-            arrValue.add(String.valueOf(duration));
-            FixCount = FixCount + 1;
+            arrColumn.add("StartTimeStamp"); // addIng StartTimeStamp column INto the arrColumn arrayLIst
+            arrValue.add(startTimefix); //addIng startTimefix value Into arrValue
+            arrColumn.add("SumX"); // addIng SumX column INto the arrColumn arrayLIst
+            arrValue.add(String.valueOf(sumX / countxy)); //dIvIdIng sumx/countxy and then addIng the result Into arrValue
+            arrColumn.add("SumY"); // addIng SumY column INto the arrColumn arrayLIst
+            arrValue.add(String.valueOf(sumY / countxy)); //dIvIdIng sumY / countxy and then addIng the result Into arrValue
+            arrColumn.add("SumDuration"); // addIng SumDuration column INto the arrColumn arrayLIst
+            arrValue.add(String.valueOf(duration)); // addIng duratIon Into the arrValue
+            FixCount = FixCount + 1;  //IncremenTIng FixCount wIth 1
             addData_inHbase("FixData", filename, "FX", arrColumn, arrValue); /// Inserting Fixtation
-            arrColumn.clear();
+            arrColumn.clear();//clearIng arrColumn
             arrValue.clear();
         }
         countxy = 0;

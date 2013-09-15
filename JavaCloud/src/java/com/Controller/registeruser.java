@@ -28,6 +28,7 @@ public class registeruser extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     }
+    //declarIng all the publIc varIables
     DataClass dc = new DataClass();
     String txtfname, txtemail, txtpass, txtCpass, txtcountry, txtcity, txtadd,
             txtphone, txtmob, txtpostal, txtstate, btnlogin, btnregister,btnsubmit;
@@ -38,6 +39,7 @@ public class registeruser extends HttpServlet {
             0x74, 0x68, 0x69, 0x73, 0x49, 0x73, 0x41, 0x53, 0x65, 0x63, 0x72, 0x65, 0x74, 0x4b, 0x65, 0x79
     };//"thisIsASecretKey";
 
+     // ThIs Is the encrypt functIon for password
     public static String encrypt(String strToEncrypt)
     {
         try
@@ -55,7 +57,7 @@ public class registeruser extends HttpServlet {
         return null;
 
     }
-
+    // ThIs Is the Decrypt functIon for password
     public static String decrypt(String strToDecrypt)
     {
         try
@@ -78,39 +80,37 @@ public class registeruser extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        txtfname = request.getParameter("txtfname");
-        txtemail = request.getParameter("txtemail");
-        txtpass = request.getParameter("txtpass");
-        txtCpass = request.getParameter("txtCpass");
-        txtcountry = request.getParameter("txtcountry");
-        txtcity = request.getParameter("txtcity");
-        txtadd = request.getParameter("txtadd");
-        txtphone = request.getParameter("txtphone");
-        txtmob = request.getParameter("txtmob");
-        txtpostal = request.getParameter("txtpostal");
-        txtstate = request.getParameter("txtstate");
-        btnlogin = request.getParameter("btnlogin");
-        btnregister = request.getParameter("btnregister");
-        btnsubmit = request.getParameter("btnsubmit");
+        txtfname = request.getParameter("txtfname"); // gettIng txtfname value from the request parameter
+        txtemail = request.getParameter("txtemail");// gettIng txtemail value from the request parameter
+        txtpass = request.getParameter("txtpass");// gettIng txtfname value from the request parameter
+        txtCpass = request.getParameter("txtCpass");// gettIng txtpass value from the request parameter
+        txtcountry = request.getParameter("txtcountry");// gettIng txtcountry value from the request parameter
+        txtcity = request.getParameter("txtcity");// gettIng txtcity value from the request parameter
+        txtadd = request.getParameter("txtadd");// gettIng txtadd value from the request parameter
+        txtphone = request.getParameter("txtphone");// gettIng txtphone value from the request parameter
+        txtmob = request.getParameter("txtmob");// gettIng txtmob value from the request parameter
+        txtpostal = request.getParameter("txtpostal");// gettIng txtpostal value from the request parameter
+        txtstate = request.getParameter("txtstate");// gettIng txtstate value from the request parameter
+        btnlogin = request.getParameter("btnlogin");// gettIng btnlogin value from the request parameter
+        btnregister = request.getParameter("btnregister");// gettIng btnregister value from the request parameter
+        btnsubmit = request.getParameter("btnsubmit");// gettIng btnsubmit value from the request parameter
         
-        if ("kill".equalsIgnoreCase(request.getParameter("hdnData"))) {
-            request.getSession().invalidate();
-            response.sendRedirect(request.getContextPath() + "/loginuser.jsp");
+        if ("kill".equalsIgnoreCase(request.getParameter("hdnData"))) { // checkIng the HdnData If Its KIll then kIllIng sessIon
+            request.getSession().invalidate(); //kIllIng the sessIon 
+            response.sendRedirect(request.getContextPath() + "/loginuser.jsp"); //forwardIng Into the logInUser.Jsp
         } else if ("edit".equalsIgnoreCase(request.getParameter("hdnData"))) { // users wants to see hIs profIle
             HttpSession session = request.getSession(false);
             session.setAttribute("hdnData", "edit");
-            getUserDetails(request, response);
+            getUserDetails(request, response); //ReadINg user Data of user profIle
             flagupdate = true;
-            
-
-        }else if ("submit".equalsIgnoreCase(btnsubmit)) { //If login button Is pressed
-            String password=dc.recoverPassword(txtemail);
-            if (!password.equals("")) { // successfull logiN
-                request.setAttribute("password",decrypt(password));
-                request.setAttribute("txtemail",txtemail);
-                RequestDispatcher rd = request.getRequestDispatcher("/password.jsp");
+        }else if ("submit".equalsIgnoreCase(btnsubmit)) { //If recover button Is pressed & user forgets hIs password
+            String password=dc.recoverPassword(txtemail); // recovIng user Password
+            if (!password.equals("")) { // If password Isnot "" then decrypt p/assword and show to the user
+                request.setAttribute("password",decrypt(password)); //decryptIng the password & set Into the attrIbute
+                request.setAttribute("txtemail",txtemail);// set txtEmaIl Into the attrIbute
+                RequestDispatcher rd = request.getRequestDispatcher("/password.jsp"); // forward to the next page
                 rd.forward(request, response);
-            } else { // there Is some error In logIn
+            } else { // emaIl ID Is not correct
                 request.setAttribute("error", "1");
                 RequestDispatcher rd = request.getRequestDispatcher("/password.jsp");
                 rd.forward(request, response);
@@ -125,17 +125,17 @@ public class registeruser extends HttpServlet {
 
             } else { // requIre fIeld Is empty
                 request.setAttribute("error", "1");
-                setAttribute(request);
+                setAttribute(request); //settIng all the attrIbutes to pass to the next page
                 RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
                 rd.forward(request, response);
             }
         } else if ("login".equalsIgnoreCase(btnlogin)) { //If login button Is pressed
 
-            int loginUser=dc.loginUser(txtemail, encrypt(txtpass));
+            int loginUser=dc.loginUser(txtemail, encrypt(txtpass)); // encrypt password and send to check If user Is valId
             if (loginUser > 0) { // successfull logiN
-                HttpSession session = request.getSession(false);
-                session.setAttribute("username", dc.username);
-                session.setAttribute("userId", loginUser);
+                HttpSession session = request.getSession(false); // generate Instance of sessIon 
+                session.setAttribute("username", dc.username); // addIng username Into the sessIon 
+                session.setAttribute("userId", loginUser);  // addIng logInUser Into the sessIon 
                 RequestDispatcher rd = request.getRequestDispatcher("/Dashboard.jsp");
                 rd.forward(request, response);
             } else { // there Is some error In logIn
@@ -155,82 +155,84 @@ public class registeruser extends HttpServlet {
         }
     }
 
+    // regIsterIng user FunctIon
     private void registerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (dc.CheckEmaIl(txtemail) != 0) { //If emaIl already exIsts
-            request.setAttribute("error", "3");
-            setAttribute(request);
+            request.setAttribute("error", "3"); //settIng error Number
+            setAttribute(request); // settIng all the attrIbutes
             RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
             rd.forward(request, response);
         } else {
             result = dc.RegIsteruser_mysql(txtfname, txtemail,
                    encrypt(txtpass), txtcountry, txtstate,
                     txtcity, txtadd, txtmob,
-                    txtphone, txtpostal);
+                    txtphone, txtpostal); // ThIs methOd wIll regIster User Into the Mysql table
 
             if (result == 1) { //iF user iS regIster successfully
                 RequestDispatcher rd = request.getRequestDispatcher("/loginuser.jsp");
                 rd.forward(request, response);
             } else { //if user can not regIster
-                setAttribute(request);
-                request.setAttribute("error", "5");
+                setAttribute(request); // settIng all the attrIbutes
+                request.setAttribute("error", "5"); //settIng error Number
                 RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
                 rd.forward(request, response);
             }
         }
 
     }
-
+    // ThIs funcaton wIll Update the ProfIle of the user
     private void UpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        String Id = String.valueOf(session.getAttribute("userId"));
-        result = dc.UpdateUser_detail(txtfname, Id, txtpass, txtcountry, txtstate, txtcity, txtadd, txtmob, txtphone, txtpostal);
-        if (result == 1) {
-            session.setAttribute("username", txtfname);
-            request.setAttribute("success", "1");
-            request.setAttribute("error", "0");
-            setAttribute(request);
+        HttpSession session = request.getSession(false); // makIng Instance of SessIon
+        String Id = String.valueOf(session.getAttribute("userId")); // gettIng UserId sessIon value and stOrg Into the VaraIale
+        result = dc.UpdateUser_detail(txtfname, Id, txtpass, txtcountry, txtstate, txtcity, txtadd, txtmob, txtphone, txtpostal);// updatIng UserPrfOle
+        if (result == 1) { // If result Is 1
+            session.setAttribute("username", txtfname); //settIng UserName AttrIbutes
+            request.setAttribute("success", "1"); //settIng success AttrIbute
+            request.setAttribute("error", "0"); //settIng error AttrIbute
+            setAttribute(request); // settIng all the attrIbutes
             RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
             rd.forward(request, response);
         } else {
             request.setAttribute("error", "6");
-            setAttribute(request);
+            setAttribute(request); // settIng all the attrIbutes
             RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
             rd.forward(request, response);
         }
     }
 
+    // ThIs funcatIon wIll set all the attrIbutes
     private void setAttribute(HttpServletRequest request) {
-        request.setAttribute("name", txtfname);
-        request.setAttribute("email", txtemail);
-        request.setAttribute("country", txtcountry);
-        request.setAttribute("state", txtstate);
-        request.setAttribute("city", txtcity);
-        request.setAttribute("address", txtadd);
-        request.setAttribute("mobile", txtmob);
-        request.setAttribute("phone", txtphone);
-        request.setAttribute("postal", txtpostal);
+        request.setAttribute("name", txtfname); // settIng attrIbute for name
+        request.setAttribute("email", txtemail); // settIng attrIbute for email
+        request.setAttribute("country", txtcountry);// settIng attrIbute for country
+        request.setAttribute("state", txtstate);// settIng attrIbute for state
+        request.setAttribute("city", txtcity);// settIng attrIbute for city
+        request.setAttribute("address", txtadd);// settIng attrIbute for address
+        request.setAttribute("mobile", txtmob);// settIng attrIbute for mobile
+        request.setAttribute("phone", txtphone);// settIng attrIbute for phone
+        request.setAttribute("postal", txtpostal);// settIng attrIbute for postal
         if(flagupdate){
             request.setAttribute("btnlabel", "1");
             request.setAttribute("hdnData", "edit");
             
         }
     }
-
+    //ThIs funcatIon wIll get All the User DetaIls
     private void getUserDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        Integer userid = Integer.parseInt(session.getAttribute("userId").toString());
-        dc.getUserDetails(userid);
+        Integer userid = Integer.parseInt(session.getAttribute("userId").toString()); // gettIng userID from the sessIon
+        dc.getUserDetails(userid); // GettIng user DetaIls by the gIven ID
         
-        request.setAttribute("name", dc.username);
-        request.setAttribute("email", dc.email);
-        request.setAttribute("country", dc.country);
-        request.setAttribute("state", dc.state);
-        request.setAttribute("city", dc.city);
-        request.setAttribute("address", dc.address);
-        request.setAttribute("mobile", dc.mobileNO);
-        request.setAttribute("phone", dc.phoneNo);
-        request.setAttribute("postal", dc.postalcode);
-        request.setAttribute("btnlabel", "1");
+        request.setAttribute("name", dc.username); // settIng attrIbute for name
+        request.setAttribute("email", dc.email);// settIng attrIbute for email
+        request.setAttribute("country", dc.country);// settIng attrIbute for country
+        request.setAttribute("state", dc.state);// settIng attrIbute for state
+        request.setAttribute("city", dc.city);// settIng attrIbute for city
+        request.setAttribute("address", dc.address);// settIng attrIbute for address
+        request.setAttribute("mobile", dc.mobileNO);// settIng attrIbute for mobile
+        request.setAttribute("phone", dc.phoneNo);// settIng attrIbute for phone
+        request.setAttribute("postal", dc.postalcode);// settIng attrIbute for postal
+        request.setAttribute("btnlabel", "1");// settIng attrIbute for btnlabel
         RequestDispatcher rd = request.getRequestDispatcher("/registeruser.jsp");
         rd.forward(request, response);
 

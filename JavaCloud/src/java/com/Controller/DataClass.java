@@ -65,14 +65,14 @@ public class DataClass {
 
         try {
 
-            HTable table = new HTable(conf, tablename);
-            List<Get> Rowlist = new ArrayList<Get>();
-            for (long a = loopStarter; a <= loopruner - 1; a++) {
-                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a))); //Here I am adding all the numbers of rows that I want to call
+            HTable table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon 
+            List<Get> Rowlist = new ArrayList<Get>(); // makIng arraylIst of Get element
+            for (long a = loopStarter; a <= loopruner - 1; a++) { // runnIng loop as per gIven loopruner by the user
+                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a))); //Here I am readIng all the numbers of rows and adding them Into the arrayLIst
             }
             int hold_a = 0, hold_b = 0;
-            Result[] result = table.get(Rowlist);
-            for (Result r : result) {
+            Result[] result = table.get(Rowlist); // gettIng data from Hbase by GIVEn the Rowlist and result array
+            for (Result r : result) { // runnINg loop untIll result has value
                 for (KeyValue kv : r.raw()) {
                     if (Bytes.toString(kv.getQualifier()).equals("GazePointXLeft") // here I am only showing these specific columns and values
                             || Bytes.toString(kv.getQualifier()).equals("GazePointYLeft")
@@ -82,20 +82,20 @@ public class DataClass {
                             || Bytes.toString(kv.getQualifier()).equals("ValidityRight")
                             || Bytes.toString(kv.getQualifier()).equals("ValidityLeft")
                             || Bytes.toString(kv.getQualifier()).equals("DistanceLeft")) {
-                        if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
+                        if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) { //checkIng If the column are already added
                             ArrayRD_Column.add(new String(kv.getQualifier())); //Here I am adding all the columns
-                            hold_a++;
+                            hold_a++; // IncrementIng hold_a by 1
                         } else if (hold_b == 0) {
-                            ArrayRD_Value.add("/"); // here I add "\" to show that from here New Recrds its started
-                            hold_b = 1;
+                            ArrayRD_Value.add("/"); // here I add "/" to show that from here New Recrds its started
+                            hold_b = 1; //setting hold_b to 1 so that IF condItIon should nt get true
                         } else {
                             if (hold_a == hold_b) {
-                                ArrayRD_Value.add("/"); // here I add "\" to show that from here New Recrds its started
+                                ArrayRD_Value.add("/"); // here I add "/" to show that from here New Recrds its started
                                 hold_b = 0;
                             }
-                            hold_b++;
+                            hold_b++; // IncrementIng hold_b by 1
                         }
-                        ArrayRD_Value.add(new String(kv.getValue())); // here I am adding values 
+                        ArrayRD_Value.add(new String(kv.getValue())); // here I am adding values to ArrayRD_Value array LIST
                     } else if (Bytes.toString(kv.getQualifier()).equals("Timestamp")) { // I am adding time stamp
                         ArrayRD_Time.add(new String(kv.getValue()));
                     }
@@ -108,15 +108,15 @@ public class DataClass {
 
     }
 
-    public String get_MapFile(String tablename, String rowkey, String CF) { // This function will gives single record frm database
+    public String get_MapFile(String tablename, String rowkey, String CF) { // This function will gives record frm database
         String holdvalue = null;
         try {
-            HTable table = new HTable(conf, tablename);
-            Get get = new Get(rowkey.getBytes());
+            HTable table = new HTable(conf, tablename);// assIgIng tablename and confIguratIon 
+            Get get = new Get(rowkey.getBytes()); // assIgIng rowkey to fIltr frm the table
 
-            get.addFamily(CF.getBytes());
-            Result rs = table.get(get);
-            for (KeyValue kv : rs.raw()) {
+            get.addFamily(CF.getBytes()); // addIng column famIly to the fIlter
+            Result rs = table.get(get); // gettIng result frm the database and assIgIng that to the result varIable
+            for (KeyValue kv : rs.raw()) {// runnIng loop as per the value we fInd & storIng It to the varIable
                 holdvalue = new String(kv.getValue());
             }
             table.close();
@@ -128,14 +128,14 @@ public class DataClass {
 
     }
 
-    public void InsertMapRecord(String tablename, String rowkey, String CF, String qualifier, String value) { // TO Insert one record
+    public void InsertMapRecord(String tablename, String rowkey, String CF, String qualifier, String value) { // TO Insert one record In Hbase
 
         try {
-            HTable table = new HTable(conf, tablename);
-            Put put = new Put(Bytes.toBytes(rowkey));
-            put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value));
-            table.put(put);
-            table.close();
+            HTable table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon 
+            Put put = new Put(Bytes.toBytes(rowkey)); // makIng Instance of the Put WIth the rowkey
+            put.add(Bytes.toBytes(CF), Bytes.toBytes(qualifier), Bytes.toBytes(value)); // addIng columnFamIly, Column name and Values Into the Put
+            table.put(put); // InsertIng record Into the table now wIth the Put
+            table.close(); // fInally closIng the table 
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,33 +149,33 @@ public class DataClass {
             {
             } else {
                 loopStarter = 0;
-                String NosRow = get_MapFile(tablename, rowkey, Columnfly);// LD for label data
-                loopruner = Integer.valueOf(NosRow);
+                String NosRow = get_MapFile(tablename, rowkey, Columnfly);// ThIs funcatIon wILL gIves us Nos of Records present In the table In a gIven table,rowkey and Column FamIly 
+                loopruner = Integer.valueOf(NosRow); // assIgIng the result to the varIable
             }
-            table = new HTable(conf, tablename);
+            table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon 
 
-            List<Get> Rowlist = new ArrayList<Get>();
-            for (long a = loopStarter; a <= loopruner - 1; a++) {
-                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
+            List<Get> Rowlist = new ArrayList<Get>(); // makIng arraylIst of Get element
+            for (long a = loopStarter; a <= loopruner - 1; a++) { // runnIng loop as per nos of result we have In loopruner 
+                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a))); //Here I am readIng all the numbers of rows and adding them Into the arrayLIst
             }
             int hold_a = 0, hold_b = 0;
-            Result[] result = table.get(Rowlist);
-            for (Result r : result) {
+            Result[] result = table.get(Rowlist); // gettIng data from Hbase by GIVEn the Rowlist and result array
+            for (Result r : result) { // runnINg loop untIll result has value
                 for (KeyValue kv : r.raw()) {
-                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
-                        ArrayRD_Column.add(new String(kv.getQualifier()));
-                        hold_a++;
+                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) { //checkIng If the column are already added Into the arrayLIst
+                        ArrayRD_Column.add(new String(kv.getQualifier())); //Here I am adding all the columns
+                        hold_a++; // IncrementIng hold_a by 1
                     } else if (hold_b == 0) {
-                        ArrayRD_Value.add("/");
-                        hold_b = 1;
+                        ArrayRD_Value.add("/"); // here I add "/" to show that from here New Recrds its started
+                        hold_b = 1; //setting hold_b to 1 so that IF condItIon should nt get true
                     } else {
                         if (hold_a == hold_b) {
-                            ArrayRD_Value.add("/");
+                            ArrayRD_Value.add("/"); // here I add "/" to show that from here New Recrds its started
                             hold_b = 0;
                         }
-                        hold_b++;
+                        hold_b++; // IncrementIng hold_b by 1
                     }
-                    ArrayRD_Value.add(new String(kv.getValue()));
+                    ArrayRD_Value.add(new String(kv.getValue())); // here I am adding values to ArrayRD_Value array LIST
                 }
             }
             table.close();
@@ -185,7 +185,7 @@ public class DataClass {
 
     }
 
-    //This funcation is just like get_DataHbase but just contain some other setup
+    //This funcation is just like get_DataHbase but It wIll also WrIte Result Into text FIle so that User can download
     public void get_DataHbase_WriteTextFile(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
 
         HTable table = null;
@@ -211,43 +211,43 @@ public class DataClass {
             {
             } else {
                 loopStarter = 0;
-                String NosRow = get_MapFile(tablename, rowkey, Columnfly);// LD for label data
-                loopruner = Integer.valueOf(NosRow);
+                String NosRow = get_MapFile(tablename, rowkey, Columnfly);// ThIs funcatIon wILL gIves us Nos of Records present In the table In a gIven table,rowkey and Column FamIly 
+                loopruner = Integer.valueOf(NosRow); // assIgIng the result to the varIable
             }
-            table = new HTable(conf, tablename);
+            table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon
 
-            List<Get> Rowlist = new ArrayList<Get>();
-            for (long a = loopStarter; a <= loopruner - 1; a++) {
-                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a)));
+            List<Get> Rowlist = new ArrayList<Get>(); // makIng arraylIst of Get element
+            for (long a = loopStarter; a <= loopruner - 1; a++) { // runnIng loop as per gIven loopruner by the user
+                Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a))); //Here I am readIng all the numbers of rows and adding them Into the arrayLIst
             }
             int hold_a = 0, hold_b = 0;
-            Result[] result = table.get(Rowlist);
-            for (Result r : result) {
+            Result[] result = table.get(Rowlist); // gettIng data from Hbase by GIVEn the Rowlist and result array
+            for (Result r : result) { // runnINg loop untIll result has value
                 for (KeyValue kv : r.raw()) {
-                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) {
-                        ArrayRD_Column.add(new String(kv.getQualifier()));
-                        hold_a++;
+                    if (!ArrayRD_Column.contains(new String(kv.getQualifier()))) { //checkIng If the column are already added
+                        ArrayRD_Column.add(new String(kv.getQualifier())); //Here I am adding all the columns
+                        hold_a++; //  // IncrementIng hold_a by 1
                         if (flag.equals("fix") || flag.equals("sac")) { // checking here if it is fix or sac then write into the text file
-                            bufferedWriter.write(new String(kv.getQualifier()) + "\t");
+                            bufferedWriter.write(new String(kv.getQualifier()) + "\t"); // wrItIng values Into TextFIle and also addIng tab space dIstance
                         }
                     } else if (hold_b == 0) {
-                        ArrayRD_Value.add("/");
+                        ArrayRD_Value.add("/"); // here I add "/" to show that from here New Recrds its started
                         flagcolumn = true; // if all the columns are written into the file THEN MAKE VAriable trUE
                         flagline = true; // SETting varaible to true for new line
                         hold_b = 1;
                         if (flag.equals("fix") || flag.equals("sac")) {
-                            bufferedWriter.newLine();
+                            bufferedWriter.newLine(); //addIng new LIne
                         }
                     } else {
 
-                        if (hold_a == hold_b) {
-                            ArrayRD_Value.add("/");
+                        if (hold_a == hold_b) { 
+                            ArrayRD_Value.add("/");// here I add "/" to show that from here New Recrds its started
                             hold_b = 0;
                             if (flag.equals("fix") || flag.equals("sac")) {
                                 bufferedWriter.newLine(); // adding new line into the textfile
                             }
                         }
-                        hold_b++;
+                        hold_b++; // IncrementIng hold_b by 1
                         flagcolumn = true;
                     }
                     ArrayRD_Value.add(new String(kv.getValue()));
@@ -255,7 +255,7 @@ public class DataClass {
                         if (flagcolumn) { // if all the columns are written on the file
                             bufferedWriter.write(holdvalue); // write string variable into the file
                             if (flagline) { // adding new line ONCE
-                                bufferedWriter.newLine();
+                                bufferedWriter.newLine(); // adding new line into the textfile
                                 flagline = false;
                             }
                             bufferedWriter.write(new String(kv.getValue()) + "\t"); // now simply writing value into the file
@@ -266,29 +266,31 @@ public class DataClass {
                     }
                 }
             }
-            table.close();
-            bufferedWriter.close();
+            table.close(); //closIng the table
+            bufferedWriter.close();//closIng the BufferWrIter
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-
+    
+    
     public void getfileNames(String tablename, String CF, String column, LinkedHashMap<String, String> arrls) throws IOException {
-        HTable table = new HTable(conf, tablename);
-        Scan s = new Scan();
-        s.addColumn(Bytes.toBytes(CF), Bytes.toBytes(column));
-        ResultScanner scanner = table.getScanner(s);
-        arrls.put("Select", "Select");
+        HTable table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon 
+        Scan s = new Scan(); // makIng Instance of Scan
+        s.addColumn(Bytes.toBytes(CF), Bytes.toBytes(column)); // addIng columnFamIly and Column Into the Scan
+        ResultScanner scanner = table.getScanner(s); // assIgIng the scanner to scan 
+        arrls.put("Select", "Select"); // addIng select value to the arrayLIst
         try {
-            for (Result rr = scanner.next(); rr != null; rr = scanner.next()) {
-                if (tablename.equals("FixData")) {
-                    if (!new String(rr.getRow()).contains("-S-")) {
-                        arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow()));
+            for (Result rr = scanner.next(); rr != null; rr = scanner.next()) { // runnInt the loop untIl the RR Is not null
+                if (tablename.equals("FixData")) { // If there Is a request for FIXDATA table 
+                    if (!new String(rr.getRow()).contains("-S-")) { // In FIXDATA table I STore two records for fIleName one Is for saccade and another Is for FIxatIon
+                        // In Saccade I add -S- after the FIle name, that's why here I check & only show 
+                        arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow())); // addIng the values Into the ArrayLIst
                     }
                 } else {
-                    arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow()));
+                    arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow())); // addIng the values Into the ArrayLIst
                 }
 
             }
@@ -299,6 +301,8 @@ public class DataClass {
     //////////////////////////////
     //          MY SQL         /// 
     ///////////////////////////////
+    
+    // DeclarIng all the publIc varIable here
     Connection connection = null;
     PreparedStatement preStat = null;
     Statement stat = null;
@@ -308,15 +312,15 @@ public class DataClass {
     public int CheckEmaIl(String email) {
         try {
             int ID = 0;
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver"); //settIng drIver for Mysql
             connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234"); // maKIng connectIon wIth mysql
             preStat = connection
-                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?");
-            preStat.setString(1, email);
-            rs = preStat.executeQuery();
-            while (rs.next()) {
-                ID = Integer.valueOf(rs.getString("Id"));
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?"); // selectIng records from the table
+            preStat.setString(1, email); // assIgIng the parameter to the where column
+            rs = preStat.executeQuery(); // executIng query
+            while (rs.next()) { // runnIng loop untIl value
+                ID = Integer.valueOf(rs.getString("Id")); // assIgIng value to the varIable
             }
             return ID;
         } catch (Exception e) {
@@ -327,15 +331,15 @@ public class DataClass {
     public String getUserDetails(int Id) {
         try {
 
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver"); //settIng drIver for Mysql
             connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234"); // maKIng connectIon wIth mysql
             preStat = connection
-                    .prepareStatement("SELECT * from CloudLogin.tblRegister where ID= ?");
-            preStat.setInt(1, Id);
-            rs = preStat.executeQuery();
-            while (rs.next()) {
-                email = rs.getString("Email");
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where ID= ?");  // selectIng records from the table
+            preStat.setInt(1, Id); // assIgIng the parameter to the where column
+            rs = preStat.executeQuery(); // executIng query
+            while (rs.next()) { // runnIng loop untIl results exIsts
+                email = rs.getString("Email"); // assIgIng value to the varIable
                 username = rs.getString("Fullname");
                 country = rs.getString("Country");
                 state = rs.getString("State");
@@ -346,7 +350,7 @@ public class DataClass {
                 postalcode = rs.getString("PostalCode");
 
             }
-            return email;
+            return email; //returIng result
         } catch (Exception e) {
             return "";
         }
@@ -356,11 +360,11 @@ public class DataClass {
             String city, String address, String mobNum, String phoneNum, String postalcode) {
         try {
             int result = 0;
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver"); //settIng drIver for Mysql
             connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
-            preStat = connection.prepareStatement("insert into tblRegister values(default,?,?,?,?,?,?,?,?,?,?)");
-            preStat.setString(1, name);
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234"); // maKIng connectIon wIth mysql
+            preStat = connection.prepareStatement("insert into tblRegister values(default,?,?,?,?,?,?,?,?,?,?)"); // selectIng records from the table
+            preStat.setString(1, name); // assIgIng the parameter to the where column
             preStat.setString(2, email);
             preStat.setString(3, pass);
             preStat.setString(4, country);
@@ -370,13 +374,13 @@ public class DataClass {
             preStat.setString(8, mobNum);
             preStat.setString(9, phoneNum);
             preStat.setString(10, postalcode);
-            preStat.executeUpdate();
-            if (preStat.getUpdateCount() == 1) {
-                result = 1;
+            preStat.executeUpdate(); // executIng query
+            if (preStat.getUpdateCount() == 1) { //checkIng If the result Is Inserted
+                result = 1; // return 1 where record Is Inserted
             } else {
-                result = 0;
+                result = 0; // else 0
             }
-            return result;
+            return result; // returnIng result
 
         } catch (Exception e) {
             System.out.println("Connection Failed! Check output console");
@@ -390,12 +394,12 @@ public class DataClass {
             String city, String address, String mobNum, String phoneNum, String postalcode) {
         try {
             int result = 0;
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver"); //settIng drIver for Mysql
             connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234"); // maKIng connectIon wIth mysql
             preStat = connection.prepareStatement("update tblRegister set Fullname=?,Country=?,State=?,City=?,"
-                    + "Address=?,MobileNo=?,PhoneNo=?,PostalCode=?,Password=?  where Id=?");
-            preStat.setString(1, name);
+                    + "Address=?,MobileNo=?,PhoneNo=?,PostalCode=?,Password=?  where Id=?"); // selectIng records from the table
+            preStat.setString(1, name); // assIgIng the parameter to the where column
             preStat.setString(2, country);
             preStat.setString(3, state);
             preStat.setString(4, city);
@@ -405,9 +409,9 @@ public class DataClass {
             preStat.setString(8, postalcode);
             preStat.setString(9, pass);
             preStat.setString(10, Id);
-            preStat.executeUpdate();
-            if (preStat.getUpdateCount() == 1) {
-                result = 1;
+            preStat.executeUpdate(); // executIng query
+            if (preStat.getUpdateCount() == 1) {  //checkIng If the result Is Inserted
+                result = 1; // return 1 where record Is Inserted
             } else {
                 result = 0;
             }
@@ -424,20 +428,20 @@ public class DataClass {
     public int loginUser(String email, String password) {
         try {
             int ID = 0;
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver"); //settIng drIver for Mysql
             connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234"); // maKIng connectIon wIth mysql
             preStat = connection
-                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ? and Password= ?");
-            preStat.setString(1, email);
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ? and Password= ?"); // selectIng records from the table
+            preStat.setString(1, email); // assIgIng the parameter to the where column
             preStat.setString(2, password);
-            rs = preStat.executeQuery();
-            while (rs.next()) {
-                ID = Integer.valueOf(rs.getString("Id"));
+            rs = preStat.executeQuery(); // executIng query
+            while (rs.next()) { // runnIng loop untIl results exIsts
+                ID = Integer.valueOf(rs.getString("Id")); // assIgIng value to the varIable
                 username = rs.getString("Fullname");
 
             }
-            return ID;
+            return ID; //returnIng the ID
         } catch (Exception e) {
             return 0;
         }
@@ -446,16 +450,16 @@ public class DataClass {
      public String recoverPassword(String email) {
         try {
             String pass = "";
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver"); //settIng drIver for Mysql
             connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234");
+                    .getConnection("jdbc:mysql://localhost:3306/CloudLogin", "root", "Sa1234"); // maKIng connectIon wIth mysql
             preStat = connection
-                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?");
-            preStat.setString(1, email);
-            rs = preStat.executeQuery();
-            while (rs.next()) {
+                    .prepareStatement("SELECT * from CloudLogin.tblRegister where Email= ?"); // selectIng records from the table
+            preStat.setString(1, email); // assIgIng the parameter to the where column
+            rs = preStat.executeQuery(); // executIng query
+            while (rs.next()) { // runnIng loop untIl results exIsts
                 
-                pass = rs.getString("Password");
+                pass = rs.getString("Password"); // assIgIng value to the varIable
 
             }
             return pass;

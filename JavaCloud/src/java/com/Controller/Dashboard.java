@@ -38,72 +38,73 @@ public class Dashboard extends HttpServlet {
     ArrayList<String> arrTime = new ArrayList<String>();
     ArrayList<String> arrColumn_sac = new ArrayList<String>();
     ArrayList<String> arrValue_sac = new ArrayList<String>();
-    String fileName = "", hdnselectvalue = "";
+    String UserId,fileName = "", hdnselectvalue = "";
     private static final int BYTES_DOWNLOAD = 1024;
+    
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     }
-    String UserId;
+    
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        Integer ID = Integer.parseInt(session.getAttribute("userId").toString());
-        UserId = String.valueOf(ID);
+        HttpSession session = request.getSession(false); // intializing session
+        Integer ID = Integer.parseInt(session.getAttribute("userId").toString()); // storing sessIon value Into the ID VarIable 
+        UserId = String.valueOf(ID);// convertIng ID Into StrIng
 
-        String hdnData = request.getParameter("hdnData");
-        String btnRawsearch = request.getParameter("btnRawsearch");
-        String btnValidsearch = request.getParameter("btnValidsearch");
-        String btnFixsearch = request.getParameter("btnFixsearch");
-        String btnEFsearch = request.getParameter("btnEFsearch");
+        String hdnData = request.getParameter("hdnData"); // gettIng value of Hidden hdnData frm Jsp page Into servlet
+        String btnRawsearch = request.getParameter("btnRawsearch");// gettIng value of button btnRawsearch frm Jsp page Into servlet
+        String btnValidsearch = request.getParameter("btnValidsearch");// gettIng value of button btnValidsearch frm Jsp page Into servlet
+        String btnFixsearch = request.getParameter("btnFixsearch");// gettIng value of button btnFixsearch frm Jsp page Into servlet
+        String btnEFsearch = request.getParameter("btnEFsearch");// gettIng value of button btnEFsearch frm Jsp page Into servlet
 
-        Alrd_column.clear();
-        Alrd_value.clear();
-        arrTime.clear();
-        arrColumn_sac.clear();
-        arrValue_sac.clear();
-        if (hdnData != null && !hdnData.equals("")) {
+        Alrd_column.clear(); // clearing the arraylIst
+        Alrd_value.clear(); // clearing the arraylIst
+        arrTime.clear();  // clearing the arraylIst
+        arrColumn_sac.clear(); // clearing the arraylIst
+        arrValue_sac.clear(); // clearing the arraylIst
+        if (hdnData != null && !hdnData.equals("")) { //checkIng the hdndata value that If Its null or not
             if (arrls.size() != 0) {
-                arrls.clear();
+                arrls.clear(); // clearing the arraylIst
             }
         }
-        if ("RD".equalsIgnoreCase(hdnData)) {
-            dc.getfileNames("RawData", "MF", UserId, arrls);
-            request.setAttribute("arrls", arrls);
+        if ("RD".equalsIgnoreCase(hdnData)) { // If rawData page Is clIcked
+            dc.getfileNames("RawData", "MF", UserId, arrls); // get all the fIle names of the raw Data as per user Id
+            request.setAttribute("arrls", arrls); // set array lIst to pass to the next page
             request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", Alrd_value);
             RequestDispatcher rd = request.getRequestDispatcher("/RawDataList.jsp"); // redirecting to the next page
             rd.forward(request, response);
-        } else if ("VD".equalsIgnoreCase(hdnData)) {
-            dc.getfileNames("ValidData", "MD", UserId, arrls);
-            request.setAttribute("arrls", arrls);
+        } else if ("VD".equalsIgnoreCase(hdnData)) { // If ValId Data page Is clIcked
+            dc.getfileNames("ValidData", "MD", UserId, arrls); // get all the fIle names of the ValId Data as per user Id
+            request.setAttribute("arrls", arrls); // set array lIst to pass to the next page
             request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", Alrd_value);
             request.setAttribute("arrTime", arrTime);
             RequestDispatcher rd = request.getRequestDispatcher("/ValidDataList.jsp"); // redirecting to the next page
             rd.forward(request, response);
-        } else if ("FD".equalsIgnoreCase(hdnData)) {
-            dc.getfileNames("FixData", "MD", UserId, arrls);
-            request.setAttribute("arrls", arrls);
+        } else if ("FD".equalsIgnoreCase(hdnData)) { // If Fixation Data page Is clIcked
+            dc.getfileNames("FixData", "MD", UserId, arrls); // get all the fIle names of the Fixation Data as per user Id
+            request.setAttribute("arrls", arrls); // set array lIst to pass to the next page
             request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", Alrd_value);
             request.setAttribute("Alrd_lbl_column", arrColumn_sac); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_lbl_value", arrValue_sac);
             RequestDispatcher rd = request.getRequestDispatcher("/FixDataList.jsp"); // redirecting to the next page
             rd.forward(request, response);
-        } else if ("EF".equalsIgnoreCase(hdnData)) { // Eye Feature
-            dc.getfileNames("EyeFeature", "MD", UserId, arrls);
-            request.setAttribute("arrls", arrls);
+        } else if ("EF".equalsIgnoreCase(hdnData)) { // // If Eye Feature page Is clIcked
+            dc.getfileNames("EyeFeature", "MD", UserId, arrls); // get all the fIle names of the Eye Feature as per user Id
+            request.setAttribute("arrls", arrls); // set array lIst to pass to the next page
             request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
             request.setAttribute("Alrd_value", Alrd_value);
             RequestDispatcher rd = request.getRequestDispatcher("/EyeFeatureList.jsp"); // redirecting to the next page
             rd.forward(request, response);
         } else if ("kill".equalsIgnoreCase(hdnData)) {
-            request.getSession().invalidate();
+            request.getSession().invalidate(); // killiNg session here
             response.sendRedirect(request.getContextPath() + "/loginuser.jsp");
         } else if ("DF".equalsIgnoreCase(hdnData)) { // If It Is fIxatIon FIle
             DownloadFile(response, hdnData); // download FixatIon FILe
@@ -112,13 +113,13 @@ public class Dashboard extends HttpServlet {
         }
 
         if ("Raw".equalsIgnoreCase(btnRawsearch)) {
-            RawData(request, response);
+            RawData(request, response); // reading and dIsplayIng raw data well btnRawsearch Is clIcked
         } else if ("Valid".equalsIgnoreCase(btnValidsearch)) {
-            ValidData(request, response);
+            ValidData(request, response); // reading and dIsplayIng Valid data well btnValidsearch Is clIcked
         } else if ("Fix".equalsIgnoreCase(btnFixsearch)) {
-            FixSaccData(request, response);
+            FixSaccData(request, response); // reading and dIsplayIng Fix data well btnFixsearch Is clIcked
         } else if ("EyeFeature".equalsIgnoreCase(btnEFsearch)) {
-            EyeFeature(request, response);
+            EyeFeature(request, response); // reading and dIsplayIng EyeFeature data well btnEFsearch Is clIcked
         }
 
 
@@ -127,36 +128,36 @@ public class Dashboard extends HttpServlet {
     private void DownloadFile(HttpServletResponse response, String filetype) throws FileNotFoundException, IOException {
         response.setContentType("text/plain");
         File file;
-        if (filetype.equals("DF")) {
+        if (filetype.equals("DF")) { // If download FIxatIon fIle Is clIcked
             response.setHeader("Content-Disposition",
                     "attachment;filename=Fixation.txt");
-            file = new File(getServletContext().getRealPath("/") + "download/" + "fix.txt");
-        } else {
+            file = new File(getServletContext().getRealPath("/") + "download/" + "fix.txt"); // gettIng path to download fIxatIon FIle
+        } else { // else download saccade fIle
             response.setHeader("Content-Disposition",
                     "attachment;filename=Saccade.txt");
-            file = new File(getServletContext().getRealPath("/") + "download/" + "sac.txt");
+            file = new File(getServletContext().getRealPath("/") + "download/" + "sac.txt"); // gettIng path to download saccade FIle
         }
 
-        FileInputStream fileIn = new FileInputStream(file);
+        FileInputStream fileIn = new FileInputStream(file); // assIgIng the FIle to fIleInput sream
         //ServletOutputStream out = response.getOutputStream();
         OutputStream out = response.getOutputStream();
 
-        byte[] outputByte = new byte[4096];
+        byte[] outputByte = new byte[4096]; // assIngIng bytes 
         int byteRead;
-        while ((byteRead = fileIn.read(outputByte, 0, 4096)) != -1) {
-            out.write(outputByte, 0, byteRead);
+        while ((byteRead = fileIn.read(outputByte, 0, 4096)) != -1) { // readIng FIle bytes UntIl bytes exIsts
+            out.write(outputByte, 0, byteRead); // wrItIng bytes Into the textFIle
         }
-        fileIn.close();
-        out.flush();
-        out.close();
+        fileIn.close();     // closIng fIle
+        out.flush(); // flushIng fIle
+        out.close(); // closIng output stream
     }
 
     private void RawData(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        hdnselectvalue = request.getParameter("hdnselectvalue");
-        fileName = request.getParameter("hdnselectText");
+        hdnselectvalue = request.getParameter("hdnselectvalue"); // gettIng total numbers of rawData rows from the textFIle 
+        fileName = request.getParameter("hdnselectText"); // settIng textFIle of RawData Into the FIle name
         dc.get_DataHbase_common(0, 1000, "ok", UserId, "RawData", fileName, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
-        request.setAttribute("fileName", hdnselectvalue);
+        request.setAttribute("fileName", hdnselectvalue); // setting hdnselectvalue for forwarding data to next page
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
         request.setAttribute("Alrd_value", Alrd_value);
@@ -166,10 +167,10 @@ public class Dashboard extends HttpServlet {
 
     private void ValidData(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        hdnselectvalue = request.getParameter("hdnselectvalue");
-        fileName = request.getParameter("hdnselectText");
-        dc.get_DataHbase(0, 1000, UserId, "ValidData", fileName, Alrd_column, Alrd_value, arrTime);
-        request.setAttribute("fileName", hdnselectvalue);
+        hdnselectvalue = request.getParameter("hdnselectvalue");// gettIng total numbers of ValId Data rows from the textFIle 
+        fileName = request.getParameter("hdnselectText"); // settIng textFIle of ValId Data Into the FIle name
+        dc.get_DataHbase(0, 1000, UserId, "ValidData", fileName, Alrd_column, Alrd_value, arrTime); // getting valId data from Hbase
+        request.setAttribute("fileName", hdnselectvalue); // setting hdnselectvalue for forwarding data to next page
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
         request.setAttribute("Alrd_value", Alrd_value);
@@ -180,12 +181,12 @@ public class Dashboard extends HttpServlet {
 
     private void FixSaccData(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         DataClass dc = new DataClass(getServletContext().getRealPath("/"));
-        hdnselectvalue = request.getParameter("hdnselectvalue");
-        fileName = request.getParameter("hdnselectText");
+        hdnselectvalue = request.getParameter("hdnselectvalue"); // gettIng total numbers of fIxatIon & Saccade data rows from the textFIle 
+        fileName = request.getParameter("hdnselectText"); // settIng textFIle of fIxatIon & Saccade Data Into the FIle name
 
         dc.get_DataHbase_WriteTextFile(0, 0, "fix", UserId, "FixData", fileName, "MD", Alrd_column, Alrd_value);//reading fixation
         dc.get_DataHbase_WriteTextFile(0, 0, "sac", UserId, "FixData", fileName + "-S-", "MD", arrColumn_sac, arrValue_sac);// Adding -S- in the filename to make it varry from fix and reading Saccade
-        request.setAttribute("fileName", hdnselectvalue);
+        request.setAttribute("fileName", hdnselectvalue); // setting hdnselectvalue for forwarding data to next page
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
         request.setAttribute("Alrd_value", Alrd_value);
@@ -197,10 +198,10 @@ public class Dashboard extends HttpServlet {
 
     private void EyeFeature(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
-        hdnselectvalue = request.getParameter("hdnselectvalue");
-        fileName = request.getParameter("hdnselectText");
-        dc.get_DataHbase_common(0, 1000, "", UserId, "EyeFeature", fileName, "MD", Alrd_column, Alrd_value); // getting raw data from Hbase
-        request.setAttribute("fileName", hdnselectvalue);
+        hdnselectvalue = request.getParameter("hdnselectvalue"); // gettIng total numbers of eyeFeature rows from the textFIle 
+        fileName = request.getParameter("hdnselectText"); // settIng textFIle of eyeFeature Data Into the FIle name
+        dc.get_DataHbase_common(0, 1000, "", UserId, "EyeFeature", fileName, "MD", Alrd_column, Alrd_value); // getting eyefeature from Hbase
+        request.setAttribute("fileName", hdnselectvalue); // setting hdnselectvalue for forwarding data to next page
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
         request.setAttribute("Alrd_value", Alrd_value);
