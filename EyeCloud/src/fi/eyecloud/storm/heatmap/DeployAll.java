@@ -18,7 +18,7 @@ public class DeployAll {
 	public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException {
 		// TODO Auto-generated method stub
 		
-		int nodes = Integer.parseInt(args[0]);
+		//int nodes = Integer.parseInt(args[0]);
 		
 		Config conf = new Config();
 		

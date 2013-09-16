@@ -17,6 +17,7 @@ public class AccuracyRate {
 	 */
 	private int MF;
 	private int totalDuration;
+	private long delay;
 	private String onlineFile;
 	private String offlineFile;
 	
@@ -25,6 +26,7 @@ public class AccuracyRate {
 		AFN = 0;
 		AFD = 0;
 		MF	= 0;
+		delay = 0;
 		totalDuration = 0;
 		onlineFile = online;
 		offlineFile = offline;
@@ -38,6 +40,7 @@ public class AccuracyRate {
 		while (online.readNextLine() != null){
 			AFN ++;
 			totalDuration += Integer.parseInt(online.getField(Constants.Duration));
+			delay += Long.parseLong(online.getField(Constants.Delay));
 		}
 		
 		AFD = (float)totalDuration / AFN;
@@ -48,15 +51,20 @@ public class AccuracyRate {
 		ReadTextFile offline = new ReadTextFile(offlineFile);
 		
 		while (online.readNextLine() != null){
+			int check = 0;
 			while (offline.readNextLine() != null){
 				if (Integer.parseInt(online.getField(Constants.Timestamp)) == 
 					Integer.parseInt(offline.getField(Constants.Timestamp)) &&
 					Integer.parseInt(online.getField(Constants.Duration)) == 
 					Integer.parseInt(offline.getField(Constants.Duration)) ){
 					MF++;
+					check = 1;
 					break;
 				}
 			}
+			if (check == 0)
+				System.out.println(online.getField(Constants.Timestamp) + " - " + online.getField(Constants.Duration));
+				
 			// Reset offline file result
 			offline.resetFile();
 		}
@@ -78,15 +86,20 @@ public class AccuracyRate {
 		return MF;
 	}
 	
+	public float getDelay(){
+		return (float)delay/(float)AFN;
+	}
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		AccuracyRate test = new AccuracyRate("data/17June_2000_Merge_Cloud", "data/17JuneResult.txt");
+		AccuracyRate test = new AccuracyRate("data/17June_1000_Cloud", "data/17JuneResult.txt");
 		System.out.println("FN: " + test.getAFN());
 		System.out.println("FD: " + test.getTotalDuration());
 		System.out.println("MF: " + test.getMF());
+		System.out.println("Delay: " + test.getDelay());
 	}
 
 }
