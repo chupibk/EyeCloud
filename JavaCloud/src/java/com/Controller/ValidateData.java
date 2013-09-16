@@ -288,20 +288,21 @@ public class ValidateData extends HttpServlet {
 
     }
 
-    public void addingEyeFeature_inHbase(String tablename, String rowKey, int FixCount, int SacCount, int time) {
+    //ThIs functIon wIll Insert nos of FIxaTIon & Saccade taken place In each round
+    public void addingEyeFeature_inHbase(String tablename, String rowKey, int FixCount, int SacCount, int time) { 
         try {
-            HTable table = new HTable(conf, tablename);
-            table.setAutoFlush(false);
-            table.setWriteBufferSize(1024 * 1024 * 12);
-            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterEF)); //userId + Filename+rownumber
-            put.add(Bytes.toBytes("FS"), Bytes.toBytes("GivenTime"), Bytes.toBytes(String.valueOf(time)));
-            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersofFixation"), Bytes.toBytes(String.valueOf(FixCount)));
-            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersofSaccade"), Bytes.toBytes(String.valueOf(SacCount)));
-            table.put(put);
+            HTable table = new HTable(conf, tablename);// assIgIng tablename and confIguratIon 
+            table.setAutoFlush(false); //settIng table to autoflush false
+            table.setWriteBufferSize(1024 * 1024 * 12); // settIng buffer sIze
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterEF)); // makIng Instance of the Put WIth the rowkey, rowkey format Is userId + Filename+rownumber
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("GivenTime"), Bytes.toBytes(String.valueOf(time)));// addIng columnFamIly, Column name and Values Into the Put
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersofFixation"), Bytes.toBytes(String.valueOf(FixCount))); // addIng columnFamIly, Column name and Values Into the Put
+            put.add(Bytes.toBytes("FS"), Bytes.toBytes("NumbersofSaccade"), Bytes.toBytes(String.valueOf(SacCount))); // addIng columnFamIly, Column name and Values Into the Put
+            table.put(put); // InsertIng record Into the table now wIth the Put
             counterEF++;
             timeIntervalToIncrement = timeIntervalToIncrement + timeInterval;
             table.flushCommits();
-            table.close();
+            table.close(); // fInally closIng the table 
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -312,82 +313,82 @@ public class ValidateData extends HttpServlet {
         HTable table = null;
         try {
             counter = 0;
-            long NosRow = Integer.valueOf(dc.get_MapFile("RawData", filename, "MF"));
+            long NosRow = Integer.valueOf(dc.get_MapFile("RawData", filename, "MF")); //gettIng nos of rows of RawData 
             int vLindex, vRindex, dLindex, dRindex, gpXLindex,
-                    gpXRindex, gpYLindex, gpYRindex;
-            Double DLeft, DRight, gpXleft, gpYleft;
-            int DLlength, DRlenght;
-            boolean breakflag;
-            table = new HTable(conf, "RawData");
-            for (long a = 0; a <= NosRow - 1; a++) {
-                breakflag = false;
-                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a));
-                Result result = table.get(get);
-                arrColumn.clear();
-                arrValue.clear();
-                for (KeyValue kv : result.raw()) {
-                    arrColumn.add(new String(kv.getQualifier()));
-                    arrValue.add(new String(kv.getValue()));
+                    gpXRindex, gpYLindex, gpYRindex; // declarIng varIables of gettIng Index Of columns
+            Double DLeft, DRight, gpXleft, gpYleft; //declarIng varIables of keepIng the double values
+            int DLlength, DRlenght; 
+            boolean breakflag; // ThIs flag Is used to check wheater data Is valId or not, If Its true It means Data Is InvaLId and data wIll not be Inserted  In Hbase, else Its Inserted
+            table = new HTable(conf, "RawData"); // assIgIng tablename and confIguratIon 
+            for (long a = 0; a <= NosRow - 1; a++) { //runnIng loop untIl nosRow
+                breakflag = false; // make It false In every cIrcle
+                Get get = new Get(Bytes.toBytes(UserId + ":" + filename + ":" + a)); // assIgIng rowkey to fIltr frm the table
+                Result result = table.get(get);// gettIng result frm the database and assIgIng that to the result varIable
+                arrColumn.clear(); // clearIng the arrcolumn
+                arrValue.clear(); // clearIng the arrvalue
+                for (KeyValue kv : result.raw()) { // runnIng loop as per the value we fInd & storIng It to the varIable
+                    arrColumn.add(new String(kv.getQualifier())); // addIng column Into arrColumn arrayLIst
+                    arrValue.add(new String(kv.getValue()));// addIng value Into arrValue arrayLIst
                 }
-                vLindex = arrColumn.indexOf("ValidityLeft"); // getting Index of the speciFied column
-                vRindex = arrColumn.indexOf("ValidityRight"); // getting Index of the speciFied column
-                dLindex = arrColumn.indexOf("DistanceLeft");
-                dRindex = arrColumn.indexOf("DistanceRight");
-                gpXLindex = arrColumn.indexOf("GazePointXLeft");
-                gpXRindex = arrColumn.indexOf("GazePointXRight");
-                gpYLindex = arrColumn.indexOf("GazePointYLeft");
-                gpYRindex = arrColumn.indexOf("GazePointYRight"); // getting Index of the speciFied column
+                vLindex = arrColumn.indexOf("ValidityLeft"); // getting Index of the ValidityLeft column from arrColumn arrayLIst
+                vRindex = arrColumn.indexOf("ValidityRight");// getting Index of the ValidityRight column from arrColumn arrayLIst
+                dLindex = arrColumn.indexOf("DistanceLeft");// getting Index of the DistanceLeft column from arrColumn arrayLIst
+                dRindex = arrColumn.indexOf("DistanceRight");// getting Index of the DistanceRight column from arrColumn arrayLIst
+                gpXLindex = arrColumn.indexOf("GazePointXLeft");// getting Index of the GazePointXLeft column from arrColumn arrayLIst
+                gpXRindex = arrColumn.indexOf("GazePointXRight");// getting Index of the GazePointXRight column from arrColumn arrayLIst
+                gpYLindex = arrColumn.indexOf("GazePointYLeft");// getting Index of the GazePointYLeft column from arrColumn arrayLIst
+                gpYRindex = arrColumn.indexOf("GazePointYRight"); // getting Index of the GazePointYRight column from arrColumn arrayLIst
 
-                if (arrValue.get(vLindex).equals("4") && arrValue.get(vRindex).equals("4")) // if L & R=4 then skip the line
+                if (arrValue.get(vLindex).equals("4") && arrValue.get(vRindex).equals("4")) // if ValidityLeft & ValidityRight=4 then data Is totally InvalId, It means we have to skip thIs record
                 {
-                    breakflag = true;
+                    breakflag = true; // settIng thIs flag to true, so that ThIs record Is not Inserted In Hbase
                 } else if (Double.parseDouble(arrValue.get(gpXLindex).equals("") ? "0" : arrValue.get(gpXLindex)) < 1) // For Validity if XLeft is less than 1
                 {
                     if (gxleft != null && !gxleft.equals("")) {
-                        breakflag = true;
+                        breakflag = true; // settIng thIs flag to true, so that ThIs record Is not Inserted In Hbase
                     }
                 } else if (Double.parseDouble(arrValue.get(gpXRindex).equals("") ? "0" : arrValue.get(gpXRindex)) < 1) // // For Validity if XRIGHT is less than 1
                 {
                     if (gxright != null && !gxright.equals("")) {
-                        breakflag = true;
+                        breakflag = true; // settIng thIs flag to true, so that ThIs record Is not Inserted In Hbase
                     }
                 } else if (Double.parseDouble(arrValue.get(gpYLindex).equals("") ? "0" : arrValue.get(gpYLindex)) < 1) // For Validity if YLeft is less than 1
                 {
                     if (gyleft != null && !gyleft.equals("")) {
-                        breakflag = true;
+                        breakflag = true; // settIng thIs flag to true, so that ThIs record Is not Inserted In Hbase
                     }
 
                 } else if (Double.parseDouble(arrValue.get(gpYRindex).equals("") ? "0" : arrValue.get(gpYRindex)) < 1) // For Validity if YRGHT is less than 1
                 {
                     if (gyright != null && !gyright.equals("")) {
-                        breakflag = true;
+                        breakflag = true; // settIng thIs flag to true, so that ThIs record Is not Inserted In Hbase
                     }
-                } else if ((arrValue.get(vLindex).equals("0") || arrValue.get(vLindex).equals("3")) && arrValue.get(vRindex).equals("4")) // For Validity L=0 or 3 & then Update R
+                } else if ((arrValue.get(vLindex).equals("0") || arrValue.get(vLindex).equals("3")) && arrValue.get(vRindex).equals("4")) // For Validity L=0 or 3 & then Update R, wIth the values OF Left
                 {
-                    arrValue.set(gpXRindex, arrValue.get(gpXLindex)); //updating  XRIght with Xleft
-                    arrValue.set(gpYRindex, arrValue.get(gpYLindex));
-                    arrValue.set(dRindex, arrValue.get(dLindex));
+                    arrValue.set(gpXRindex, arrValue.get(gpXLindex)); //updating gazePoInt XRIght with Xleft
+                    arrValue.set(gpYRindex, arrValue.get(gpYLindex));//updating  gazePoInt YRIght with Yleft
+                    arrValue.set(dRindex, arrValue.get(dLindex));//updating  dIstance RIght with dIstance left
 
-                } else if (arrValue.get(vLindex).equals("4") && (arrValue.get(vRindex).equals("0") || arrValue.get(vRindex).equals("3"))) // For Validity R=0 or 3 & then Update L
+                } else if (arrValue.get(vLindex).equals("4") && (arrValue.get(vRindex).equals("0") || arrValue.get(vRindex).equals("3"))) // For Validity R=0 or 3 & then Update L, wIth the values OF RIGHT
                 {
-                    arrValue.set(gpXLindex, arrValue.get(gpXRindex));
-                    arrValue.set(gpYLindex, arrValue.get(gpYRindex));
-                    arrValue.set(dLindex, arrValue.get(dRindex));
+                    arrValue.set(gpXLindex, arrValue.get(gpXRindex)); //updating gazePoInt Xleft with XRIght
+                    arrValue.set(gpYLindex, arrValue.get(gpYRindex));//updating gazePoInt yleft with yRIght
+                    arrValue.set(dLindex, arrValue.get(dRindex));//updating DIStance left with DIStance RIght
 
                 } else if ((arrValue.get(vLindex).equals("") && arrValue.get(vRindex).equals(""))) // If row is blank or contains garbage
                 {
-                    breakflag = true;
+                    breakflag = true;// settIng thIs flag to true, so that ThIs record Is not Inserted In Hbase
                 }
-                if (!breakflag) {
+                if (!breakflag) { // IF ITs false 
                     DLeft = new Double(arrValue.get(dLindex)); //converting left Distance into cm
-                    DLlength = (int) (Math.log10(DLeft.intValue()) + 1);
-                    if (DLlength != 2) {
-                        DLeft = DLeft / 10;
+                    DLlength = (int) (Math.log10(DLeft.intValue()) + 1); // gettIng length of the Dleft
+                    if (DLlength != 2) { // If Its Not equal to 2 then 
+                        DLeft = DLeft / 10; //dIvIde DLeft by 10
                     }
-                    DRight = new Double(arrValue.get(dRindex)); //converting left Distance into cm
-                    DRlenght = (int) (Math.log10(DRight.intValue()) + 1);
-                    if (DRlenght != 2) {
-                        DRight = DRight / 10;
+                    DRight = new Double(arrValue.get(dRindex)); //converting RIght Distance into cm
+                    DRlenght = (int) (Math.log10(DRight.intValue()) + 1); // gettIng length of the DRIGHT
+                    if (DRlenght != 2) {// If Its Not equal to 2 then 
+                        DRight = DRight / 10;//dIvIde DRight by 10
                     }
 
                     arrValue.set(dLindex, String.valueOf(Math.round(DLeft))); //roundIng Left dIstance 
@@ -406,31 +407,31 @@ public class ValidateData extends HttpServlet {
                     }
 
                     arrColumn.add("AvgGxleft");
-                    if ((gxleft != null && !gxleft.equals("")) && (gxright != null && !gxright.equals(""))) { //same as above
-                        gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2;
+                    if ((gxleft != null && !gxleft.equals("")) && (gxright != null && !gxright.equals(""))) { // checkIng If users select Both gazePoIntXLeft & gazePoIntXRIGHT dIstance
+                        gpXleft = (Double.valueOf(arrValue.get(gpXLindex)) + Double.valueOf(arrValue.get(gpXRindex))) / 2; // nw takIng avg gazePoIntXLeft & gazePoIntXRIGHT & addIng Into the lIst
                         arrValue.add(String.valueOf(Math.round(gpXleft)));
-                    } else if (gxleft != null && !gxleft.equals("")) { //same as above
+                    } else if (gxleft != null && !gxleft.equals("")) { //when user select gazePoIntXRIGHT
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXLindex)))));
-                    } else if (gxright != null && !gxright.equals("")) { //same as above
+                    } else if (gxright != null && !gxright.equals("")) { //when user select gazePoIntXLeft
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpXRindex)))));
                     }
 
                     arrColumn.add("AvgGyleft");
-                    if ((gyleft != null && !gyleft.equals("")) && (gyright != null && !gyright.equals(""))) { //same as above
-                        gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2;
+                    if ((gyleft != null && !gyleft.equals("")) && (gyright != null && !gyright.equals(""))) { // checkIng If users select Both gazePoIntYLeft & gazePoIntYRIGHT dIstance
+                        gpYleft = (Double.valueOf(arrValue.get(gpYLindex)) + Double.valueOf(arrValue.get(gpYRindex))) / 2; // nw takIng avg gazePoIntYLeft & gazePoIntYRIGHT & addIng Into the lIst
                         arrValue.add(String.valueOf(Math.round(gpYleft)));
-                    } else if (gyleft != null && !gyleft.equals("")) { //same as above
+                    } else if (gyleft != null && !gyleft.equals("")) { //when user select gazePoIntYRIGHT
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYLindex)))));
-                    } else if (gyright != null && !gyright.equals("")) { //same as above
+                    } else if (gyright != null && !gyright.equals("")) { //when user select gazePoIntYLeft
                         arrValue.add(String.valueOf(Math.round(Double.valueOf(arrValue.get(gpYRindex)))));
                     }
 
-                    addData_inHbase("ValidData", filename, "VD", arrColumn, arrValue); //addIng Into Hbase 
+                    addData_inHbase("ValidData", filename, "VD", arrColumn, arrValue); //now addIng valIdated Data Into Hbase 
 
                 }
             }
             table.close();
-            dc.InsertMapRecord("ValidData", filename, "MD", UserId, String.valueOf(counter)); // here I am storig nos of rows of ValIDData Into MD(Map Data) column FamIly
+            dc.InsertMapRecord("ValidData", filename, "MD", UserId, String.valueOf(counter)); // here I am storig nos of rows Into table ValIDData under MD(Map Data) column FamIly
         } catch (ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
 
@@ -439,39 +440,41 @@ public class ValidateData extends HttpServlet {
 
     }
 
+    // ThIs FuncatIon Is Used For addIng record In Hbase
     public void addData_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
 
         try {
-            HTable table = new HTable(conf, tablename);
+            HTable table = new HTable(conf, tablename);// assIgIng tablename and confIguratIon 
             table.setAutoFlush(false);
             table.setWriteBufferSize(1024 * 1024 * 12);
-            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counter)); //userId + Filename+rownumber
-            for (int a = 0; a <= arrColumn.size() - 1; a++) {
-                put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counter));// makIng Instance of the Put WIth the rowkey, WIth the followIng rowKey //userId + Filename+rownumber
+            for (int a = 0; a <= arrColumn.size() - 1; a++) { // runnIng loop UntIll arrCOlumn sIze
+                put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a))); // addIng columnfamIly, column and value Into the Put
             }
-            table.put(put);
-            counter++;
-            table.flushCommits();
-            table.close();
+            table.put(put); // InsertIng record Into the table now wIth the Put
+            counter++; // IncrementIng counter In each Call of thIs funcatIOn
+            table.flushCommits();// flushIng the commIt
+            table.close(); // fInally closIng the table 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
+    
+    // ThIs FuncatIon Is Used For addIng record In saccade Hbase
     public void addScade_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
 
         try {
-            HTable table = new HTable(conf, tablename);
+            HTable table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon 
             table.setAutoFlush(false);
             table.setWriteBufferSize(1024 * 1024 * 12);
-            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterSaccade)); //userId + Filename+rownumber
-            for (int a = 0; a <= arrColumn.size() - 1; a++) {
-                put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a)));
+            Put put = new Put(Bytes.toBytes(UserId + ":" + rowKey + ":" + counterSaccade)); // makIng Instance of the Put WIth the rowkey, WIth the followIng rowKey //userId + Filename+rownumber
+            for (int a = 0; a <= arrColumn.size() - 1; a++) { // runnIng loop UntIll arrCOlumn sIze
+                put.add(Bytes.toBytes(CQ), Bytes.toBytes(arrColumn.get(a)), Bytes.toBytes(arrValue.get(a))); // addIng columnfamIly, column and value Into the Put
             }
-            table.put(put);
-            counterSaccade++;
-            table.flushCommits();
-            table.close();
+            table.put(put); // InsertIng record Into the table now wIth the Put
+            counterSaccade++; // IncrementIng counterSaccade In each Call of thIs funcatIOn
+            table.flushCommits(); // flushIng the commIt
+            table.close(); // fInally closIng the table 
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -483,86 +486,86 @@ public class ValidateData extends HttpServlet {
 
         //out.println("System ");
 
-        HttpSession session = request.getSession(false);
-        Integer ID = Integer.parseInt(session.getAttribute("userId").toString());
-        UserId = String.valueOf(ID);
+        HttpSession session = request.getSession(false); // creatIng Instance of sessIon
+        Integer ID = Integer.parseInt(session.getAttribute("userId").toString()); //gettIng UserId by SessIOn
+        UserId = String.valueOf(ID); // conertIng It to StrIng
 
-        String Efilename = (String) session.getAttribute("hdnfilename"); //settIng sessIons Into StrIng
-        String Lfilename = (String) session.getAttribute("hdnlblfilename");
-        String gxleft = (String) session.getAttribute("hdnxleft");
-        String gxright = (String) session.getAttribute("hdnxright");
-        String gyleft = (String) session.getAttribute("hdnyleft");
-        String gyright = (String) session.getAttribute("hdnyright");
-        String dleft = (String) session.getAttribute("hdndleft");
-        String dright = (String) session.getAttribute("hdndright");
-        SCREEN_WIDTH = Integer.parseInt(session.getAttribute("xscreen").toString());
-        SCREEN_HEIGHT = Integer.parseInt(session.getAttribute("yscreen").toString());
-        RESOLUTION_WIDTH = Integer.parseInt(session.getAttribute("xresol").toString());
-        RESOLUTION_HEIGHT = Integer.parseInt(session.getAttribute("yresol").toString());
-        FIXATION_DURATION_THRESHOLD = Integer.parseInt(session.getAttribute("fxdr").toString());
-        VELOCITY_THRESHOLD = Integer.parseInt(session.getAttribute("velth").toString());
-        Missing_Time_THRESHOLD = Integer.parseInt(session.getAttribute("mstm").toString());
-        sample_rate = Integer.parseInt(session.getAttribute("rate").toString());
-        timeInterval = Integer.parseInt(session.getAttribute("timeInterval").toString());
+        String Efilename = (String) session.getAttribute("hdnfilename"); //settIng FIleName sessIons Into Efilename
+        //String Lfilename = (String) session.getAttribute("hdnlblfilename");// Uncomment It If u want to work on Label,settIng sessIons Into StrIng
+        String gxleft = (String) session.getAttribute("hdnxleft"); //settIng hdnxleft sessIons Into gxleft
+        String gxright = (String) session.getAttribute("hdnxright"); //settIng hdnxright sessIons Into gxright
+        String gyleft = (String) session.getAttribute("hdnyleft"); //settIng hdnyleft sessIons Into gyleft
+        String gyright = (String) session.getAttribute("hdnyright"); //settIng hdnyright sssIons Into gyright
+        String dleft = (String) session.getAttribute("hdndleft"); //settIng hdndleft sessIons Into dleft
+        String dright = (String) session.getAttribute("hdndright"); //settIng hdndright sessIons Into dright
+        SCREEN_WIDTH = Integer.parseInt(session.getAttribute("xscreen").toString());//settIng xscreen sessIons Into SCREEN_WIDTH
+        SCREEN_HEIGHT = Integer.parseInt(session.getAttribute("yscreen").toString());//settIng yscreen sessIons Into SCREEN_HEIGHT
+        RESOLUTION_WIDTH = Integer.parseInt(session.getAttribute("xresol").toString());//settIng xresol sessIons Into RESOLUTION_WIDTH
+        RESOLUTION_HEIGHT = Integer.parseInt(session.getAttribute("yresol").toString());//settIng yresol sessIons Into RESOLUTION_HEIGHT
+        FIXATION_DURATION_THRESHOLD = Integer.parseInt(session.getAttribute("fxdr").toString());//settIng fxdr sessIons Into FIXATION_DURATION_THRESHOLD
+        VELOCITY_THRESHOLD = Integer.parseInt(session.getAttribute("velth").toString());//settIng velth sessIons Into VELOCITY_THRESHOLD
+        Missing_Time_THRESHOLD = Integer.parseInt(session.getAttribute("mstm").toString());//settIng mstm sessIons Into Missing_Time_THRESHOLD
+        sample_rate = Integer.parseInt(session.getAttribute("rate").toString());//settIng rate sessIons Into sample_rate
+        timeInterval = Integer.parseInt(session.getAttribute("timeInterval").toString());//settIng timeInterval sessIons Into timeInterval
 
-        String hdnData = request.getParameter("hdnData");
-        arrColumn.clear();
-        arrValue.clear();
-        arrTime.clear();
-        String btnNext = request.getParameter("btnNext");
-        String btnRun = request.getParameter("btnRun");
-        String btnEyeF = request.getParameter("btnEyeF");
+        String hdnData = request.getParameter("hdnData"); // gettIng hdnData parameter value
+        arrColumn.clear(); //clearng the arrColumn arrayLIst
+        arrValue.clear();//clearng the arrValue arrayLIst
+        arrTime.clear();//clearng the arrTime arrayLIst
+        String btnNext = request.getParameter("btnNext"); // gettIng btnNext parameter value
+        String btnRun = request.getParameter("btnRun");// gettIng btnRun parameter value
+        String btnEyeF = request.getParameter("btnEyeF");// gettIng btnEyeF parameter value
 
-        if ("Next".equalsIgnoreCase(btnNext)) { // when user clIck on next button
-            loopStarter = looprunner;
-            looprunner = looprunner + 1000;
-            dc.get_DataHbase(loopStarter, looprunner, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); //UserID TO BE ADDED IN IT
-        } else if ("Run Fixation".equalsIgnoreCase(btnRun)) { // Run FixatIon and Saccade
-            FixAlgorithm(Efilename);
-            DataClass dc = new DataClass(getServletContext().getRealPath("/"));
-            dc.InsertMapRecord("FixData", Efilename, "MD", UserId, String.valueOf(counter));// inserting Nos of Rows of fixation
-            dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
-            dc.InsertMapRecord("EyeFeature", Efilename, "MD", UserId, String.valueOf(counterEF));// inserting Nos of Rows of fixation
-            arrColumn.clear();
-            arrValue.clear();
-            arrColumn_lbl.clear();
-            arrValue_lbl.clear();
-            dc.get_DataHbase_WriteTextFile(0, 0, "fix", UserId, "FixData", Efilename, "MD", arrColumn, arrValue);//reading fixation
-            dc.get_DataHbase_WriteTextFile(0, 0, "sac", UserId, "FixData", Efilename + "-S-", "MD", arrColumn_lbl, arrValue_lbl);// reading Saccade
-            request.setAttribute("arrColumn", arrColumn);
-            request.setAttribute("arrValue", arrValue);
-            request.setAttribute("arrColumn_lbl", arrColumn_lbl);
-            request.setAttribute("arrValue_lbl", arrValue_lbl);
+        if ("Next".equalsIgnoreCase(btnNext)) { // when next button Is clIcked  
+            loopStarter = looprunner; // set loopstarter to looprunner
+            looprunner = looprunner + 1000; // Increment loopRunner wIth 1000
+            dc.get_DataHbase(loopStarter, looprunner, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); //THIS functIon wIll get 1000 records In each Request from ValID Data table as per gven FIlename and user ID
+        } else if ("Run Fixation".equalsIgnoreCase(btnRun)) { // when button of Run FixatIon Is clIcked 
+            FixAlgorithm(Efilename); // run FIXaTION ANd saccade alogrIthm
+            DataClass dc = new DataClass(getServletContext().getRealPath("/")); // get the path of thIS servlet
+            dc.InsertMapRecord("FixData", Efilename, "MD", UserId, String.valueOf(counter));// inserting total Nos of Rows of fixation
+            dc.InsertMapRecord("FixData", Efilename + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting total Nos of Rows of Sccade
+            dc.InsertMapRecord("EyeFeature", Efilename, "MD", UserId, String.valueOf(counterEF));// inserting total Nos of Rows of EyeFeature
+            arrColumn.clear(); //clearng the arrColumn arrayLIst
+            arrValue.clear(); //clearng the arrValue arrayLIst
+            arrColumn_lbl.clear(); //clearng the arrColumn_lbl arrayLIst
+            arrValue_lbl.clear(); //clearng the arrValue_lbl arrayLIst
+            dc.get_DataHbase_WriteTextFile(0, 0, "fix", UserId, "FixData", Efilename, "MD", arrColumn, arrValue);//THIS functIon wIll get all the records of FIxatIon from FIxData table and also WrIte them Into text FIle to download as per gven FIlename and UserID
+            dc.get_DataHbase_WriteTextFile(0, 0, "sac", UserId, "FixData", Efilename + "-S-", "MD", arrColumn_lbl, arrValue_lbl);//THIS functIon wIll get all the records of saccade from FIxData table and also WrIte them Into text FIle to download as per gven FIlename and UserID
+            request.setAttribute("arrColumn", arrColumn); // settIng result FIXatIOn of column Into arrColumn  for forwarding data to next page
+            request.setAttribute("arrValue", arrValue);// settIng result FIXatIOn of value Into arrValue  for forwarding data to next page
+            request.setAttribute("arrColumn_lbl", arrColumn_lbl);// settIng result saccade of column Into arrColumn_lbl  for forwarding data to next page
+            request.setAttribute("arrValue_lbl", arrValue_lbl);// settIng result saccade of value Into arrValue_lbl  for forwarding data to next page
             RequestDispatcher rd = request.getRequestDispatcher("/ShowFixData.jsp");
             rd.forward(request, response);
-        } else if ("EyeFeature".equalsIgnoreCase(btnEyeF)) { // If It Is fIxatIon FIle
-            arrColumn.clear();
-            arrValue.clear();
-            dc.get_DataHbase_common(0, 0, "", UserId, "EyeFeature", Efilename, "MD", arrColumn, arrValue); // getting raw data from Hbase
+        } else if ("EyeFeature".equalsIgnoreCase(btnEyeF)) { // If eyeFeature ButtOn Is clIked
+            arrColumn.clear();//clearng the arrColumn arrayLIst
+            arrValue.clear();//clearng the arrValue arrayLIst
+            dc.get_DataHbase_common(0, 0, "", UserId, "EyeFeature", Efilename, "MD", arrColumn, arrValue); //THIS functIon wIll get all records from eyeFeature table as per gven FIlename and user ID
             request.setAttribute("Alrd_column", arrColumn); // setting array List for forwarding data to next page
-            request.setAttribute("Alrd_value", arrValue);
+            request.setAttribute("Alrd_value", arrValue);// setting array List for forwarding data to next page
             RequestDispatcher rd = request.getRequestDispatcher("/ShowEyeFeature.jsp"); // redirecting to the next page
             rd.forward(request, response);
-        } else if ("DF".equalsIgnoreCase(hdnData)) { // If It Is fIxatIon FIle
+        } else if ("DF".equalsIgnoreCase(hdnData)) { // If request of fIxatIon FIle Is requested
             DownloadFile(response, hdnData); // download FixatIon FILe
-        } else if ("DS".equalsIgnoreCase(hdnData)) { // If It Is saccade FIle
+        } else if ("DS".equalsIgnoreCase(hdnData)) { // If request of saccade FIle Is requested
             DownloadFile(response, hdnData); // download saccade FILe
         } else {
             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
            // Read_LabelData_forValdiation(Efilename, Lfilename); // uncomment It for ReadIng label Data from RawData table for valIdatIng It 
-            arrColumn.clear();
-            arrValue.clear();
-            arrTime.clear();
-            arrColumn_lbl.clear();
-            arrValue_lbl.clear();
+            arrColumn.clear(); //clearng the arrColumn arrayLIst
+            arrValue.clear();//clearng the arrValue arrayLIst
+            arrTime.clear();//clearng the arrTime arrayLIst
+            arrColumn_lbl.clear(); //clearng the arrColumn_lbl arrayLIst
+            arrValue_lbl.clear(); //clearng the arrValue_lbl arrayLIst
             dc.get_DataHbase(0, 1000, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
            // dc.get_DataHbase_common(0, 0, "", UserId, "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// uncommentIng for readIng label valId data to show on page
         }
-        request.setAttribute("arrColumn", arrColumn);
-        request.setAttribute("arrValue", arrValue);
-        request.setAttribute("arrTime", arrTime);
-        request.setAttribute("arrColumn_lbl", arrColumn_lbl);
-        request.setAttribute("arrValue_lbl", arrValue_lbl);
+        request.setAttribute("arrColumn", arrColumn); // setting array List for forwarding data to next page
+        request.setAttribute("arrValue", arrValue); // setting array List for forwarding data to next page
+        request.setAttribute("arrTime", arrTime); // setting array List for forwarding data to next page
+        request.setAttribute("arrColumn_lbl", arrColumn_lbl); // setting array List for forwarding data to next page
+        request.setAttribute("arrValue_lbl", arrValue_lbl); // setting array List for forwarding data to next page
         RequestDispatcher rd = request.getRequestDispatcher("/ShowValidData.jsp");
         rd.forward(request, response);
     }
@@ -570,28 +573,27 @@ public class ValidateData extends HttpServlet {
     private void DownloadFile(HttpServletResponse response, String filetype) throws FileNotFoundException, IOException {
         response.setContentType("text/plain");
         File file;
-        if (filetype.equals("DF")) {
+        if (filetype.equals("DF")) { // IF FILE type Is FIxaTIOn
             response.setHeader("Content-Disposition",
-                    "attachment;filename=Fixation.txt");
-            file = new File(getServletContext().getRealPath("/") + "download/" + "fix.txt");
-        } else {
+                    "attachment;filename=Fixation.txt"); // make FIxaTIOn FILE
+            file = new File(getServletContext().getRealPath("/") + "download/" + "fix.txt"); // gIve absolute path to download FIXATION FILE
+        } else { // IF FILE type Is saccade
             response.setHeader("Content-Disposition",
-                    "attachment;filename=Saccade.txt");
-            file = new File(getServletContext().getRealPath("/") + "download/" + "sac.txt");
+                    "attachment;filename=Saccade.txt");  // make saccade FILE
+            file = new File(getServletContext().getRealPath("/") + "download/" + "sac.txt"); // gIve absolute path to download saccade FILE
         }
 
-        FileInputStream fileIn = new FileInputStream(file);
-        //ServletOutputStream out = response.getOutputStream();
-        OutputStream out = response.getOutputStream();
+        FileInputStream fileIn = new FileInputStream(file); // assIGN FILE varIable to FileInputStream
+        OutputStream out = response.getOutputStream(); // get OutPut response 
 
-        byte[] outputByte = new byte[4096];
+        byte[] outputByte = new byte[4096]; //set bytes
         int byteRead;
-        while ((byteRead = fileIn.read(outputByte, 0, 4096)) != -1) {
-            out.write(outputByte, 0, byteRead);
+        while ((byteRead = fileIn.read(outputByte, 0, 4096)) != -1) { // run loop UntIL bytes ExISts
+            out.write(outputByte, 0, byteRead); // WrIte the Bytes
         }
-        fileIn.close();
-        out.flush();
-        out.close();
+        fileIn.close(); // Close the FileInputStream varaIable
+        out.flush(); // flush the FILE to download
+        out.close(); // close the OutputStream object
     }
 
     /**
