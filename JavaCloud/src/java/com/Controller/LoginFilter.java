@@ -45,6 +45,7 @@ public class LoginFilter implements Filter {
         ar.add("/JavaCloud/css/layout/login/login_wrapper_bg.gif");
         ar.add("/JavaCloud/css/layout/login/form_bg.gif");
         ar.add("/JavaCloud/css/layout/login/submit_left.gif");
+        ar.add("/JavaCloud/css/layout/login/logo.jpg");
         ar.add("/JavaCloud/css/layout/login/logo.png");
         ar.add("/JavaCloud/css/layout/login/submit_middle.gif");
         ar.add("/JavaCloud/img/logo1.png");

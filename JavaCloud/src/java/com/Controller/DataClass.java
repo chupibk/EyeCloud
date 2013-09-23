@@ -57,10 +57,7 @@ public class DataClass {
     // create 'FixData','FX','SC','MD' --------FixData table & column family structure
     // create 'EyeFeature', 'FS','MD' ---------- Eyefeature table & column family structure
 
-    public boolean isBlankOrNull(String str) {
-        return (str == null || "".equals(str.trim()));
-    }
-
+    // thiis function is used for getting recrods of specific columns from valid data
     public void get_DataHbase(long loopStarter, long loopruner, String userId, String tablename, String rowkey, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value, ArrayList<String> ArrayRD_Time) throws IOException {
 
         try {
@@ -142,6 +139,7 @@ public class DataClass {
         }
 
     }
+    // This is the common method of retrieving of data from Hbase
         public void get_DataHbase_common(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
         try {
@@ -187,24 +185,17 @@ public class DataClass {
 
     //This funcation is just like get_DataHbase but It wIll also WrIte Result Into text FIle so that User can download
     public void get_DataHbase_WriteTextFile(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
-
         HTable table = null;
         boolean flagcolumn = false, flagline = false;
         String holdvalue = "";
-
         File file;
-
         if (flag.equals("fix")) { // for writing into textfile
-
             file = new File(this.holdpath + "download/" + "fix.txt"); //wrItIng fIxaTIon fIle 
-
         } else {
-
             file = new File(this.holdpath + "download/" + "sac.txt"); //wrItIng Saccade fIle 
         }
         try {
             FileWriter fileWriter = new FileWriter(file); // puting file into filewriter
-
             // Always wrap FileWriter in BufferedWriter.
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             if (flag.equals("ok")) // if its not a lable data
@@ -215,7 +206,6 @@ public class DataClass {
                 loopruner = Integer.valueOf(NosRow); // assIgIng the result to the varIable
             }
             table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon
-
             List<Get> Rowlist = new ArrayList<Get>(); // makIng arraylIst of Get element
             for (long a = loopStarter; a <= loopruner - 1; a++) { // runnIng loop as per gIven loopruner by the user
                 Rowlist.add(new Get(Bytes.toBytes(userId + ":" + rowkey + ":" + a))); //Here I am readIng all the numbers of rows and adding them Into the arrayLIst
@@ -239,7 +229,6 @@ public class DataClass {
                             bufferedWriter.newLine(); //addIng new LIne
                         }
                     } else {
-
                         if (hold_a == hold_b) { 
                             ArrayRD_Value.add("/");// here I add "/" to show that from here New Recrds its started
                             hold_b = 0;

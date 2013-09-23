@@ -98,10 +98,8 @@ public class LoadData extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
 
-        HttpSession session = request.getSession(false);
-        Integer ID = Integer.parseInt(session.getAttribute("userId").toString()); // settIng value of sessIon Into the varaIable
-        UserId = String.valueOf(ID);
-        
+
+
         /*I have used Appache File Uploader for uploading Files bcoz of this all the 
          * controls have become the Items of this uploader that is why I have to use if Condition to get values of each 
          * control
@@ -136,7 +134,7 @@ public class LoadData extends HttpServlet {
                         Iterator<FileItem> it = fields.iterator(); // takIng FIleItem Into the FIeld Iterator
                         while (it.hasNext()) { // run the loop untIll It found the Value
                             FileItem fileItem = it.next(); // settIng control InformatIon Into the FIleItem
-                            boolean isFormField = fileItem.isFormField(); 
+                            boolean isFormField = fileItem.isFormField();
                             if (!isFormField) { // checkIng If Its the form control
                                 // if (fileItem.getName().endsWith("txt")) {
                                 BufferedReader br = new BufferedReader(new InputStreamReader(fileItem.getInputStream())); // settIng buffer reader to read text fIle data vIa stream
@@ -253,63 +251,9 @@ public class LoadData extends HttpServlet {
 //                            }
                         //  }
                         // break;
-                    } else if ("btnsave".equals(fielditem.getFieldName())) { // Start saving data into Hbase & then reading that
-                        if (!hdnxleft.isEmpty() && !hdnxleft.equals("") && !hdnyleft.isEmpty() && !hdnyleft.equals("") && !hdntimestamp.isEmpty() && !hdntimestamp.equals("") 
-                                && !hdnstname.isEmpty() && !hdnstname.equals("") && !hdndleft.isEmpty() && !hdndleft.equals("")) { // checking if all the required fields are selected
-                            addrawData(); // Adding raw Data into Hbase database from the Text File
-                            //addLabelrawData(); // uncomment it FOR Adding Label Data from the Text File
-                            Alrd_column.clear(); // clear the array
-                            Alrd_value.clear(); // clear the array
-                            Alrd_lbl_column.clear(); // clear the column array for label data, NB It Isnt currently In used
-                            Alrd_lbl_value.clear(); // clear the label array for label data, NB It Isnt currently In used
-                            dc.get_DataHbase_common(0, 1000, "ok", UserId, "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
-                            //   dc.get_DataHbase_common(0, 0, "", UserId, "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value); // uncomment it FOR gettIng Label Data from the hbase
-                            request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
-                            request.setAttribute("Alrd_value", Alrd_value);  // setting array List for forwarding data to next page
-                            request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);  // NB It Isnt currently In used, FOR Label Data, setting array List for forwarding data to next page
-                            request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);  // NB It Isnt currently In used, FOR Label Data, setting array List for forwarding data to next page
-                            session.setAttribute("hdnxleft", hdnxleft);  // setting session of GazePointXLeft
-                            session.setAttribute("hdnyleft", hdnyleft); // setting session of GazePointYLeft
-                            session.setAttribute("hdnxright", hdnxright); // setting session of GazePointXright
-                            session.setAttribute("hdnyright", hdnyright); // setting session of GazePointyright
-                            session.setAttribute("hdndleft", hdndleft);// setting session of DistanceLeft
-                            session.setAttribute("hdndright", hdndright);// setting session of Distanceright
-                            session.setAttribute("hdnfilename", hdnfilename);// setting session of filename of the textfile that is uploaded
-                            //session.setAttribute("hdnlblfilename", hdnlblfilename); // uncomment it if label text file is used
-                            session.setAttribute("xscreen", xscreen); // setting session of xscreen
-                            session.setAttribute("yscreen", yscreen); // setting session of yscreen
-                            session.setAttribute("xresol", xresol); // setting session of xresolution
-                            session.setAttribute("yresol", yresol); // setting session of yresolution
-                            session.setAttribute("fxdr", fxdr); // setting session of Fixation duration Threshold
-                            session.setAttribute("velth", velth); // setting session of vel Threshold
-                            session.setAttribute("mstm", mstm); // setting session of missing time Threshold
-                            session.setAttribute("timeInterval", txtTimeInterval); // setting session of TimeInterval
-                            session.setAttribute("rate", txtrate); // setting session of rate
-                            request.setAttribute("error", "1"); // setting attribute of error
-                            RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp"); // redirecting to the next page
-                            rd.forward(request, response);
-                            break;
-                        } else {
-                            request.setAttribute("error", "0");
-                            request.setAttribute("arrls", arrls); //setting arrls array lIst of columns Into the varIable for bIdIng It wIth the dropdown
-                            //request.setAttribute("lblarrls", lblarrls); //uncomment it label array
-                            //request.setAttribute("partarrls", partarrls); //uncomment it participant array
-                            request.setAttribute("hdnfilename", hdnfilename); //setting attribute to forward to the next page
-                            //request.setAttribute("hdnlblfilename", hdnlblfilename); //uncomment it label file
-                            request.setAttribute("hdntimestamp", hdntimestamp); //setting attribute to forward to the next page
-                            request.setAttribute("hdnxleft", hdnxleft);//setting attribute to forward to the next page
-                            request.setAttribute("hdnxright", hdnxright);//setting attribute to forward to the next page
-                            request.setAttribute("hdnyleft", hdnyleft);//setting attribute to forward to the next page
-                            request.setAttribute("hdnyright", hdnyright);//setting attribute to forward to the next page
-                            request.setAttribute("hdndleft", hdndleft);//setting attribute to forward to the next page
-                            request.setAttribute("hdndright", hdndright);//setting attribute to forward to the next page
-                            request.setAttribute("hdnvleft", hdnvleft);//setting attribute to forward to the next page
-                            request.setAttribute("hdnvright", hdnvright);//setting attribute to forward to the next page
-                            request.setAttribute("hdnstname", hdnstname);//setting attribute to forward to the next page
-                            RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp"); // redirecting to the same page incase of error
-                            rd.forward(request, response);
-                        }
-
+                    } else if ("btnsave".equals(fielditem.getFieldName())) { // if save button is pressed
+                        SaveData_then_Read(request, response); // Start saving data into Hbase & then reading that 
+                        break;
                     }
                     if ("hdntimestamp".equals(fielditem.getFieldName())) { // checking if condition & setting hidden fields hdntimestamp values to show it back to the user
                         hdntimestamp = fielditem.getString();
@@ -408,7 +352,68 @@ public class LoadData extends HttpServlet {
         }
 
     }
+      public void SaveData_then_Read(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        Integer ID = Integer.parseInt(session.getAttribute("userId").toString()); // settIng value of sessIon Into the varaIable
+        UserId = String.valueOf(ID);
+        if (!hdnxleft.isEmpty() && !hdnxleft.equals("") && !hdnyleft.isEmpty() && !hdnyleft.equals("") && !hdntimestamp.isEmpty() && !hdntimestamp.equals("")
+                && !hdnstname.isEmpty() && !hdnstname.equals("") && !hdndleft.isEmpty() && !hdndleft.equals("")) { // checking if all the required fields are selected
+            addrawData(); // Adding raw Data into Hbase database from the Text File
+            //addLabelrawData(); // uncomment it FOR Adding Label Data from the Text File
+            Alrd_column.clear(); // clear the array
+            Alrd_value.clear(); // clear the array
+            Alrd_lbl_column.clear(); // clear the column array for label data, NB It Isnt currently In used
+            Alrd_lbl_value.clear(); // clear the label array for label data, NB It Isnt currently In used
+            dc.get_DataHbase_common(0, 1000, "ok", UserId, "RawData", hdnfilename, "MF", Alrd_column, Alrd_value); // getting raw data from Hbase
+            //   dc.get_DataHbase_common(0, 0, "", UserId, "RawData", hdnlblfilename, "MF", Alrd_lbl_column, Alrd_lbl_value); // uncomment it FOR gettIng Label Data from the hbase
+            request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
+            request.setAttribute("Alrd_value", Alrd_value);  // setting array List for forwarding data to next page
+            request.setAttribute("Alrd_lbl_column", Alrd_lbl_column);  // NB It Isnt currently In used, FOR Label Data, setting array List for forwarding data to next page
+            request.setAttribute("Alrd_lbl_value", Alrd_lbl_value);  // NB It Isnt currently In used, FOR Label Data, setting array List for forwarding data to next page
+            session.setAttribute("hdnxleft", hdnxleft);  // setting session of GazePointXLeft
+            session.setAttribute("hdnyleft", hdnyleft); // setting session of GazePointYLeft
+            session.setAttribute("hdnxright", hdnxright); // setting session of GazePointXright
+            session.setAttribute("hdnyright", hdnyright); // setting session of GazePointyright
+            session.setAttribute("hdndleft", hdndleft);// setting session of DistanceLeft
+            session.setAttribute("hdndright", hdndright);// setting session of Distanceright
+            session.setAttribute("hdnfilename", hdnfilename);// setting session of filename of the textfile that is uploaded
+            //session.setAttribute("hdnlblfilename", hdnlblfilename); // uncomment it if label text file is used
+            session.setAttribute("xscreen", xscreen); // setting session of xscreen
+            session.setAttribute("yscreen", yscreen); // setting session of yscreen
+            session.setAttribute("xresol", xresol); // setting session of xresolution
+            session.setAttribute("yresol", yresol); // setting session of yresolution
+            session.setAttribute("fxdr", fxdr); // setting session of Fixation duration Threshold
+            session.setAttribute("velth", velth); // setting session of vel Threshold
+            session.setAttribute("mstm", mstm); // setting session of missing time Threshold
+            session.setAttribute("timeInterval", txtTimeInterval); // setting session of TimeInterval
+            session.setAttribute("rate", txtrate); // setting session of rate
+            request.setAttribute("error", "1"); // setting attribute of error
+            RequestDispatcher rd = request.getRequestDispatcher("/ShowRawData.jsp"); // redirecting to the next page
+            rd.forward(request, response);
 
+        } else {
+            request.setAttribute("error", "0");
+            request.setAttribute("arrls", arrls); //setting arrls array lIst of columns Into the varIable for bIdIng It wIth the dropdown
+            //request.setAttribute("lblarrls", lblarrls); //uncomment it label array
+            //request.setAttribute("partarrls", partarrls); //uncomment it participant array
+            request.setAttribute("hdnfilename", hdnfilename); //setting attribute to forward to the next page
+            //request.setAttribute("hdnlblfilename", hdnlblfilename); //uncomment it label file
+            request.setAttribute("hdntimestamp", hdntimestamp); //setting attribute to forward to the next page
+            request.setAttribute("hdnxleft", hdnxleft);//setting attribute to forward to the next page
+            request.setAttribute("hdnxright", hdnxright);//setting attribute to forward to the next page
+            request.setAttribute("hdnyleft", hdnyleft);//setting attribute to forward to the next page
+            request.setAttribute("hdnyright", hdnyright);//setting attribute to forward to the next page
+            request.setAttribute("hdndleft", hdndleft);//setting attribute to forward to the next page
+            request.setAttribute("hdndright", hdndright);//setting attribute to forward to the next page
+            request.setAttribute("hdnvleft", hdnvleft);//setting attribute to forward to the next page
+            request.setAttribute("hdnvright", hdnvright);//setting attribute to forward to the next page
+            request.setAttribute("hdnstname", hdnstname);//setting attribute to forward to the next page
+            RequestDispatcher rd = request.getRequestDispatcher("/LoadData.jsp"); // redirecting to the same page incase of error
+            rd.forward(request, response);
+        }
+    }
+
+      // This funcation is used for inserting record into RawData table
     public void addrawData() {
         try {
 
@@ -416,7 +421,7 @@ public class LoadData extends HttpServlet {
                 int countcoulmn = 0; // varIable for counting column in a textfile
                 long countrow = 0; // varIable for counting nos of rows in a textfile
                 largeStr = largeStr.replaceAll("\\r\\n", "\t"); // remove \n from the  text file
-                String[] strArr = largeStr.split("\t");// spliting text into the array
+                String[] strArr = largeStr.split("\t");// spliting text into the array with the tab space
                 ArrayList<String> list = new ArrayList<String>(arrls.values()); // setting all values of array into another array
                 HTable table = new HTable(conf, "RawData"); // here RawData Is the table name whIch I am assIng It here
                 table.setAutoFlush(false);
@@ -451,6 +456,8 @@ public class LoadData extends HttpServlet {
             e.printStackTrace();
         }
     }
+
+  
 
     // uncomment it FOR adding Label Data
 //    public void addLabelrawData() {

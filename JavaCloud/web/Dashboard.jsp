@@ -71,6 +71,7 @@
                     
                     <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
                         Interactive Technologies Research Group
+                      
                     </div>
                     
                 </div>
