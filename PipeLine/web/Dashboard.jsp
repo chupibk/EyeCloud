@@ -29,18 +29,18 @@
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
-                }else if (val === 'EF')
+                } else if (val === 'EF')
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
-                }else if (val === 'kill')
+                } else if (val === 'kill')
                 {
                     document.getElementById('hdnData').value = val;
                     document.getElementById('form1').submit();
                 }
 
             }
-            function logout_load(){
+            function logout_load() {
                 var val = window.location.search.slice(1);
                 if (val === 'kill')
                 {
@@ -49,9 +49,9 @@
 
                 }
             }
-            
-            window.onload=logout_load;
-            
+
+            window.onload = logout_load;
+
         </script>
         <title>Dashboard Page</title>
     </head>
@@ -60,21 +60,22 @@
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
 
-                <div class="inner-image">
-                    &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
-                        Welcome : "${username}"
-                        </br>
-                        </br>
-                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
-                    </div>
-                    
-                        <div class="inner-title">
-                        Interactive Technologies Research Group
-                      
-                    </div>
-                    
+                &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
+                <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                    Welcome : "${username}"
+                    </br>
+                    </br>
+                    <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                 </div>
+
+                <div class="inner-image">
+                    <div class="inner-title">
+                        Interactive Technologies Research Group
+
+                    </div>
+
+                </div>
+
                 <!--[if !IE]>start page<![endif]-->
                 <div id="page">
                     <div class="inner-dash">
