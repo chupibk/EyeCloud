@@ -80,6 +80,7 @@ public class registeruser extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        
         txtfname = request.getParameter("txtfname"); // gettIng txtfname value from the request parameter
         txtemail = request.getParameter("txtemail");// gettIng txtemail value from the request parameter
         txtpass = request.getParameter("txtpass");// gettIng txtfname value from the request parameter
@@ -119,6 +120,7 @@ public class registeruser extends HttpServlet {
             if (!txtemail.isEmpty() && !txtpass.isEmpty() && !txtfname.isEmpty()) { // if required field Is not empty
                 if (flagupdate) { // users wants to update his profle
                     UpdateUser(request, response);
+                    flagupdate=false; //setting flag false 
                 } else { // users wants to register
                     registerUser(request, response);
                 }

@@ -41,6 +41,7 @@ public class Dashboard extends HttpServlet {
     String UserId,fileName = "", hdnselectvalue = "";
     private static final int BYTES_DOWNLOAD = 1024;
     
+    
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -67,7 +68,7 @@ public class Dashboard extends HttpServlet {
         arrTime.clear();  // clearing the arraylIst
         arrColumn_sac.clear(); // clearing the arraylIst
         arrValue_sac.clear(); // clearing the arraylIst
-        if (hdnData != null && !hdnData.equals("")) { //checkIng the hdndata value that If Its null or not
+        if (hdnData != null && !hdnData.equals("") && !hdnData.equals("DF") && !hdnData.equals("DS")) { //checkIng the hdndata value that If Its null or not
             if (arrls.size() != 0) {
                 arrls.clear(); // clearing the arraylIst
             }
@@ -106,10 +107,12 @@ public class Dashboard extends HttpServlet {
         } else if ("kill".equalsIgnoreCase(hdnData)) {
             request.getSession().invalidate(); // killiNg session here
             response.sendRedirect(request.getContextPath() + "/loginuser.jsp");
-        } else if ("DF".equalsIgnoreCase(hdnData)) { // If It Is fIxatIon FIle
+        } else if ("DF".equalsIgnoreCase(hdnData) && !"Fix".equalsIgnoreCase(btnFixsearch)) { // If download fIxatIon FIle is clicked
             DownloadFile(response, hdnData); // download FixatIon FILe
-        } else if ("DS".equalsIgnoreCase(hdnData)) { // If It Is saccade FIle
+            request.setAttribute("arrls", arrls);
+        } else if ("DS".equalsIgnoreCase(hdnData)  && !"Fix".equalsIgnoreCase(btnFixsearch)) { // If download saccade FIle is clicked
             DownloadFile(response, hdnData); // download saccade FILe
+            request.setAttribute("arrls", arrls);
         }
 
         if ("Raw".equalsIgnoreCase(btnRawsearch)) {
@@ -127,15 +130,19 @@ public class Dashboard extends HttpServlet {
 
     private void DownloadFile(HttpServletResponse response, String filetype) throws FileNotFoundException, IOException {
         response.setContentType("text/plain");
+        int len=getServletContext().getRealPath("/").length();
+        
+        String filepath = getServletContext().getRealPath("/").substring(0, len - 11);
+        
         File file;
         if (filetype.equals("DF")) { // If download FIxatIon fIle Is clIcked
             response.setHeader("Content-Disposition",
                     "attachment;filename=Fixation.txt");
-            file = new File(getServletContext().getRealPath("/") + "download/" + "fix.txt"); // gettIng path to download fIxatIon FIle
+            file = new File(filepath + "/fix.txt"); // gettIng path to download fIxatIon FIle
         } else { // else download saccade fIle
             response.setHeader("Content-Disposition",
                     "attachment;filename=Saccade.txt");
-            file = new File(getServletContext().getRealPath("/") + "download/" + "sac.txt"); // gettIng path to download saccade FIle
+            file = new File(filepath + "/sac.txt"); // gettIng path to download saccade FIle
         }
 
         FileInputStream fileIn = new FileInputStream(file); // assIgIng the FIle to fIleInput sream

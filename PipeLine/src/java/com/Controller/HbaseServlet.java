@@ -516,7 +516,28 @@ public class HbaseServlet extends HttpServlet {
     }
 }
 
+  public static void getfileNames(String tablename, String CF, String column) throws IOException {
+        HTable table = new HTable(conf, tablename); // assIgIng tablename and confIguratIon 
+        Scan s = new Scan(); // makIng Instance of Scan
+        s.addColumn(Bytes.toBytes(CF), Bytes.toBytes(column)); // addIng columnFamIly and Column Into the Scan
+        ResultScanner scanner = table.getScanner(s); // assIgIng the scanner to scan 
+      //  arrls.put("Select", "Select"); // addIng select value to the arrayLIst
+        try {
+            for (Result rr = scanner.next(); rr != null; rr = scanner.next()) { // runnInt the loop untIl the RR Is not null
+                if (tablename.equals("FixData")) { // If there Is a request for FIXDATA table 
+                    if (!new String(rr.getRow()).contains("-S-")) { // In FIXDATA table I STore two records for fIleName one Is for saccade and another Is for FIxatIon
+                        // In Saccade I add -S- after the FIle name, that's why here I check & only show 
+        //                arrls.put(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column))), new String(rr.getRow())); // addIng the values Into the ArrayLIst
+                    }
+                } else {
+                  System.out.print(new String(rr.getValue(Bytes.toBytes(CF), Bytes.toBytes(column)))); // addIng the values Into the ArrayLIst
+                }
 
+            }
+        } finally {
+            scanner.close();
+        }
+    }
 
 
     public static void main(String[] args) {
@@ -527,7 +548,7 @@ public class HbaseServlet extends HttpServlet {
 //            InsertMapRecord("FixData", "Rec 01-All-Data.txt" + "-S-", "MD", UserId, String.valueOf(counterSaccade)); // inserting Nos of Rows of Sccade
 //            InsertMapRecord("EyeFeature", "Rec 01-All-Data.txt", "MD", UserId, String.valueOf(counterEF));// inserting Nos of Rows of fixation
 //            System.out.println("done");
-            encrypt();
+            getfileNames("EyeFeature","MD","5");
 
         } catch (Exception e) {
             e.printStackTrace();

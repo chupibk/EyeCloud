@@ -148,16 +148,16 @@
 
 
                         if ("edit".equalsIgnoreCase(String.valueOf(session.getAttribute("hdnData")))) {%>
-                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                    <div id="welcome">
                         Welcome : "${username}"
                         </br>
                         </br>
                         <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
-                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:-50px; margin-right:550px">
+                        <div id="title" >
                         Interactive Technologies Research Group
                     </div>                        
-                    <% } else {%>  <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
+                    <% } else {%>  <div id="title">
                         Interactive Technologies Research Group
                     </div>  <%}%>
 

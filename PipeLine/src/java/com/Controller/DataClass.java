@@ -193,9 +193,9 @@ public class DataClass {
         File file;
         filepath = holdpath.substring(0, holdpath.length() - 11);
         if (flag.equals("fix")) { // for writing holdpathinto textfile
-            file = new File(filepath + "/download/" + "fix.txt"); //wrItIng fIxaTIon fIle // add web also if you runs on development machine like this /web/download/
+            file = new File(filepath + "/" + "fix.txt"); //wrItIng fIxaTIon fIle // add web also if you runs on development machine like this /web/download/
         } else {
-            file = new File(filepath + "/download/" + "sac.txt"); //wrItIng Saccade fIle // add web also if you runs on development machine like this /web/download/
+            file = new File(filepath + "/" + "sac.txt"); //wrItIng Saccade fIle // add web also if you runs on development machine like this /web/download/
         }
         try {
             FileWriter fileWriter = new FileWriter(file); // puting file into filewriter

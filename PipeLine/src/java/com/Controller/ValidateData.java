@@ -307,6 +307,8 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
+    
+    
 
     public void Read_RawData_forValidation(String filename, String gxleft, String gxright,
             String gyleft, String gyright, String dleft, String dright) {
@@ -572,15 +574,18 @@ public class ValidateData extends HttpServlet {
 
     private void DownloadFile(HttpServletResponse response, String filetype) throws FileNotFoundException, IOException {
         response.setContentType("text/plain");
+         int len=getServletContext().getRealPath("/").length();
+        String filepath = getServletContext().getRealPath("/").substring(0, len - 11);
+        
         File file;
         if (filetype.equals("DF")) { // IF FILE type Is FIxaTIOn
             response.setHeader("Content-Disposition",
                     "attachment;filename=Fixation.txt"); // make FIxaTIOn FILE
-            file = new File(getServletContext().getRealPath("/") + "download/" + "fix.txt"); // gIve absolute path to download FIXATION FILE
+            file = new File(filepath + "/fix.txt"); // gettIng path to download fIxatIon FIle
         } else { // IF FILE type Is saccade
             response.setHeader("Content-Disposition",
                     "attachment;filename=Saccade.txt");  // make saccade FILE
-            file = new File(getServletContext().getRealPath("/") + "download/" + "sac.txt"); // gIve absolute path to download saccade FILE
+            file = new File(filepath + "/sac.txt"); // gettIng path to download saccade FIle
         }
 
         FileInputStream fileIn = new FileInputStream(file); // assIGN FILE varIable to FileInputStream

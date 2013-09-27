@@ -30,13 +30,13 @@
 
                 <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                      <div id="welcome">
                         Welcome : "${username}"
                         </br>
                         </br>
                         <a style="float: right" href="Dashboard.jsp?kill" class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
-                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
+                    <div id="title">
                         Interactive Technologies Research Group
                     </div>
 
@@ -66,7 +66,7 @@
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
 
-                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent;margin-top: 4%;">
+                                                                            <div style="overflow: scroll; height: 400px; width: 1080px; background: transparent;margin-top: 3%;">
                                                                                 <table border="1" style='table-layout:fixed'><tr> <td style=" vertical-align: top"> 
                                                                                             <table >
                                                                                                 <tr><td style='text-overflow: ellipsis; overflow: hidden; white-space: nowrap;'>Timestamp</td> </tr>

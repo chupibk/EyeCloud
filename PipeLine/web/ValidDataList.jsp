@@ -77,13 +77,13 @@
 
                  <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                   <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                     <div id="welcome">
                         Welcome : "${username}"
                         </br>
                         </br>
-                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
+                        <a style="float: right" href="Dashboard.jsp?kill" class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
-                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
+                    <div id="title">
                         Interactive Technologies Research Group
                     </div>
                     
@@ -114,7 +114,7 @@
                                                         <input id="hdnselectText" name="hdnselectText" type="hidden" />
                                                          <input type="hidden" name="hdnData" id="hdnData" />
                                                         <table>
-                                                            <tr><td style="float: left; width: 30%; margin-top: 4%;" >Select File: <select style="margin-bottom: 10px" id="ddlfile" name="ddlfile" onchange="Setdropdownvalue()">
+                                                            <tr><td style="float: left; width: 30%; margin-top: 3%" >Select File: <select style="margin-bottom: 10px" id="ddlfile" name="ddlfile" onchange="Setdropdownvalue()">
                                                                         <c:forEach items="${arrls}" var="arrl">
                                                                             <option value="${arrl.key}">
                                                                                 <c:out value="${arrl.value}" />

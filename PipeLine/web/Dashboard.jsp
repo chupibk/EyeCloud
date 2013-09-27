@@ -59,19 +59,18 @@
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
             <div id="content">
-
-                &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
-                    Welcome : "${username}"
-                    </br>
-                    </br>
-                    <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
-                </div>
-
                 <div class="inner-image">
-                    <div class="inner-title">
-                        Interactive Technologies Research Group
+                    &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
+                    <div id="welcome">
+                        Welcome : "${username}"
+                        </br>
+                        </br>
+                        <a style="float: right" href="#" onclick="submitForm('kill')"  class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
+                    </div>
 
+
+                    <div id="title">
+                        Interactive Technologies Research Group
                     </div>
 
                 </div>

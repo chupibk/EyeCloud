@@ -44,13 +44,13 @@
 
                 <div class="inner-image">
                     &nbsp;&nbsp;&nbsp;&nbsp;<img id="g1" src="img/logo1.png" />
-                    <div style="color: #194d65; font-weight: bold; font-size: 12px; float:right; margin-top:30px; margin-right:20px">
+                      <div id="welcome">
                         Welcome : "${username}"
                         </br>
                         </br>
                         <a style="float: right" href="Dashboard.jsp?kill" class="d5"><span>Log Out &nbsp;&nbsp;&nbsp;</span></a>
                     </div>
-                    <div style="color: #194d65; font-weight: bold; font-size: 30px; float:right; margin-top:50px; margin-right:550px">
+                    <div id="title">
                         Interactive Technologies Research Group
                     </div>
 
@@ -77,14 +77,15 @@
                                                 <div class="sct_right_load">
                                                     <form id="form1" method="POST" action="./ValidateData">
                                                         <input type="hidden" name="hdnData" id="hdnData" />
-                                                        <table><tr><td>
+                                                        <table><tr ><td style="margin-top: 3%;">
                                                                     <% if (Alrd_value.size() != 0) {%>
+                                                                    <br/><br/>
                                                                     <a href="#" onclick="submitForm('DF')">Download Fixation</a>
 
                                                                     <%}%>
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 450px; background: transparent;margin-top: 4%;">
+                                                                            <div style="overflow: scroll; height: 400px; width: 450px; background: transparent;">
                                                                                 <table border="1">
                                                                                     <tr>
                                                                                         <% for (int a = 0; a <= Alrd_column.size() - 1; a++) {%>
@@ -113,12 +114,12 @@
                                                                 </td>
                                                                 <td>
                                                                     <% if (Alrd_value.size() != 0) {%>
-
+                                                                    <br/><br/>
                                                                     <a href="#" onclick="submitForm('DS')">Download Saccade</a>
                                                                     <%}%>
                                                                     <div class="table_wrapper">
                                                                         <div class="table_wrapper_inner">
-                                                                            <div style="overflow: scroll; height: 400px; width: 620px; background:transparent">
+                                                                            <div style="overflow: scroll; height: 400px; width: 620px; background:transparent;">
                                                                                 <table border="1">
                                                                                     <tr>
                                                                                         <% for (int a = 0; a <= Alrd_lbl_column.size() - 1; a++) {%>
