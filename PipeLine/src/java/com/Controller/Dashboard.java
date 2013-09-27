@@ -130,19 +130,19 @@ public class Dashboard extends HttpServlet {
 
     private void DownloadFile(HttpServletResponse response, String filetype) throws FileNotFoundException, IOException {
         response.setContentType("text/plain");
-        int len=getServletContext().getRealPath("/").length();
+        int len=getServletContext().getRealPath("/").indexOf("PipeLine/");
         
-        String filepath = getServletContext().getRealPath("/").substring(0, len - 11);
+        String filepath = getServletContext().getRealPath("/").substring(0, len);
         
         File file;
         if (filetype.equals("DF")) { // If download FIxatIon fIle Is clIcked
             response.setHeader("Content-Disposition",
                     "attachment;filename=Fixation.txt");
-            file = new File(filepath + "/fix.txt"); // gettIng path to download fIxatIon FIle
+           file = new File(filepath + "PipeLine/" + "fix.txt");  // gettIng path to download fIxatIon FIle
         } else { // else download saccade fIle
             response.setHeader("Content-Disposition",
                     "attachment;filename=Saccade.txt");
-            file = new File(filepath + "/sac.txt"); // gettIng path to download saccade FIle
+            file = new File(filepath + "PipeLine/" + "sac.txt"); // gettIng path to download saccade FIle
         }
 
         FileInputStream fileIn = new FileInputStream(file); // assIgIng the FIle to fIleInput sream
@@ -188,12 +188,15 @@ public class Dashboard extends HttpServlet {
 
     private void FixSaccData(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         DataClass dc = new DataClass(getServletContext().getRealPath("/"));
+        System.out.println(getServletContext().getRealPath("/")+" ===psppspsts");
+        
         hdnselectvalue = request.getParameter("hdnselectvalue"); // gettIng total numbers of fIxatIon & Saccade data rows from the textFIle 
         fileName = request.getParameter("hdnselectText"); // settIng textFIle of fIxatIon & Saccade Data Into the FIle name
 
         dc.get_DataHbase_WriteTextFile(0, 0, "fix", UserId, "FixData", fileName, "MD", Alrd_column, Alrd_value);//reading fixation
         dc.get_DataHbase_WriteTextFile(0, 0, "sac", UserId, "FixData", fileName + "-S-", "MD", arrColumn_sac, arrValue_sac);// Adding -S- in the filename to make it varry from fix and reading Saccade
         request.setAttribute("fileName", hdnselectvalue); // setting hdnselectvalue for forwarding data to next page
+        
         request.setAttribute("arrls", arrls);
         request.setAttribute("Alrd_column", Alrd_column); // setting array List for forwarding data to next page
         request.setAttribute("Alrd_value", Alrd_value);

@@ -76,10 +76,9 @@ public class ValidateData extends HttpServlet {
             throws ServletException, IOException {
     }
     String UserId;
-    
+
     // uncomment it FOR reading from rawData table for Label text fIle, valIdatIng It and adding them
     // Into ValidData table
-
 //    public void Read_LabelData_forValdiation(String Efilename, String filename) { // Here I am reading label data for validation
 //        HTable table = null;
 //        try {
@@ -116,9 +115,8 @@ public class ValidateData extends HttpServlet {
 //            e.printStackTrace();
 //        }
 //    }
-
     public float pixalToCenti(int x1, int y1, int x2, int y2) { //this function convert pixal to centimeter
-        float xf1, xf2, yf1, yf2; 
+        float xf1, xf2, yf1, yf2;
         xf1 = (float) x1 * SCREEN_WIDTH / RESOLUTION_WIDTH;
         xf2 = (float) x2 * SCREEN_WIDTH / RESOLUTION_WIDTH;
         yf1 = (float) y1 * SCREEN_HEIGHT / RESOLUTION_HEIGHT;
@@ -194,7 +192,7 @@ public class ValidateData extends HttpServlet {
                                     if (IsStartTimefix) { //If Its true then
                                         startTimefix = arrT.get(0);// set startTimefix to the start TIme of the FIXATION
                                         IsStartTimefix = false; //settIng It false so that we can only recIeve startIng TIME
-                                    } 
+                                    }
                                     putXY(Integer.parseInt(arrX.get(0)), Integer.parseInt(arrY.get(0)),
                                             Integer.parseInt(arrT.get(1)) - Integer.parseInt(arrT.get(0))); //addIng & IncrementIng FIxatIon 
                                     FlagSccade = false;
@@ -262,11 +260,11 @@ public class ValidateData extends HttpServlet {
             addScade_inHbase("FixData", filename + "-S-", "SC", arrColumn, arrValue);// Inserting Saccade with adding "S" in file name
             arrXsac.clear(); //clearIng arrXsac
             arrYsac.clear(); //clearIng arrYsac
-            countxySac = 0; 
+            countxySac = 0;
             durationSac = 0;
         } else { // When Its fixation
-            IsStartTimefix = true; 
-            arrColumn.clear(); 
+            IsStartTimefix = true;
+            arrColumn.clear();
             arrValue.clear();
             arrColumn.add("StartTimeStamp"); // addIng StartTimeStamp column INto the arrColumn arrayLIst
             arrValue.add(startTimefix); //addIng startTimefix value Into arrValue
@@ -289,7 +287,7 @@ public class ValidateData extends HttpServlet {
     }
 
     //ThIs functIon wIll Insert nos of FIxaTIon & Saccade taken place In each round
-    public void addingEyeFeature_inHbase(String tablename, String rowKey, int FixCount, int SacCount, int time) { 
+    public void addingEyeFeature_inHbase(String tablename, String rowKey, int FixCount, int SacCount, int time) {
         try {
             HTable table = new HTable(conf, tablename);// assIgIng tablename and confIguratIon 
             table.setAutoFlush(false); //settIng table to autoflush false
@@ -307,8 +305,6 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
-    
-    
 
     public void Read_RawData_forValidation(String filename, String gxleft, String gxright,
             String gyleft, String gyright, String dleft, String dright) {
@@ -319,7 +315,7 @@ public class ValidateData extends HttpServlet {
             int vLindex, vRindex, dLindex, dRindex, gpXLindex,
                     gpXRindex, gpYLindex, gpYRindex; // declarIng varIables of gettIng Index Of columns
             Double DLeft, DRight, gpXleft, gpYleft; //declarIng varIables of keepIng the double values
-            int DLlength, DRlenght; 
+            int DLlength, DRlenght;
             boolean breakflag; // ThIs flag Is used to check wheater data Is valId or not, If Its true It means Data Is InvaLId and data wIll not be Inserted  In Hbase, else Its Inserted
             table = new HTable(conf, "RawData"); // assIgIng tablename and confIguratIon 
             for (long a = 0; a <= NosRow - 1; a++) { //runnIng loop untIl nosRow
@@ -461,7 +457,7 @@ public class ValidateData extends HttpServlet {
             e.printStackTrace();
         }
     }
-    
+
     // ThIs FuncatIon Is Used For addIng record In saccade Hbase
     public void addScade_inHbase(String tablename, String rowKey, String CQ, ArrayList<String> arrColumn, ArrayList<String> arrValue) {
 
@@ -554,14 +550,14 @@ public class ValidateData extends HttpServlet {
             DownloadFile(response, hdnData); // download saccade FILe
         } else {
             Read_RawData_forValidation(Efilename, gxleft, gxright, gyleft, gyright, dleft, dright); //ReadIng Raw Data for valIdatIon 
-           // Read_LabelData_forValdiation(Efilename, Lfilename); // uncomment It for ReadIng label Data from RawData table for valIdatIng It 
+            // Read_LabelData_forValdiation(Efilename, Lfilename); // uncomment It for ReadIng label Data from RawData table for valIdatIng It 
             arrColumn.clear(); //clearng the arrColumn arrayLIst
             arrValue.clear();//clearng the arrValue arrayLIst
             arrTime.clear();//clearng the arrTime arrayLIst
             arrColumn_lbl.clear(); //clearng the arrColumn_lbl arrayLIst
             arrValue_lbl.clear(); //clearng the arrValue_lbl arrayLIst
             dc.get_DataHbase(0, 1000, UserId, "ValidData", Efilename, arrColumn, arrValue, arrTime); // readIng Eye tracker valId data to show on page
-           // dc.get_DataHbase_common(0, 0, "", UserId, "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// uncommentIng for readIng label valId data to show on page
+            // dc.get_DataHbase_common(0, 0, "", UserId, "ValidData", Lfilename, "MD", arrColumn_lbl, arrValue_lbl);// uncommentIng for readIng label valId data to show on page
         }
         request.setAttribute("arrColumn", arrColumn); // setting array List for forwarding data to next page
         request.setAttribute("arrValue", arrValue); // setting array List for forwarding data to next page
@@ -574,18 +570,19 @@ public class ValidateData extends HttpServlet {
 
     private void DownloadFile(HttpServletResponse response, String filetype) throws FileNotFoundException, IOException {
         response.setContentType("text/plain");
-         int len=getServletContext().getRealPath("/").length();
-        String filepath = getServletContext().getRealPath("/").substring(0, len - 11);
-        
+        int len = getServletContext().getRealPath("/").indexOf("PipeLine/");
+
+        String filepath = getServletContext().getRealPath("/").substring(0, len);
+
         File file;
         if (filetype.equals("DF")) { // IF FILE type Is FIxaTIOn
             response.setHeader("Content-Disposition",
                     "attachment;filename=Fixation.txt"); // make FIxaTIOn FILE
-            file = new File(filepath + "/fix.txt"); // gettIng path to download fIxatIon FIle
+            file = new File(filepath + "PipeLine/" + "fix.txt"); // gettIng path to download fIxatIon FIle
         } else { // IF FILE type Is saccade
             response.setHeader("Content-Disposition",
                     "attachment;filename=Saccade.txt");  // make saccade FILE
-            file = new File(filepath + "/sac.txt"); // gettIng path to download saccade FIle
+            file = new File(filepath + "PipeLine/" + "sac.txt");// gettIng path to download saccade FIle
         }
 
         FileInputStream fileIn = new FileInputStream(file); // assIGN FILE varIable to FileInputStream

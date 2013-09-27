@@ -4,6 +4,7 @@
     Author     : samsalman
 --%>
 
+<%@page import="java.io.PrintWriter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.ArrayList" %>
@@ -74,9 +75,9 @@
             ArrayList<String> Alrd_value = (ArrayList) request.getAttribute("Alrd_value");
 
             ArrayList<String> Alrd_lbl_column = (ArrayList) request.getAttribute("Alrd_lbl_column");
-            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");
-            //out.print(Alrd_lbl_column +" " +  );
-%>
+            ArrayList<String> Alrd_lbl_value = (ArrayList) request.getAttribute("Alrd_lbl_value");             
+             
+        %>
 
         <div id="wrapper">
             <!--[if !IE]>start login wrapper<![endif]-->
@@ -130,7 +131,7 @@
                                                                     </select> 
                                                                     <span class="button approve"><span><span>Search</span></span><input name="btnFixsearch" id="btnFixsearch" type="submit" value="Fix"/></span>
                                                                 </td> 
-                                                                <td style="float: left; width: 60%; margin-left: 40px" >
+                                                                <td style="float: left; width: 60%; margin-left: 40px; margin-top: 3%" >
                                                                     <br/>&nbsp;&nbsp;&nbsp;
                                                                     <% if (Alrd_value.size() != 0) {%>
                                                                     <a href="#" onclick="submitForm('DF')">Download Fixation</a>

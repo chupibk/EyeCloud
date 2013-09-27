@@ -183,19 +183,21 @@ public class DataClass {
         }
 
     }
-
+     String filepath = "";
     //This funcation is just like get_DataHbase but It wIll also WrIte Result Into text FIle so that User can download
+
     public void get_DataHbase_WriteTextFile(long loopStarter, long loopruner, String flag, String userId, String tablename, String rowkey, String Columnfly, ArrayList<String> ArrayRD_Column, ArrayList<String> ArrayRD_Value) throws IOException {
         HTable table = null;
         boolean flagcolumn = false, flagline = false;
         String holdvalue = "";
-        String filepath = "";
         File file;
-        filepath = holdpath.substring(0, holdpath.length() - 11);
+        //filepath = holdpath.substring(0, holdpath.length() - 11);
+        filepath = holdpath.substring(0, holdpath.indexOf("PipeLine/"));
+        System.out.println(filepath);
         if (flag.equals("fix")) { // for writing holdpathinto textfile
-            file = new File(filepath + "/" + "fix.txt"); //wrItIng fIxaTIon fIle // add web also if you runs on development machine like this /web/download/
+            file = new File(filepath + "PipeLine/" + "fix.txt"); //wrItIng fIxaTIon fIle // add web also if you runs on development machine like this /web/download/
         } else {
-            file = new File(filepath + "/" + "sac.txt"); //wrItIng Saccade fIle // add web also if you runs on development machine like this /web/download/
+            file = new File(filepath + "PipeLine/" + "sac.txt"); //wrItIng Saccade fIle // add web also if you runs on development machine like this /web/download/
         }
         try {
             FileWriter fileWriter = new FileWriter(file); // puting file into filewriter
@@ -298,8 +300,8 @@ public class DataClass {
     Statement stat = null;
     ResultSet rs = null;
     public String email, username, country, state, city, address, mobileNO, phoneNo, postalcode;
-    String MysqlCon = "jdbc:mysql://localhost:3306/Cloud";
-    //String MysqlCon="jdbc:mysql://localhost:3306/Cloud";
+    //String MysqlCon = "jdbc:mysql://localhost:3306/CloudLogin";
+   String MysqlCon="jdbc:mysql://localhost:3306/Cloud";
     String Mysqluser = "root";
     //String Mysqluser="cloudadmin";
     //String MysqlPass="Vg78gRt";
