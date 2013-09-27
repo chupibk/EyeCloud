@@ -298,12 +298,12 @@ public class DataClass {
     Statement stat = null;
     ResultSet rs = null;
     public String email, username, country, state, city, address, mobileNO, phoneNo, postalcode;
-    String MysqlCon = "jdbc:mysql://localhost:3306/CloudLogin";
+    String MysqlCon = "jdbc:mysql://localhost:3306/Cloud";
     //String MysqlCon="jdbc:mysql://localhost:3306/Cloud";
     String Mysqluser = "root";
     //String Mysqluser="cloudadmin";
     //String MysqlPass="Vg78gRt";
-    String MysqlPass = "Sa1234";
+    String MysqlPass = "";
     //"jdbc:mysql://localhost:3306/CloudLogin"
 
     public int CheckEmaIl(String email) {
