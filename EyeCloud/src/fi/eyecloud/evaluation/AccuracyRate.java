@@ -51,19 +51,19 @@ public class AccuracyRate {
 		ReadTextFile offline = new ReadTextFile(offlineFile);
 		
 		while (online.readNextLine() != null){
-			int check = 0;
+			//int check = 0;
 			while (offline.readNextLine() != null){
 				if (Integer.parseInt(online.getField(Constants.Timestamp)) == 
 					Integer.parseInt(offline.getField(Constants.Timestamp)) &&
 					Integer.parseInt(online.getField(Constants.Duration)) == 
 					Integer.parseInt(offline.getField(Constants.Duration)) ){
 					MF++;
-					check = 1;
+					//check = 1;
 					break;
 				}
 			}
-			if (check == 0)
-				System.out.println(online.getField(Constants.Timestamp) + " - " + online.getField(Constants.Duration));
+			//if (check == 0)
+			//	System.out.println(online.getField(Constants.Timestamp) + " - " + online.getField(Constants.Duration));
 				
 			// Reset offline file result
 			offline.resetFile();

@@ -1,6 +1,7 @@
 package fi.eyecloud.storm.fixation;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -13,13 +14,17 @@ import backtype.storm.utils.DRPCClient;
 
 public class EyeTracker {
 	
-	public EyeTracker(String hostName, String dataPath, int segment, int id) throws TException, DRPCExecutionException, InterruptedException, IOException{
+	public EyeTracker(String hostName, String dataPath, String prefix, int segment, int id) throws TException, DRPCExecutionException, InterruptedException, IOException{
 		DRPCClient client = new DRPCClient(hostName, 3772);
 		ReadTextFile data = new ReadTextFile(dataPath);
 		
 		// Output file
 		BufferedWriter out = null;
-		FileWriter fw = new FileWriter(id + "_" + segment);
+		File folder = new File(prefix);
+		if (!folder.exists()){
+			folder.mkdir();
+		}
+		FileWriter fw = new FileWriter(prefix + "/" + id + "_" + segment);
 		out = new BufferedWriter(fw);
 		out.write("GazePointX\tGazePointY\tRecordingTimestamp\tDuration\tDelay\n");
 		
@@ -91,9 +96,13 @@ public class EyeTracker {
 	
 	/**
 	 * @param args
+	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * @throws DRPCExecutionException 
+	 * @throws TException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws TException, DRPCExecutionException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		
+		new EyeTracker("54.229.164.16", "data/17June.txt", "test", 1000, 10);
 	}
 }
