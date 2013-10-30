@@ -38,32 +38,40 @@ public class I_VT {
 			e.printStackTrace();
 		}
 		
-		int lineId = 0;
 		mapHeader = data.getMapHeader();
 		String pre = null;
 		String current = null;
 		while ((current = data.readNextLine()) != null) {
-			lineId++;
+			//System.out.println(current);
 			if (pre == null) pre = current;
 			String split[] = pre.split(Constants.SPLIT_MARK);
-			int x1 = Integer.parseInt(getField(split, Constants.GazePointX));
-			int y1 = Integer.parseInt(getField(split, Constants.GazePointY));
-			int time1 = Integer.parseInt(getField(split, Constants.Timestamp));
+			int x1 = (Integer.parseInt(getField(split, Constants.GazePointXLeft)) +
+					Integer.parseInt(getField(split, Constants.GazePointXRight)))/2;
+			int y1 = (Integer.parseInt(getField(split, Constants.GazePointYLeft)) +
+					Integer.parseInt(getField(split, Constants.GazePointYRight)))/2;
+			int time1 = Integer.parseInt(getField(split, Constants.Timestamp));			
 			float dis1 = (Float.parseFloat(getField(split, Constants.DistanceLeft)) + 
 						 Float.parseFloat(getField(split, Constants.DistanceRight))) / 2;
+			int line1 = Integer.parseInt(getField(split, Constants.Number));
 			
 			split = current.split(Constants.SPLIT_MARK);
-			int x2 = Integer.parseInt(getField(split, Constants.GazePointX));
-			int y2 = Integer.parseInt(getField(split, Constants.GazePointY));
+			int x2 = (Integer.parseInt(getField(split, Constants.GazePointXLeft)) +
+					Integer.parseInt(getField(split, Constants.GazePointXRight)))/2;
+			int y2 = (Integer.parseInt(getField(split, Constants.GazePointYLeft)) +
+					Integer.parseInt(getField(split, Constants.GazePointYRight)))/2;
 			int time2 = Integer.parseInt(getField(split, Constants.Timestamp));
 			float dis2 = (Float.parseFloat(getField(split, Constants.DistanceLeft)) + 
 						 Float.parseFloat(getField(split, Constants.DistanceRight))) / 2;
+			int line2 = Integer.parseInt(getField(split, Constants.Number));
+			//System.out.println(getField(split, Constants.GazePointYLeft));
 			if (x1 >= 0 && y1 >= 0 && time1 >= 0 && dis1 >= 0 && x2 >= 0 && y2 >= 0 && time2 >= 0 && dis2 >= 0){
 				float tmp = Library.VT_Degree(x1, y1, x2, y2, dis1, dis2,
 						time2 - time1);
+				//System.out.println(tmp);
 				// time1 = time2 --> first coordinate
 				if ( tmp <= Constants.VELOCITY_THRESHOLD || time1 == time2) {
-					putXY(x2, y2, time2, lineId);
+					System.out.println(line1 + " , " + line2 + " , " + currentLine + " , " + time2 + " , " + duration);
+					putXY(x2, y2, time2, line2);
 				}
 			}
 			
@@ -105,8 +113,9 @@ public class I_VT {
 	public String getField(String[] split, String fieldName){
 		if (mapHeader.get(fieldName) == -1 || mapHeader.get(fieldName) >= split.length) 
 			return Integer.toString(Constants.UNKNOWN);
-		if (split[mapHeader.get(fieldName)].equals("")) 
+		if (split[mapHeader.get(fieldName)].equals("") || split[mapHeader.get(fieldName)].equals(" ")) 
 			return Integer.toString(Constants.UNKNOWN);
+		
 		return split[mapHeader.get(fieldName)];
 	} 	
 	
@@ -119,23 +128,14 @@ public class I_VT {
 	 * @param dis
 	 */
 	public void putXY(int x, int y, int time, int lineId) {
-		if (currentLine == 0 || lineId - currentLine == 1) {
-			if (count == 0){
-				count++;
-				sumX = x;
-				sumY = y;
-				startTime = time;
-				duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
-				currentLine = lineId;
-			}else{
+		if (lineId - currentLine == 1) {
 				count++;
 				sumX += x;
 				sumY += y;
 
-				currentLine = lineId;
+				currentLine = lineId;	
 				duration = time - startTime + Constants.THOUSAND / Constants.SAMPLE_RATE;
 				//System.out.println(time + " - " + startTime + " - " + duration + " - " + lineId + " - " + currentLine);
-			}
 		}else {
 			if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
 				try {
@@ -168,7 +168,7 @@ public class I_VT {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		long start = System.currentTimeMillis();
-		new I_VT("data/17June.txt", "data/17JuneResult.txt");
+		new I_VT("data/AjayaCMD.txt", "data/AjayaCMDResult.txt");
 		//new I_VT("/home/hadoop/eye/01-01-All-Data.txt", "result.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}

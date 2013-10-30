@@ -33,9 +33,13 @@ public class EyeTracker {
 		long tmpTime = System.currentTimeMillis();
 			
 		while (data.readNextLine() != null) {
-			currentSend = currentSend + data.getField(Constants.GazePointX)
+			int x = (Integer.parseInt(data.getField(Constants.GazePointXLeft)) +
+					Integer.parseInt(data.getField(Constants.GazePointXRight)))/2;
+			int y = (Integer.parseInt(data.getField(Constants.GazePointYLeft)) +
+					Integer.parseInt(data.getField(Constants.GazePointYRight)))/2;			
+			currentSend = currentSend + x
 					+ Constants.PARAMETER_SPLIT;
-			currentSend = currentSend + data.getField(Constants.GazePointY)
+			currentSend = currentSend + y
 					+ Constants.PARAMETER_SPLIT;
 			int timestamp = Integer.parseInt(data.getField(Constants.Timestamp));
 			currentSend = currentSend + timestamp + Constants.PARAMETER_SPLIT;
@@ -45,11 +49,16 @@ public class EyeTracker {
 					.parseFloat(data.getField(Constants.DistanceRight))) / 2;
 
 			currentSend = currentSend + dis + Constants.PARAMETER_SPLIT;
+			currentSend = currentSend + System.currentTimeMillis() + Constants.PARAMETER_SPLIT;
+			currentSend = currentSend + Integer.parseInt(data.getField(Constants.Number)) 
+										+ Constants.PARAMETER_SPLIT;
 			
 			if (timestamp - currentTime >= segment){
 				currentSend = currentSend + id;
+				System.out.println(currentSend);
 				String result = client.execute("CloudFixation", currentSend);
-				writeFile(out, result);
+				System.out.println(result);
+				writeFile(out, result, System.currentTimeMillis());
 				
 				long dif = System.currentTimeMillis() - tmpTime;
 				if (dif < segment)
@@ -64,12 +73,12 @@ public class EyeTracker {
 		if (!currentSend.equals("")){
 			currentSend = currentSend + id;
 			String result = client.execute("CloudFixation", currentSend);
-			writeFile(out, result);
+			writeFile(out, result, System.currentTimeMillis());
 		}
 		
 		// Finish sending by send empty string
 		String result = client.execute("CloudFixation", Integer.toString(id));
-		writeFile(out, result);	
+		writeFile(out, result, System.currentTimeMillis());	
 		
 		// Close all
 		data.closeFile();
@@ -77,15 +86,16 @@ public class EyeTracker {
 		out.close();
 	}
 	
-	public static void writeFile(BufferedWriter o, String data){
-		String split[] = data.split(Constants.PARAMETER_SPLIT);
+	public static void writeFile(BufferedWriter o, String data, long time){
+		String split[] = data.split(Constants.PARAMETER_SPLIT); 
 		for (int i=0; i < split.length/5; i++){
+			long delay = time - Long.parseLong(split[i*5 + 4]) - Long.parseLong(split[i*5 + 3]);
 			try {
 				o.write(split[i*5]
 						+ Constants.SPLIT_MARK + split[i*5 + 1]
 						+ Constants.SPLIT_MARK + split[i*5 + 2]
 						+ Constants.SPLIT_MARK + split[i*5 + 3]
-						+ Constants.SPLIT_MARK + split[i*5 + 4]
+						+ Constants.SPLIT_MARK + delay
 						+ "\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -103,6 +113,6 @@ public class EyeTracker {
 	 */
 	public static void main(String[] args) throws TException, DRPCExecutionException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		new EyeTracker("54.229.164.16", "data/17June.txt", "test", 1000, 10);
+		new EyeTracker("54.246.217.6", "data/AjayaCMD.txt", "test", 20, 190);
 	}
 }

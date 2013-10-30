@@ -84,7 +84,7 @@ public class ReadTextFile {
 		String split[] = currentLine.split(Constants.SPLIT_MARK);
 		if (mapHeader.get(fieldName) == -1 || mapHeader.get(fieldName) >= split.length) 
 			return Integer.toString(Constants.UNKNOWN);
-		if (split[mapHeader.get(fieldName)].equals("")) 
+		if (split[mapHeader.get(fieldName)].equals("") || split[mapHeader.get(fieldName)].equals(" ")) 
 			return Integer.toString(Constants.UNKNOWN);
 		return split[mapHeader.get(fieldName)];
 	}

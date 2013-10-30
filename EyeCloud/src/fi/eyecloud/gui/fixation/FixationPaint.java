@@ -32,17 +32,17 @@ public class FixationPaint extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(scaledMedia, 0, 0, null);  
-        this.drawFixation(g);
-        //this.drawPoint(g);
+        //this.drawFixation(g);
+        this.drawPoint(g);
     }
     
     public void drawPoint(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/17June.txt");
+		ReadTextFile data = new ReadTextFile("data/AjayaCMD.txt");
 		int preX, preY;
 		preX = preY = Constants.UNKNOWN;
 		while (data.readNextLine() != null) {
-			int x = Integer.parseInt(data.getField(Constants.GazePointX))/GuiConstants.SCREEN_RATE;
-			int y = Integer.parseInt(data.getField(Constants.GazePointY))/GuiConstants.SCREEN_RATE - GuiConstants.ERROR_USED;
+			int x = ((Integer.parseInt(data.getField(Constants.GazePointXLeft)) + Integer.parseInt(data.getField(Constants.GazePointXRight))) / 2)/GuiConstants.SCREEN_RATE;
+			int y = ((Integer.parseInt(data.getField(Constants.GazePointYLeft)) + Integer.parseInt(data.getField(Constants.GazePointYRight))) / 2)/GuiConstants.SCREEN_RATE - GuiConstants.ERROR_USED;
 			int size  = GuiConstants.DOT_SIZE;
 			
 			if (x !=Constants.UNKNOWN && y!=Constants.UNKNOWN){
@@ -60,8 +60,8 @@ public class FixationPaint extends JPanel {
     }
     
     public void drawFixation(Graphics g){
-		ReadTextFile data = new ReadTextFile("data/17June_40");
-		ReadTextFile offline = new ReadTextFile("data/17JuneResult.txt");
+		ReadTextFile data = new ReadTextFile("data/AjayaCMD.txt");
+		ReadTextFile offline = new ReadTextFile("data/AjayaCMDResult.txt");
 		
 		int preX, preY;
 		preX = preY = Constants.UNKNOWN;

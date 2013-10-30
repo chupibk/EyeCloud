@@ -49,21 +49,22 @@ public class CloudFixation {
 		private static String Y_1 = "y1_";
 		private static String TIME_1 = "time1_";
 		private static String DIS_1 = "dis1_";
+		private static String INDEX_1 = "index1_";
 		private static String COUNT = "count_";				
 		private static String SUM_X = "sumX_";
 		private static String SUM_Y = "sumY_";
 		private static String START_TIME = "starttime_";
 		private static String DURATION = "duration_";		
-		private static String DELAY = "delay_";
+		private static String SENDTIME = "sendtime_";
 		
     	private int sumX;
     	private int sumY;
     	private int count = 0;
     	private int startTime;
     	private int duration = 0;
-    	private long delay = 0;
-    	
+    	private long sendtime = 0;
     	private int currentLine = 0;
+    	
     	private String result = "";		
 		
 		@SuppressWarnings("rawtypes")
@@ -76,13 +77,13 @@ public class CloudFixation {
 		public void execute(Tuple input, BasicOutputCollector collector) {
 			// Set values
 			sumX = sumY = count = startTime = duration = currentLine = 0;
-			delay = 0;
 			result = "";
 			
 			Integer id = input.getInteger(0);
 			String data[] = (String[]) input.getValue(1);
         	int length = data.length/Constants.PARAMETER_NUMBER_FIXATION;
-        	int x1,y1,time1,x2,y2,time2;
+        	int x1, y1, time1, x2, y2, time2, index2;
+        	long send2;
         	float dis1, dis2;
         	x1 = y1 = time1 = 0;
         	dis1 = 0;			
@@ -95,7 +96,9 @@ public class CloudFixation {
 			if (contextData.getTaskData(TIME_1 + id) != null)
 				time1 = Integer.parseInt(contextData.getTaskData(TIME_1 + id).toString());	
 			if (contextData.getTaskData(DIS_1 + id) != null)
-				dis1 = Float.parseFloat(contextData.getTaskData(DIS_1 + id).toString());			
+				dis1 = Float.parseFloat(contextData.getTaskData(DIS_1 + id).toString());	
+			if (contextData.getTaskData(INDEX_1 + id) != null)
+				currentLine = Integer.parseInt(contextData.getTaskData(INDEX_1 + id).toString());			
 			if (contextData.getTaskData(COUNT + id) != null)
 				count = Integer.parseInt(contextData.getTaskData(COUNT + id).toString());		        	
 			if (contextData.getTaskData(SUM_X + id) != null)
@@ -106,8 +109,8 @@ public class CloudFixation {
 				startTime = Integer.parseInt(contextData.getTaskData(START_TIME + id).toString());		
 			if (contextData.getTaskData(DURATION + id) != null)
 				duration = Integer.parseInt(contextData.getTaskData(DURATION + id).toString());				
-			if (contextData.getTaskData(DELAY + id) != null)
-				delay = System.currentTimeMillis() - Long.parseLong(contextData.getTaskData(DELAY + id).toString());				
+			if (contextData.getTaskData(SENDTIME + id) != null)
+				sendtime = Long.parseLong(contextData.getTaskData(SENDTIME + id).toString());				
 			
 			if (data.length == 1){
 				if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
@@ -115,20 +118,20 @@ public class CloudFixation {
 							+ Constants.PARAMETER_SPLIT + (float) sumY
 							/ count + Constants.PARAMETER_SPLIT + startTime
 							+ Constants.PARAMETER_SPLIT + duration 
-							+ Constants.PARAMETER_SPLIT + delay + Constants.PARAMETER_SPLIT;
-					delay = 0;
+							+ Constants.PARAMETER_SPLIT + sendtime + Constants.PARAMETER_SPLIT;
 				}
 				
 	        	contextData.setTaskData(X_1 + id, null);
 	        	contextData.setTaskData(Y_1 + id, null);
 	        	contextData.setTaskData(TIME_1 + id, null);
 	        	contextData.setTaskData(DIS_1 + id, null);
+	        	contextData.setTaskData(INDEX_1 + id, null);
 	        	contextData.setTaskData(COUNT + id, null);
 	        	contextData.setTaskData(SUM_X + id, null);
 	        	contextData.setTaskData(SUM_Y + id, null);
 	        	contextData.setTaskData(START_TIME + id, null);
 	        	contextData.setTaskData(DURATION + id, null);
-	        	contextData.setTaskData(DELAY + id, null);
+	        	contextData.setTaskData(SENDTIME + id, null);
 				collector.emit(new Values(input.getValue(2), result));
 				return;
 			}
@@ -138,6 +141,8 @@ public class CloudFixation {
         		y2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 1]);
         		time2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 2]);
         		dis2 = Float.parseFloat(data[i*Constants.PARAMETER_NUMBER_FIXATION + 3]);
+        		send2 = Long.parseLong(data[i*Constants.PARAMETER_NUMBER_FIXATION + 4]);
+        		index2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 5]);
         		
         		if (i == 0 && contextData.getTaskData(X_1 + id) == null){
         			x1 = x2;
@@ -151,7 +156,7 @@ public class CloudFixation {
     						time2 - time1);
     				// time1 = time2 --> first coordinate
     				if ( tmp <= Constants.VELOCITY_THRESHOLD || time1 == time2) {
-    					putXY(x2, y2, time2, i + 1);
+    					putXY(x2, y2, time2, send2, index2);
     				}
     			}
     			
@@ -166,12 +171,13 @@ public class CloudFixation {
         	contextData.setTaskData(Y_1 + id, y1);
         	contextData.setTaskData(TIME_1 + id, time1);
         	contextData.setTaskData(DIS_1 + id, dis1);
+        	contextData.setTaskData(INDEX_1 + id, currentLine);
         	contextData.setTaskData(COUNT + id, count);
         	contextData.setTaskData(SUM_X + id, sumX);
         	contextData.setTaskData(SUM_Y + id, sumY);
         	contextData.setTaskData(START_TIME + id, startTime);
         	contextData.setTaskData(DURATION + id, duration);
-        	contextData.setTaskData(DELAY + id, System.currentTimeMillis());
+        	contextData.setTaskData(SENDTIME + id, sendtime);
         	
         	collector.emit(new Values(input.getValue(2), result));
 		}
@@ -184,41 +190,36 @@ public class CloudFixation {
     	 * @param time
     	 * @param dis
     	 */
-    	public void putXY(int x, int y, int time, int lineId) {
-    		if (lineId - currentLine == 1) {
-    			if (count == 0){
-    				count++;
-    				sumX = x;
-    				sumY = y;
-    				startTime = time;
-    				currentLine = lineId;
-    				duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
-    			}else{
-    				count++;
-    				sumX += x;
-    				sumY += y;
+		public void putXY(int x, int y, int time, long send,
+				int lineId) {
+			if (lineId - currentLine == 1) {
+				count++;
+				sumX += x;
+				sumY += y;
 
-    				currentLine = lineId;
-    				duration = time - startTime + Constants.THOUSAND / Constants.SAMPLE_RATE;
-    			}
-    		}else {
-    			if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
-    				result = result + (float) sumX / count
-    						+ Constants.PARAMETER_SPLIT + (float) sumY
-    						/ count + Constants.PARAMETER_SPLIT + startTime
-    						+ Constants.PARAMETER_SPLIT + duration 
-    						+ Constants.PARAMETER_SPLIT + delay + Constants.PARAMETER_SPLIT;
-    				delay = 0;
-    			}
-    			count = 0;
-    			count++;
-    			sumX = x;
-    			sumY = y;
-    			startTime = time;
-    			duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
-    			currentLine = lineId;
-    		}		
-    	}      		
+				currentLine = lineId;
+				duration = time - startTime + Constants.THOUSAND
+						/ Constants.SAMPLE_RATE;
+			} else {
+				if (count > 0
+						&& duration > Constants.FIXATION_DURATION_THRESHOLD) {
+					result = result + (float) sumX / count
+							+ Constants.PARAMETER_SPLIT + (float) sumY / count
+							+ Constants.PARAMETER_SPLIT + startTime
+							+ Constants.PARAMETER_SPLIT + duration
+							+ Constants.PARAMETER_SPLIT + sendtime
+							+ Constants.PARAMETER_SPLIT;
+				}
+				count = 0;
+				count++;
+				sumX = x;
+				sumY = y;
+				startTime = time;
+				duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
+				currentLine = lineId;
+				sendtime = send;
+			}
+		} 		
 
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
