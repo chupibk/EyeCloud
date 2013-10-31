@@ -168,7 +168,7 @@ public class I_VT {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		long start = System.currentTimeMillis();
-		new I_VT("data/AjayaCMD.txt", "data/AjayaCMDResult.txt");
+		new I_VT("exp/10.txt", "exp/result/10r.txt");
 		//new I_VT("/home/hadoop/eye/01-01-All-Data.txt", "result.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}

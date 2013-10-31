@@ -14,9 +14,9 @@ import backtype.storm.utils.DRPCClient;
 
 public class EyeTracker {
 	
-	public EyeTracker(String hostName, String dataPath, String prefix, int segment, int id) throws TException, DRPCExecutionException, InterruptedException, IOException{
+	public EyeTracker(String hostName, int dataPath, String prefix, int segment, int id) throws TException, DRPCExecutionException, InterruptedException, IOException{
 		DRPCClient client = new DRPCClient(hostName, 3772);
-		ReadTextFile data = new ReadTextFile(dataPath);
+		ReadTextFile data = new ReadTextFile("exp/" + dataPath + ".txt");
 		
 		// Output file
 		BufferedWriter out = null;
@@ -24,7 +24,7 @@ public class EyeTracker {
 		if (!folder.exists()){
 			folder.mkdir();
 		}
-		FileWriter fw = new FileWriter(prefix + "/" + id + "_" + segment);
+		FileWriter fw = new FileWriter(prefix + "/" + id + "_" + dataPath + "_" + segment + ".txt");
 		out = new BufferedWriter(fw);
 		out.write("GazePointX\tGazePointY\tRecordingTimestamp\tDuration\tDelay\n");
 		
@@ -55,9 +55,9 @@ public class EyeTracker {
 			
 			if (timestamp - currentTime >= segment){
 				currentSend = currentSend + id;
-				System.out.println(currentSend);
+				//System.out.println(currentSend);
 				String result = client.execute("CloudFixation", currentSend);
-				System.out.println(result);
+				//System.out.println(result);
 				writeFile(out, result, System.currentTimeMillis());
 				
 				long dif = System.currentTimeMillis() - tmpTime;
@@ -113,6 +113,6 @@ public class EyeTracker {
 	 */
 	public static void main(String[] args) throws TException, DRPCExecutionException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		new EyeTracker("54.246.217.6", "data/AjayaCMD.txt", "test", 20, 190);
+		new EyeTracker("54.229.233.105", 1, "test", 20, 10);
 	}
 }

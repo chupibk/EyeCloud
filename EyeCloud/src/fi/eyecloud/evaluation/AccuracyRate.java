@@ -95,7 +95,7 @@ public class AccuracyRate {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		AccuracyRate test = new AccuracyRate("data/17June_1000_Cloud", "data/17JuneResult.txt");
+		AccuracyRate test = new AccuracyRate("test/200_500", "data/AjayaCMDResult.txt");
 		System.out.println("FN: " + test.getAFN());
 		System.out.println("FD: " + test.getTotalDuration());
 		System.out.println("MF: " + test.getMF());

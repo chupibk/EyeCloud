@@ -149,6 +149,7 @@ public class CloudFixation {
         			y1 = y2;
         			time1 = time2;
         			dis1 = dis2;
+        			sendtime = send2;
         		}
         		
     			if (x1 >= 0 && y1 >= 0 && time1 >= 0 && dis1 >= 0 && x2 >= 0 && y2 >= 0 && time2 >= 0 && dis2 >= 0){
