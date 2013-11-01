@@ -18,6 +18,7 @@ public class AccuracyRate {
 	private int MF;
 	private int totalDuration;
 	private long delay;
+	private long maxDelay;
 	private String onlineFile;
 	private String offlineFile;
 	
@@ -27,6 +28,7 @@ public class AccuracyRate {
 		AFD = 0;
 		MF	= 0;
 		delay = 0;
+		maxDelay = 0;
 		totalDuration = 0;
 		onlineFile = online;
 		offlineFile = offline;
@@ -41,6 +43,9 @@ public class AccuracyRate {
 			AFN ++;
 			totalDuration += Integer.parseInt(online.getField(Constants.Duration));
 			delay += Long.parseLong(online.getField(Constants.Delay));
+			if (maxDelay < Long.parseLong(online.getField(Constants.Delay))){
+				maxDelay = Long.parseLong(online.getField(Constants.Delay));
+			}
 		}
 		
 		AFD = (float)totalDuration / AFN;
@@ -89,6 +94,10 @@ public class AccuracyRate {
 	public float getDelay(){
 		if (AFN == 0) return 0;
 		return (float)delay/(float)AFN;
+	}
+	
+	public long getMaxDelay(){
+		return maxDelay;
 	}
 	
 	public int getCorrectRate(){

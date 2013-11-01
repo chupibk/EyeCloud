@@ -8,11 +8,12 @@ import backtype.storm.generated.DRPCExecutionException;
 
 public class Simulator {
 
-	public Simulator(String h, String p, int s, int min, int max) {
+	public Simulator(String server[], String p, int s, int min, int max) {
 		System.gc();
 		for (int i = min; i < max; i++) {
+			int h = (int)(Math.random()*5 + 1);
 			int d = (int)(Math.random()*10 + 1);
-			EyeThread eye = new EyeThread(h, d, p, s, i);
+			EyeThread eye = new EyeThread(server[h], d, p, s, i);
 			eye.start();
 		}
 	}
@@ -57,13 +58,13 @@ public class Simulator {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String server[] = {	"", 
+		String serverList[] = {	"", 
 							"176.34.136.152",
 							"54.246.244.184", 
 							"176.34.136.192", 
 							"176.34.136.133", 
 							"176.34.136.175"};
-		new Simulator(server[Integer.parseInt(args[0])], args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+		new Simulator(serverList, args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
 		//new Simulator("54.229.233.105", "test", 100, 0, 2);
 	}
 

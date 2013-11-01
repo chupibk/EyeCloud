@@ -9,6 +9,7 @@ public class Evaluation {
 	public Evaluation(String prefix){
 		int correctRate = 0;
 		float delay = 0;
+		long maxDelay = 0;
 		File f = new File(prefix);
 		File[] list = f.listFiles();
 		int count = 0;
@@ -22,6 +23,9 @@ public class Evaluation {
 					count++;
 					correctRate += result.getCorrectRate();
 					delay += result.getDelay();
+					if (maxDelay < result.getMaxDelay()){
+						maxDelay = result.getMaxDelay();
+					}
 					System.out.println(delay);
 				}
 			}
@@ -30,6 +34,7 @@ public class Evaluation {
 		System.out.println("Count: " + count);
 		System.out.println("Correct Rate: " + (float)correctRate/(float)count);
 		System.out.println("Average delay: " + delay/count);
+		System.out.println("Maximum delay: " + maxDelay);
 	}
 	
 	/**
