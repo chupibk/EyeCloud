@@ -87,7 +87,13 @@ public class AccuracyRate {
 	}
 	
 	public float getDelay(){
+		if (AFN == 0) return 0;
 		return (float)delay/(float)AFN;
+	}
+	
+	public int getCorrectRate(){
+		if (AFN == 0) return 0;
+		return (MF*100)/AFN;
 	}
 	
 	/**

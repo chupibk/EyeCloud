@@ -113,6 +113,6 @@ public class EyeTracker {
 	 */
 	public static void main(String[] args) throws TException, DRPCExecutionException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		new EyeTracker("54.229.233.105", 1, "test", 20, 10);
+		new EyeTracker("54.229.233.105", 2, "test", 20, 10);
 	}
 }

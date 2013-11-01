@@ -9,18 +9,19 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
 import backtype.storm.StormSubmitter;
-import backtype.storm.drpc.LinearDRPCTopologyBuilder;
+import backtype.storm.drpc.DRPCSpout;
+import backtype.storm.drpc.ReturnResults;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
+import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-@SuppressWarnings("deprecation")
 public class CloudFixation {
 
 	@SuppressWarnings("serial")
@@ -29,9 +30,9 @@ public class CloudFixation {
 		@Override
 		public void execute(Tuple input, BasicOutputCollector collector) {
 			// TODO Auto-generated method stub
-			String data[] = input.getString(1).split(Constants.PARAMETER_SPLIT);
+			String data[] = input.getString(0).split(Constants.PARAMETER_SPLIT);
 			Integer id = Integer.parseInt(data[data.length - 1]);
-			collector.emit(new Values(id, data, input.getValue(0)));
+			collector.emit(new Values(id, data, input.getValue(1)));
 		}
 
 		@Override
@@ -132,7 +133,7 @@ public class CloudFixation {
 	        	contextData.setTaskData(START_TIME + id, null);
 	        	contextData.setTaskData(DURATION + id, null);
 	        	contextData.setTaskData(SENDTIME + id, null);
-				collector.emit(new Values(input.getValue(2), result));
+				collector.emit(new Values(result, input.getValue(2)));
 				return;
 			}
 			
@@ -180,7 +181,7 @@ public class CloudFixation {
         	contextData.setTaskData(DURATION + id, duration);
         	contextData.setTaskData(SENDTIME + id, sendtime);
         	
-        	collector.emit(new Values(input.getValue(2), result));
+        	collector.emit(new Values(result, input.getValue(2)));
 		}
 		
     	/**
@@ -225,14 +226,17 @@ public class CloudFixation {
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
 			// TODO Auto-generated method stub
-			declarer.declare(new Fields("id", "result"));
+			declarer.declare(new Fields("result", "return-info"));
 		}
 	}
 	
-    public static LinearDRPCTopologyBuilder construct(int receiveBolt, int processBolt) {
-    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("CloudFixation");
-        builder.addBolt(new ReceiveData(), receiveBolt);
-        builder.addBolt(new ProcessData(), processBolt).fieldsGrouping(new Fields("id"));
+    public static TopologyBuilder construct(int dataSpout, int receiveBolt, int processBolt, int returnBolt) {
+    	TopologyBuilder builder = new TopologyBuilder();
+    	DRPCSpout spout = new DRPCSpout("CloudFixation");
+    	builder.setSpout("drpc", spout, dataSpout);
+        builder.setBolt("receive", new ReceiveData(), receiveBolt).shuffleGrouping("drpc");
+        builder.setBolt("process", new ProcessData(), processBolt).fieldsGrouping("receive", new Fields("id"));
+        builder.setBolt("return", new ReturnResults(), returnBolt).shuffleGrouping("process");
         return builder;
     }
 	
@@ -243,7 +247,7 @@ public class CloudFixation {
 	 */
 	public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException {
 		// TODO Auto-generated method stub
-        LinearDRPCTopologyBuilder builder = construct(Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+        TopologyBuilder builder = construct(Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]));
         //LinearDRPCTopologyBuilder builder = construct(3, 3);
         Config conf = new Config();
         
@@ -251,7 +255,7 @@ public class CloudFixation {
             conf.setMaxTaskParallelism(3);
             LocalDRPC drpc = new LocalDRPC();
             LocalCluster cluster = new LocalCluster();
-            cluster.submitTopology("reach-drpc", conf, builder.createLocalTopology(drpc));
+            //cluster.submitTopology("reach-drpc", conf, builder.createLocalTopology(drpc));
             
             ReadTextFile data = new ReadTextFile("data/17June.txt");
             String send = "";
@@ -279,7 +283,7 @@ public class CloudFixation {
             drpc.shutdown();
         } else {
             conf.setNumWorkers(Integer.parseInt(args[1]));
-            StormSubmitter.submitTopology(args[0], conf, builder.createRemoteTopology());
+            StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
         }        
 	}
 

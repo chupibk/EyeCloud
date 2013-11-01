@@ -9,6 +9,7 @@ import backtype.storm.generated.DRPCExecutionException;
 public class Simulator {
 
 	public Simulator(String h, String p, int s, int min, int max) {
+		System.gc();
 		for (int i = min; i < max; i++) {
 			int d = (int)(Math.random()*10 + 1);
 			EyeThread eye = new EyeThread(h, d, p, s, i);
@@ -56,7 +57,13 @@ public class Simulator {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		new Simulator("54.229.233.105", args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+		String server[] = {	"", 
+							"176.34.136.152",
+							"54.246.244.184", 
+							"176.34.136.192", 
+							"176.34.136.133", 
+							"176.34.136.175"};
+		new Simulator(server[Integer.parseInt(args[0])], args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]));
 		//new Simulator("54.229.233.105", "test", 100, 0, 2);
 	}
 
