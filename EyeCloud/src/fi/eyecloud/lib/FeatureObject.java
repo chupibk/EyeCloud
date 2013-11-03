@@ -136,6 +136,10 @@ public class FeatureObject {
 		return fixPrior;
 	}
 	
+	public float getSaccadeSum(){
+		return sacSum;
+	}	
+	
 	public float getSaccadeMean(){
 		return sacMean;
 	}

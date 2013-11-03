@@ -3,10 +3,16 @@ package fi.eyecloud.alone;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.conf.Library;
 import fi.eyecloud.input.ReadTextFile;
+import fi.eyecloud.lib.FObject;
+import fi.eyecloud.lib.FeatureObject;
+import fi.eyecloud.lib.SObject;
+import fi.eyecloud.lib.SqObject;
 
 public class I_VT_KeyPress {
 	private int sumX;
@@ -20,6 +26,12 @@ public class I_VT_KeyPress {
 	private String keypress = "0";
 	private Map<String, Integer> mapHeader;
 	BufferedWriter out;
+	
+	List<SqObject> sequences = new ArrayList<SqObject>();
+	List<FObject> fObjects = new ArrayList<FObject>();
+	List<SObject> sObjects = new ArrayList<SObject>();
+	
+	private SObject sObjectTmp = null;
 	
 	/**
 	 * I-VT algorithm
@@ -90,6 +102,10 @@ public class I_VT_KeyPress {
 						// System.out.println(line1 + " , " + line2 + " , " +
 						// currentLine + " , " + time2 + " , " + duration);
 						putXY(x2, y2, time2, line2);
+					}else{
+						if (sObjectTmp != null && !Float.isNaN(tmp)){
+							sObjectTmp.addRawData(x2, y2, time2, tmp);
+						}	
 					}
 				}
 
@@ -103,7 +119,28 @@ public class I_VT_KeyPress {
 						+ Constants.SPLIT_MARK + (float) sumY
 						/ count + Constants.SPLIT_MARK + startTime
 						+ Constants.SPLIT_MARK + duration
+						+ Constants.SPLIT_MARK + keypress
 						+ "\n");
+				FObject fo = new FObject(sumX/count, sumY/count, startTime, duration, Integer.parseInt(keypress));
+				if (sObjectTmp != null){
+					sObjectTmp.calValues();
+					sObjects.add(sObjectTmp);
+				}
+				fObjects.add(fo);
+				if (fObjects.size() >= Constants.FIXATION_SEQUENCE_NUMBER){
+					SqObject sqo = new SqObject(); 
+					for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 1; i >= 0; i--){
+						sqo.addFObject(fObjects.get(fObjects.size() - 1 - i));
+					}
+					
+					for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 2; i >= 0; i--){
+						sqo.addSObject(sObjects.get(sObjects.size() - 1 - i));
+					}
+					
+					sequences.add(sqo);
+				}
+				
+				sObjectTmp = new SObject();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -121,6 +158,21 @@ public class I_VT_KeyPress {
 		}
 		
 		data.closeFile();
+		
+		// Sequence Object
+		List<FeatureObject> features = new ArrayList<FeatureObject>();
+		System.out.println(sequences.size());
+		
+		for (int i=0; i < sequences.size(); i++){
+			FeatureObject f = new FeatureObject(sequences.get(i));
+			features.add(f);
+			System.out.println(f.getFixationMean() + "," + f.getFixationSum() + "," + f.getSaccadeMean() + "," + f.getSaccadeSum());
+		}
+		
+		System.out.println(sObjects.size());
+		for (int i=0; i < 100; i++){
+			//sObjects.get(i).printList();
+		}
 	}
 
 	/**
@@ -164,6 +216,26 @@ public class I_VT_KeyPress {
 							+ Constants.SPLIT_MARK + duration
 							+ Constants.SPLIT_MARK + keypress
 							+ "\n");
+					FObject fo = new FObject(sumX/count, sumY/count, startTime, duration, Integer.parseInt(keypress));
+					if (sObjectTmp != null){
+						sObjectTmp.calValues();
+						sObjects.add(sObjectTmp);
+					}						
+					fObjects.add(fo);
+					if (fObjects.size() >= Constants.FIXATION_SEQUENCE_NUMBER){
+						SqObject sqo = new SqObject(); 
+						for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 1; i >= 0; i--){
+							sqo.addFObject(fObjects.get(fObjects.size() - 1 - i));
+						}
+						
+						for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 2; i >= 0; i--){
+							sqo.addSObject(sObjects.get(sObjects.size() - 1 - i));
+						}
+						
+						sequences.add(sqo);
+					}
+					
+					sObjectTmp = new SObject();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

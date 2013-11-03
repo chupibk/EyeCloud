@@ -57,8 +57,8 @@ public class Constants {
 	/**
 	 * Fixation setting
 	 */
-	public static int FIXATION_DURATION_THRESHOLD	= 40; // Millisecond
-	public static float VELOCITY_THRESHOLD			= 75;	// Degree
+	public static int FIXATION_DURATION_THRESHOLD	= 100; // Millisecond
+	public static float VELOCITY_THRESHOLD			= 100;	// Degree
 	public static String OUTPUT_FILE				= "/Users/daothanhchung/Desktop/EyeCloud/Data/Output/result_drpc.txt";
 	//public static String OUTPUT_FILE				= "result_storm.txt";
 	public static int KIND_UNKNOWN					= 0;
@@ -74,6 +74,11 @@ public class Constants {
 	 * Heatmap 
 	 */
 	public static int PARAMETER_NUMBER_HEATMAP		= 3;
+	
+	/**
+	 * Classification
+	 */
+	public static int FIXATION_SEQUENCE_NUMBER		= 3;
 	
 	/**
 	 * Upload host

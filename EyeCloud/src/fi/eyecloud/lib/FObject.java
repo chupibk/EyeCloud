@@ -7,15 +7,16 @@ public class FObject {
 	private int startTime;
 	private int duration;
 	private int keyPress;
+	
 	private int rawNumber;
 	
-	public FObject(){
+	public FObject(int x, int y, int t, int d, int k){
 		rawNumber = 0;
-		keyPress = 0;
-		duration = 0;
-		startTime = 0;
-		gazeX = 0;
-		gazeY = 0;
+		keyPress = k;
+		duration = d;
+		startTime = t;
+		gazeX = x;
+		gazeY = y;
 	}
 	
 	public int getGazeX(){
