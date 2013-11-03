@@ -5,12 +5,9 @@ import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
 import backtype.storm.StormSubmitter;
 import backtype.storm.coordination.BatchOutputCollector;
-import backtype.storm.coordination.CoordinatedBolt.FinishedCallback;
 import backtype.storm.drpc.LinearDRPCTopologyBuilder;
-import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
-import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.topology.base.BaseBatchBolt;
@@ -42,14 +39,17 @@ import java.util.Set;
  * 
  * See https://github.com/nathanmarz/storm/wiki/Distributed-RPC for more information on Distributed RPC.
  */
+@SuppressWarnings("deprecation")
 public class ReachTopology {
-    public static Map<String, List<String>> TWEETERS_DB = new HashMap<String, List<String>>() {{
+    @SuppressWarnings("serial")
+	public static Map<String, List<String>> TWEETERS_DB = new HashMap<String, List<String>>() {{
        put("foo.com/blog/1", Arrays.asList("sally", "bob", "tim", "george", "nathan")); 
        put("engineering.twitter.com/blog/5", Arrays.asList("adam", "david", "sally", "nathan")); 
        put("tech.backtype.com/blog/123", Arrays.asList("tim", "mike", "john")); 
     }};
     
-    public static Map<String, List<String>> FOLLOWERS_DB = new HashMap<String, List<String>>() {{
+    @SuppressWarnings("serial")
+	public static Map<String, List<String>> FOLLOWERS_DB = new HashMap<String, List<String>>() {{
         put("sally", Arrays.asList("bob", "tim", "alice", "adam", "jim", "chris", "jai"));
         put("bob", Arrays.asList("sally", "nathan", "jim", "mary", "david", "vivian"));
         put("tim", Arrays.asList("alex"));
@@ -59,7 +59,8 @@ public class ReachTopology {
         put("john", Arrays.asList("alice", "nathan", "jim", "mike", "bob"));
     }};
     
-    public static class GetTweeters extends BaseBasicBolt {
+    @SuppressWarnings("serial")
+	public static class GetTweeters extends BaseBasicBolt {
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
             Object id = tuple.getValue(0);
@@ -78,7 +79,8 @@ public class ReachTopology {
         }        
     }
     
-    public static class GetFollowers extends BaseBasicBolt {
+    @SuppressWarnings("serial")
+	public static class GetFollowers extends BaseBasicBolt {
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
             Object id = tuple.getValue(0);
@@ -97,7 +99,8 @@ public class ReachTopology {
         }
     }
     
-    public static class PartialUniquer extends BaseBatchBolt {
+    @SuppressWarnings({ "serial", "rawtypes" })
+	public static class PartialUniquer extends BaseBatchBolt {
         BatchOutputCollector _collector;
         Object _id;
         Set<String> _followers = new HashSet<String>();
@@ -124,7 +127,8 @@ public class ReachTopology {
         }
     }
     
-    public static class CountAggregator extends BaseBatchBolt {
+    @SuppressWarnings({ "serial", "rawtypes" })
+	public static class CountAggregator extends BaseBatchBolt {
         BatchOutputCollector _collector;
         Object _id;
         int _count = 0;

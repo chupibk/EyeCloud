@@ -26,11 +26,12 @@ public class Constants {
 	public final static String StimuliID			= "StimuliID";
 	public final static String Duration				= "Duration";
 	public final static String Delay				= "Delay";
+	public final static String EventKey				= "EventKey";
 	
 	public static final String HEADER[] = {	Timestamp, Number, GazePointXLeft, GazePointYLeft, CamXLeft, CamYLeft, 
 											DistanceLeft, PupilLeft, ValidityLeft, GazePointXRight, GazePointYRight, 
 											CamXRight, CamYRight, DistanceRight, PupilRight, ValidityRight, GazePointX,
-											GazePointY, StimuliName, StimuliID, Duration, Delay};	
+											GazePointY, StimuliName, StimuliID, Duration, Delay, EventKey};	
 	
 	/**
 	 * Text file setting
@@ -41,10 +42,10 @@ public class Constants {
 	/**
 	 * Screen setting
 	 */
-	public static int RESOLUTION_WIDTH					= 1920;
-	public static int RESOLUTION_HEIGHT					= 1080;
-	public static int SCREEN_WIDTH					= 51;
-	public static int SCREEN_HEIGHT					= 29;
+	public static int RESOLUTION_WIDTH					= 1280;
+	public static int RESOLUTION_HEIGHT					= 1024;
+	public static int SCREEN_WIDTH					= 35;
+	public static int SCREEN_HEIGHT					= 26;
 	
 	/**
 	 * Eye tracker setting

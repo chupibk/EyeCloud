@@ -7,7 +7,6 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.drpc.DRPCSpout;
 import backtype.storm.drpc.LinearDRPCTopologyBuilder;
 import backtype.storm.drpc.ReturnResults;
-import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.TopologyBuilder;
@@ -15,7 +14,6 @@ import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
-import java.util.Map;
 
 /**
  * This topology is a basic example of doing distributed RPC on top of Storm. It implements a function
@@ -24,8 +22,10 @@ import java.util.Map;
  * See https://github.com/nathanmarz/storm/wiki/Distributed-RPC for more information on 
  * doing distributed RPC on top of Storm.
  */
+@SuppressWarnings({ "deprecation", "unused" })
 public class BasicDRPCTopology {
-    public static class ExclaimBolt extends BaseBasicBolt {
+    @SuppressWarnings("serial")
+	public static class ExclaimBolt extends BaseBasicBolt {
         @Override
         public void declareOutputFields(OutputFieldsDeclarer declarer) {
             declarer.declare(new Fields("result", "return-info"));
@@ -40,7 +40,8 @@ public class BasicDRPCTopology {
     
     }
     
-    public static class Next extends BaseBasicBolt {
+    @SuppressWarnings("serial")
+	public static class Next extends BaseBasicBolt {
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
             String input = tuple.getString(1);
