@@ -15,6 +15,14 @@ public class SqObject {
 		intention = 0;
 	}
 	
+	public void printSequence(){
+		for (int i=0; i < fObjects.size(); i++){
+			System.out.println(sObjects.get(i).getStartTime() + " , " + sObjects.get(i).getDuration() + " , " + sObjects.get(i).getRawNumber() + " , " + sObjects.get(i).getVelocity());
+			System.out.println(fObjects.get(i).getStartTime() + " , " + fObjects.get(i).getDuration());
+		}
+		System.out.println();
+	}
+	
 	public void addFObject(FObject o){
 		fObjects.add(o);
 	}

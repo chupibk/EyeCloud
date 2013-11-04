@@ -34,7 +34,9 @@ public class Library {
 		
 		// c2 = a2 + b2 - 2ab cos(C)
 		float cosC;
+		//System.out.println(a + "," + b + "," + c);
 		cosC = (a*a + b*b - c*c)/(2*a*b);
+		if (cosC > 1) cosC = 1;
 		//System.out.println(cosC);
 		float degree;
 		degree = (float)Math.acos(cosC)*180/(float)Math.PI;

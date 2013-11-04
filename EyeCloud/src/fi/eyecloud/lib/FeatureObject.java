@@ -1,6 +1,12 @@
 package fi.eyecloud.lib;
 
+import fi.eyecloud.conf.Constants;
+
 public class FeatureObject {
+	/**
+	 * 0. Intention or non-intention
+	 */
+	private int intention;
 	
 	/**
 	 * 1. The average time of fixation duration
@@ -77,6 +83,14 @@ public class FeatureObject {
 		sacSumDistance = 0;
 		sacLastDistance = 0;
 		sacLastVelocity = 0;
+		
+		// Set intention or non-intention
+		intention = 0;
+		if (o.getFObject(Constants.FIXATION_SEQUENCE_NUMBER/2).getKeyPress() != 0){
+			intention = 1;
+			o.setIntention();
+		}
+		
 		calFeature(o);
 	}
 	
@@ -160,16 +174,20 @@ public class FeatureObject {
 		return sacLastDistance;
 	}
 	
-	public float getSacVelocityMean(){
+	public float getSaccadeVelocityMean(){
 		return sacVelocityMean;
 	}
 	
-	public float getSacLastVelocity(){
+	public float getSaccadeLastVelocity(){
 		return sacLastVelocity;
 	}
 	
-	public float getSacAccelerationMean(){
+	public float getSaccadeAccelerationMean(){
 		return sacAccelerationMean;
+	}
+	
+	public int getIntention(){
+		return intention;
 	}
 	
 	/**

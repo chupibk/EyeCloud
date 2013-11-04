@@ -25,7 +25,7 @@ public class I_VT_KeyPress {
 	private int numberFixation;
 	private String keypress = "0";
 	private Map<String, Integer> mapHeader;
-	BufferedWriter out;
+	BufferedWriter out, svm;
 	
 	List<SqObject> sequences = new ArrayList<SqObject>();
 	List<FObject> fObjects = new ArrayList<FObject>();
@@ -40,6 +40,10 @@ public class I_VT_KeyPress {
 	 * @param VT: velocity threshold
 	 */
 	public I_VT_KeyPress(String filePath, String output) {
+		// Velocity of a gaze
+		float preVelocity = 0;
+		sObjectTmp = new SObject();
+		
 		ReadTextFile data = new ReadTextFile(filePath);
 		sumX = sumY = count = numberFixation = 0;
 		try {
@@ -94,60 +98,34 @@ public class I_VT_KeyPress {
 				// Constants.GazePointYLeft));
 				if (x1 >= 0 && y1 >= 0 && time1 >= 0 && dis1 >= 0 && x2 >= 0
 						&& y2 >= 0 && time2 >= 0 && dis2 >= 0) {
-					float tmp = Library.VT_Degree(x1, y1, x2, y2, dis1, dis2,
-							time2 - time1);
+					float tmp = 0;
+					if (time2 != time1){
+						tmp = Library.VT_Degree(x1, y1, x2, y2, dis1, dis2,
+								time2 - time1);
+					}
 					// System.out.println(tmp);
 					// time1 = time2 --> first coordinate
 					if (tmp <= Constants.VELOCITY_THRESHOLD || time1 == time2) {
 						// System.out.println(line1 + " , " + line2 + " , " +
 						// currentLine + " , " + time2 + " , " + duration);
 						putXY(x2, y2, time2, line2);
-					}else{
-						if (sObjectTmp != null && !Float.isNaN(tmp)){
-							sObjectTmp.addRawData(x2, y2, time2, tmp);
-						}	
+					}else{						
+						storeFix(x2, y2, time2, line2);	
+						//if (!Float.isNaN(tmp)){
+							float d = (float)Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+							float a = (tmp - preVelocity) / (time2 - time1);
+							sObjectTmp.addRawData(x1, y1, time1, time2 - time1, d, tmp, a);
+						//}						
 					}
+					
+					preVelocity = tmp;
 				}
 
 				pre = current;
 			}
 		}
 
-		if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
-			try {
-				out.write((float) sumX / count
-						+ Constants.SPLIT_MARK + (float) sumY
-						/ count + Constants.SPLIT_MARK + startTime
-						+ Constants.SPLIT_MARK + duration
-						+ Constants.SPLIT_MARK + keypress
-						+ "\n");
-				FObject fo = new FObject(sumX/count, sumY/count, startTime, duration, Integer.parseInt(keypress));
-				if (sObjectTmp != null){
-					sObjectTmp.calValues();
-					sObjects.add(sObjectTmp);
-				}
-				fObjects.add(fo);
-				if (fObjects.size() >= Constants.FIXATION_SEQUENCE_NUMBER){
-					SqObject sqo = new SqObject(); 
-					for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 1; i >= 0; i--){
-						sqo.addFObject(fObjects.get(fObjects.size() - 1 - i));
-					}
-					
-					for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 2; i >= 0; i--){
-						sqo.addSObject(sObjects.get(sObjects.size() - 1 - i));
-					}
-					
-					sequences.add(sqo);
-				}
-				
-				sObjectTmp = new SObject();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			numberFixation++;
-		}
+		storeFix(0, 0, 0, 0);
 		
 		try {
 			out.write(numberFixation + "\n");
@@ -163,15 +141,39 @@ public class I_VT_KeyPress {
 		List<FeatureObject> features = new ArrayList<FeatureObject>();
 		System.out.println(sequences.size());
 		
-		for (int i=0; i < sequences.size(); i++){
-			FeatureObject f = new FeatureObject(sequences.get(i));
-			features.add(f);
-			System.out.println(f.getFixationMean() + "," + f.getFixationSum() + "," + f.getSaccadeMean() + "," + f.getSaccadeSum());
+		FileWriter fw;
+		try {
+			fw = new FileWriter("classification/result/LauraTest.txt");
+			svm = new BufferedWriter(fw);
+			for (int i=50; i < sequences.size(); i++){
+				FeatureObject f = new FeatureObject(sequences.get(i));
+				features.add(f);
+				svm.write(f.getIntention() + " ");
+				svm.write("1:" + f.getFixationMean() + " ");
+				svm.write("2:" + f.getFixationSum() + " ");
+				svm.write("3:" + f.getFixationEvent() + " ");
+				svm.write("4:" + f.getFixationPrior() + " ");
+				svm.write("5:" + f.getSaccadeMean() + " ");
+				svm.write("6:" + f.getSaccadeSum() + " ");
+				svm.write("7:" + f.getSaccadeLast() + " ");
+				svm.write("8:" + f.getSaccadeMeanDistance() + " ");
+				svm.write("9:" + f.getSaccadeSumDistance() + " ");
+				svm.write("10:" + f.getSaccadeLastDistance() + " ");
+				svm.write("11:" + f.getSaccadeVelocityMean() + " ");
+				svm.write("12:" + f.getSaccadeLastVelocity() + " ");
+				svm.write("13:" + f.getSaccadeAccelerationMean());
+				svm.write("\n");
+				//System.out.println(f.getIntention() + " , " + f.getFixationMean() + "," + f.getFixationSum() + "," + f.getSaccadeMean() + "," + f.getSaccadeSum());
+			}	
+			svm.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
-		System.out.println(sObjects.size());
+		//System.out.println(sObjects.size());
 		for (int i=0; i < 100; i++){
-			//sObjects.get(i).printList();
+			//sequences.get(i).printSequence();
 		}
 	}
 
@@ -184,7 +186,8 @@ public class I_VT_KeyPress {
 	public String getField(String[] split, String fieldName){
 		if (mapHeader.get(fieldName) == -1 || mapHeader.get(fieldName) >= split.length) 
 			return Integer.toString(Constants.UNKNOWN);
-		if (split[mapHeader.get(fieldName)].equals("") || split[mapHeader.get(fieldName)].equals(" ")) 
+		if (split[mapHeader.get(fieldName)].equals("") || split[mapHeader.get(fieldName)].equals(" ") ||
+				split[mapHeader.get(fieldName)].equals("  ")) 
 			return Integer.toString(Constants.UNKNOWN);
 		
 		return split[mapHeader.get(fieldName)];
@@ -205,54 +208,61 @@ public class I_VT_KeyPress {
 				sumY += y;
 
 				currentLine = lineId;	
-				duration = time - startTime + Constants.THOUSAND / Constants.SAMPLE_RATE;
+				duration = time - startTime;
 				//System.out.println(time + " - " + startTime + " - " + duration + " - " + lineId + " - " + currentLine);
 		}else {
-			if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
-				try {
-					out.write((float) sumX / count
-							+ Constants.SPLIT_MARK + (float) sumY
-							/ count + Constants.SPLIT_MARK + startTime
-							+ Constants.SPLIT_MARK + duration
-							+ Constants.SPLIT_MARK + keypress
-							+ "\n");
-					FObject fo = new FObject(sumX/count, sumY/count, startTime, duration, Integer.parseInt(keypress));
-					if (sObjectTmp != null){
-						sObjectTmp.calValues();
-						sObjects.add(sObjectTmp);
-					}						
-					fObjects.add(fo);
-					if (fObjects.size() >= Constants.FIXATION_SEQUENCE_NUMBER){
-						SqObject sqo = new SqObject(); 
-						for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 1; i >= 0; i--){
-							sqo.addFObject(fObjects.get(fObjects.size() - 1 - i));
-						}
-						
-						for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 2; i >= 0; i--){
-							sqo.addSObject(sObjects.get(sObjects.size() - 1 - i));
-						}
-						
-						sequences.add(sqo);
+				storeFix(x, y, time, lineId);
+		}		
+	}
+	
+	public void storeFix(int x, int y, int time, int lineId){
+		if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
+			try {
+				out.write((float) sumX / count
+						+ Constants.SPLIT_MARK + (float) sumY
+						/ count + Constants.SPLIT_MARK + startTime
+						+ Constants.SPLIT_MARK + duration
+						+ Constants.SPLIT_MARK + keypress
+						+ "\n");
+				FObject fo = new FObject(sumX/count, sumY/count, startTime, duration, Integer.parseInt(keypress));
+				if (sObjectTmp.getRawNumber() >= 0){
+					sObjectTmp.calValues();
+					sObjects.add(sObjectTmp);
+				}						
+				fObjects.add(fo);
+				
+				if (fObjects.size() >= Constants.FIXATION_SEQUENCE_NUMBER){
+					SqObject sqo = new SqObject(); 
+					for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 1; i >= 0; i--){
+						sqo.addFObject(fObjects.get(fObjects.size() - 1 - i));
 					}
 					
-					sObjectTmp = new SObject();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					for (int i = Constants.FIXATION_SEQUENCE_NUMBER - 1; i >= 0; i--){
+						sqo.addSObject(sObjects.get(sObjects.size() - 1 - i));
+					}
+					
+					sequences.add(sqo);
 				}
-
-				numberFixation++;
-				keypress = "0";
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			//System.out.println(count + " - " + startTime + " - " + duration);
-			count = 0;
-			count++;
-			sumX = x;
-			sumY = y;
-			startTime = time;
-			duration = Constants.THOUSAND / Constants.SAMPLE_RATE;
-			currentLine = lineId;
-		}		
+
+			numberFixation++;
+			keypress = "0";
+			
+			if (count > 1)
+				sObjectTmp = new SObject();
+		}
+		
+		//System.out.println(count + " - " + startTime + " - " + duration);
+		count = 0;
+		count++;
+		sumX = x;
+		sumY = y;
+		startTime = time;
+		duration = 0;
+		currentLine = lineId;
 	}
 
 	/**
@@ -261,7 +271,7 @@ public class I_VT_KeyPress {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		long start = System.currentTimeMillis();
-		new I_VT_KeyPress("classification/AjayaCMD.txt", "classification/result/AjayaCMDResult.txt");
+		new I_VT_KeyPress("classification/Laura.txt", "classification/result/LauraResult.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}
 }

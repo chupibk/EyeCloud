@@ -34,12 +34,6 @@ public class Constants {
 											GazePointY, StimuliName, StimuliID, Duration, Delay, EventKey};	
 	
 	/**
-	 * Text file setting
-	 */
-	public static final String SPLIT_MARK			= "\t";
-	public static int UNKNOWN						= -1;
-	
-	/**
 	 * Screen setting
 	 */
 	public static int RESOLUTION_WIDTH					= 1280;
@@ -50,9 +44,15 @@ public class Constants {
 	/**
 	 * Eye tracker setting
 	 */
+	public static int SAMPLE_RATE				= 50;
 	public static int THOUSAND					= 1000;
 	public static int TEN						= 10;
-	public static int SAMPLE_RATE				= 300;
+	
+	/**
+	 * Text file setting
+	 */
+	public static final String SPLIT_MARK			= "\t";
+	public static int UNKNOWN						= -1;	
 	
 	/**
 	 * Fixation setting
@@ -60,7 +60,6 @@ public class Constants {
 	public static int FIXATION_DURATION_THRESHOLD	= 100; // Millisecond
 	public static float VELOCITY_THRESHOLD			= 100;	// Degree
 	public static String OUTPUT_FILE				= "/Users/daothanhchung/Desktop/EyeCloud/Data/Output/result_drpc.txt";
-	//public static String OUTPUT_FILE				= "result_storm.txt";
 	public static int KIND_UNKNOWN					= 0;
 	public static int KIND_FIXATION					= 1;
 	
