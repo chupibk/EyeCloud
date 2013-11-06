@@ -56,7 +56,7 @@ public class EyeTracker {
 			if (timestamp - currentTime >= segment){
 				currentSend = currentSend + id;
 				//System.out.println(currentSend);
-				String result = client.execute("CloudFixation", currentSend);
+				String result = client.execute("Classification", currentSend);
 				//System.out.println(result);
 				writeFile(out, result, System.currentTimeMillis());
 				
@@ -72,12 +72,12 @@ public class EyeTracker {
 		
 		if (!currentSend.equals("")){
 			currentSend = currentSend + id;
-			String result = client.execute("CloudFixation", currentSend);
+			String result = client.execute("Classification", currentSend);
 			writeFile(out, result, System.currentTimeMillis());
 		}
 		
 		// Finish sending by send empty string
-		String result = client.execute("CloudFixation", Integer.toString(id));
+		String result = client.execute("Classification", Integer.toString(id));
 		writeFile(out, result, System.currentTimeMillis());	
 		
 		// Close all

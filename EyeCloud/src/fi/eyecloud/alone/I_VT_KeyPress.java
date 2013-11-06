@@ -143,7 +143,7 @@ public class I_VT_KeyPress {
 		
 		FileWriter fw;
 		try {
-			fw = new FileWriter("classification/result/LauraTest.txt");
+			fw = new FileWriter("classification/result/training/LauraTest.txt");
 			svm = new BufferedWriter(fw);
 			for (int i=50; i < sequences.size(); i++){
 				FeatureObject f = new FeatureObject(sequences.get(i));
@@ -270,8 +270,9 @@ public class I_VT_KeyPress {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		System.gc();
 		long start = System.currentTimeMillis();
-		new I_VT_KeyPress("classification/Laura.txt", "classification/result/LauraResult.txt");
+		new I_VT_KeyPress("classification/LauraTest.txt", "classification/result/LauraTest.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}
 }
