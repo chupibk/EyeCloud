@@ -145,7 +145,7 @@ public class I_VT_KeyPress {
 		try {
 			fw = new FileWriter("classification/result/training/LauraTest.txt");
 			svm = new BufferedWriter(fw);
-			for (int i=50; i < sequences.size(); i++){
+			for (int i=0; i < sequences.size(); i++){
 				FeatureObject f = new FeatureObject(sequences.get(i));
 				features.add(f);
 				svm.write(f.getIntention() + " ");

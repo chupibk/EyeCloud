@@ -57,7 +57,8 @@ public class BasicDRPCTopology {
     
     public static void main(String[] args) throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
-        DRPCSpout spout = new DRPCSpout("exclamation");
+        LocalDRPC drpc = new LocalDRPC();
+        DRPCSpout spout = new DRPCSpout("exclamation", drpc);
         builder.setSpout("drpc", spout, 3);
         builder.setBolt("process", new ExclaimBolt(), 3).shuffleGrouping("drpc");
         builder.setBolt("return", new ReturnResults(), 3).shuffleGrouping("process");
@@ -66,10 +67,9 @@ public class BasicDRPCTopology {
         Config conf = new Config();
         
         if(args==null || args.length==0) {
-            LocalDRPC drpc = new LocalDRPC();
             LocalCluster cluster = new LocalCluster();
             
-            //cluster.submitTopology("drpc-demo", conf, builder.createLocalTopology(drpc));
+            cluster.submitTopology("drpc-demo", conf, builder.createTopology());
 
             for(String word: new String[] {"hello", "goodbye"}) {
                 System.out.println("Result for \"" + word + "\": "

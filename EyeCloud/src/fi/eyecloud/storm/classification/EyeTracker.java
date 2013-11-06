@@ -1,4 +1,4 @@
-package fi.eyecloud.storm.fixation;
+package fi.eyecloud.storm.classification;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,7 +16,7 @@ public class EyeTracker {
 	
 	public EyeTracker(String hostName, int dataPath, String prefix, int segment, int id) throws TException, DRPCExecutionException, InterruptedException, IOException{
 		DRPCClient client = new DRPCClient(hostName, 3772);
-		ReadTextFile data = new ReadTextFile("exp/" + dataPath + ".txt");
+		ReadTextFile data = new ReadTextFile("classification/LauraTest.txt");
 		
 		// Output file
 		BufferedWriter out = null;
@@ -53,12 +53,18 @@ public class EyeTracker {
 			currentSend = currentSend + Integer.parseInt(data.getField(Constants.Number)) 
 										+ Constants.PARAMETER_SPLIT;
 			
+			int keypress = 0;
+			if (Integer.parseInt(data.getField(Constants.EventKey)) != Constants.UNKNOWN){
+				keypress = Integer.parseInt(data.getField(Constants.EventKey));
+			}
+			currentSend = currentSend + keypress + Constants.PARAMETER_SPLIT;
+			
 			if (timestamp - currentTime >= segment){
 				currentSend = currentSend + id;
 				System.out.println(currentSend);
-				String result = client.execute("CloudFixation", currentSend);
+				String result = client.execute("Classification", currentSend);
 				System.out.println(result);
-				writeFile(out, result, System.currentTimeMillis());
+				//writeFile(out, result, System.currentTimeMillis());
 				
 				long dif = System.currentTimeMillis() - tmpTime;
 				if (dif < segment)
@@ -72,12 +78,12 @@ public class EyeTracker {
 		
 		if (!currentSend.equals("")){
 			currentSend = currentSend + id;
-			String result = client.execute("CloudFixation", currentSend);
+			String result = client.execute("Classification", currentSend);
 			writeFile(out, result, System.currentTimeMillis());
 		}
 		
 		// Finish sending by send empty string
-		String result = client.execute("CloudFixation", Integer.toString(id));
+		String result = client.execute("Classification", Integer.toString(id));
 		writeFile(out, result, System.currentTimeMillis());	
 		
 		// Close all
@@ -113,6 +119,6 @@ public class EyeTracker {
 	 */
 	public static void main(String[] args) throws TException, DRPCExecutionException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		new EyeTracker("54.194.18.227", 2, "test", 20, 10);
+		new EyeTracker("54.194.16.204", 2, "test", 20, 100);
 	}
 }
