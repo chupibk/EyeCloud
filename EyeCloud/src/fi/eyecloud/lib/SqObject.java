@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SqObject {
 
-	private int intention;
+	int intention;
 	List<FObject> fObjects;
 	List<SObject> sObjects;
 	

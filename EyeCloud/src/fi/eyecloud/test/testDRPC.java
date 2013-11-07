@@ -6,7 +6,7 @@ public class testDRPC {
     
     public static void main(String[] args) throws Exception {
  
-    		DRPCClient client = new DRPCClient("176.34.136.152", 3772);
+    		DRPCClient client = new DRPCClient("54.194.20.206", 3772);
             
             long start = System.currentTimeMillis();
             for (int i=0; i < 200; i++){

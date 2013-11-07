@@ -8,7 +8,7 @@ public class FObject {
 	private int duration;
 	private int keyPress;
 	
-	private int rawNumber;
+	int rawNumber;
 	
 	public FObject(int x, int y, int t, int d, int k){
 		rawNumber = 0;

@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.esotericsoftware.kryo.serializers.DefaultSerializers.KryoSerializableSerializer;
-
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.conf.Library;
 import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.lib.FObject;
+import fi.eyecloud.lib.FObjectSerializer;
 import fi.eyecloud.lib.FeatureObject;
 import fi.eyecloud.lib.SObject;
+import fi.eyecloud.lib.SObjectSerializer;
 import fi.eyecloud.lib.SqObject;
 import fi.eyecloud.lib.SqObjectSerializer;
 import backtype.storm.Config;
@@ -108,6 +108,7 @@ public class Classification {
 			fObjects = new ArrayList<FObject>();
 			sObjects = new ArrayList<SObject>();
 			keypress = 0;
+			checkSend = 0;
 			
 			Integer id = input.getInteger(0);
 			String data[] = (String[]) input.getValue(1);
@@ -282,7 +283,6 @@ public class Classification {
 					}
 					
 					checkSend = 1;
-					
 					collectorEmit.emit(new Values(sqo, idEmit));
 				}				
 				
@@ -354,7 +354,9 @@ public class Classification {
         TopologyBuilder builder = construct(Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6]));
         //TopologyBuilder builder = construct(3, 3, 3, 3, 3);
         Config conf = new Config();
-        //conf.registerSerialization(SqObject.class, SqObjectSerializer.class);
+        conf.registerSerialization(FObject.class, FObjectSerializer.class);
+        conf.registerSerialization(SObject.class, SObjectSerializer.class);
+        conf.registerSerialization(SqObject.class, SqObjectSerializer.class);
         
         if(args==null || args.length==0) {
             conf.setMaxTaskParallelism(3);

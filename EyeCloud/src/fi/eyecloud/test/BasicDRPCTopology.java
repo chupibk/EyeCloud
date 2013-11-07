@@ -1,5 +1,6 @@
 package fi.eyecloud.test;
 
+import fi.eyecloud.lib.FObject;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
@@ -33,9 +34,10 @@ public class BasicDRPCTopology {
 
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
-            String arg = tuple.getString(0);
             Object retInfo = tuple.getValue(1);
-            collector.emit(new Values(arg + "!!!", retInfo));
+            int t = Integer.parseInt(tuple.getString(0));
+            FObject f = new FObject(0, 0, 0, t, 0);
+            collector.emit(new Values(f, retInfo));
         }
     
     }
@@ -44,8 +46,8 @@ public class BasicDRPCTopology {
 	public static class Next extends BaseBasicBolt {
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
-            String input = tuple.getString(1);
-            collector.emit(new Values(tuple.getValue(0), input + "!"));
+        	FObject f = (FObject) tuple.getValue(0);
+            collector.emit(new Values(Integer.toString(f.getDuration()), tuple.getValue(1)));
         }
 
         @Override
@@ -58,10 +60,11 @@ public class BasicDRPCTopology {
     public static void main(String[] args) throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
         LocalDRPC drpc = new LocalDRPC();
-        DRPCSpout spout = new DRPCSpout("exclamation", drpc);
+        DRPCSpout spout = new DRPCSpout("exclamation");
         builder.setSpout("drpc", spout, 3);
         builder.setBolt("process", new ExclaimBolt(), 3).shuffleGrouping("drpc");
-        builder.setBolt("return", new ReturnResults(), 3).shuffleGrouping("process");
+        builder.setBolt("next", new Next(), 3).shuffleGrouping("process");
+        builder.setBolt("return", new ReturnResults(), 3).shuffleGrouping("next");
         //builder.addBolt(new Next(), 3);
         
         Config conf = new Config();
