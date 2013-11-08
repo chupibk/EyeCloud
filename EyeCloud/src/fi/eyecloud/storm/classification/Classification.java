@@ -104,7 +104,7 @@ public class Classification {
 			// Set values
 			sumX = sumY = count = startTime = duration = currentLine = 0;
 			preVelocity = 0;
-			sObjectTmp = new SObject();
+			sObjectTmp = new SObject(0, 0, 0, 0, 0);
 			fObjects = new ArrayList<FObject>();
 			sObjects = new ArrayList<SObject>();
 			keypress = 0;
@@ -185,6 +185,7 @@ public class Classification {
         		send2 = Long.parseLong(data[i*Constants.PARAMETER_NUMBER_FIXATION + 4]);
         		index2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 5]);
         		event = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 6]);
+        		if (event != 0) keypress = 1;
         		
         		if (i == 0 && contextData.getTaskData(X_1 + id) == null){
         			x1 = x2;
@@ -210,10 +211,12 @@ public class Classification {
     				preVelocity = tmp;
     			}
     			
-    			x1 = x2;
-    			y1 = y2;
-    			time1 = time2;
-    			dis1 = dis2;
+    			if (event == 0){
+    				x1 = x2;
+    				y1 = y2;
+    				time1 = time2;
+    				dis1 = dis2;
+    			}
         	}
         	
         	// Set data
@@ -256,7 +259,6 @@ public class Classification {
 
 				currentLine = lineId;
 				duration = time - startTime;
-				keypress = event;
 			} else {
 				storeFix(x, y, time, send, lineId, event);
 			}
@@ -289,7 +291,7 @@ public class Classification {
 				keypress = 0;
 				
 				if (count > 1)
-					sObjectTmp = new SObject();				
+					sObjectTmp = new SObject(0, 0, 0, 0, 0);				
 			}
 			count = 0;
 			count++;
@@ -299,7 +301,6 @@ public class Classification {
 			duration = 0;
 			currentLine = lineId;
 			sendtime = send;
-			keypress = event;
 		}		
 		
 		@Override

@@ -10,14 +10,18 @@ public class SObjectSerializer extends Serializer<SObject>{
 	@Override
 	public SObject read(Kryo arg0, Input arg1, Class<SObject> arg2) {
 		// TODO Auto-generated method stub
-		SObject s = (SObject) arg0.readClassAndObject(arg1);
+		SObject s = new SObject(arg1.readInt(), arg1.readInt(), arg1.readFloat(), arg1.readFloat(), arg1.readFloat());
 		return s;
 	}
 
 	@Override
 	public void write(Kryo arg0, Output arg1, SObject arg2) {
 		// TODO Auto-generated method stub
-		arg0.writeClassAndObject(arg1, arg2);
+		arg1.writeInt(arg2.duration);
+		arg1.writeInt(arg2.rawNumber);
+		arg1.writeFloat(arg2.distance);
+		arg1.writeFloat(arg2.velocity);
+		arg1.writeFloat(arg2.acceleration);
 	}
 
 

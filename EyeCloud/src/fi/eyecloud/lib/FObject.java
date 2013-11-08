@@ -2,11 +2,11 @@ package fi.eyecloud.lib;
 
 public class FObject {
 
-	private int gazeX;
-	private int gazeY;
-	private int startTime;
-	private int duration;
-	private int keyPress;
+	int gazeX;
+	int gazeY;
+	int startTime;
+	int duration;
+	int keyPress;
 	
 	int rawNumber;
 	

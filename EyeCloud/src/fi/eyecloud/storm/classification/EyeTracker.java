@@ -61,9 +61,10 @@ public class EyeTracker {
 			
 			if (timestamp - currentTime >= segment){
 				currentSend = currentSend + id;
-				System.out.println(currentSend);
+				//System.out.println(currentSend);
 				String result = client.execute("Classification", currentSend);
-				System.out.println(result);
+				if (!result.equals("0"))
+					System.out.println(result);
 				//writeFile(out, result, System.currentTimeMillis());
 				
 				long dif = System.currentTimeMillis() - tmpTime;
@@ -79,12 +80,16 @@ public class EyeTracker {
 		if (!currentSend.equals("")){
 			currentSend = currentSend + id;
 			String result = client.execute("Classification", currentSend);
-			writeFile(out, result, System.currentTimeMillis());
+			//writeFile(out, result, System.currentTimeMillis());
+			if (!result.equals("0"))
+				System.out.println(result);			
 		}
 		
 		// Finish sending by send empty string
 		String result = client.execute("Classification", Integer.toString(id));
-		writeFile(out, result, System.currentTimeMillis());	
+		if (!result.equals("0"))
+			System.out.println(result);		
+		//writeFile(out, result, System.currentTimeMillis());	
 		
 		// Close all
 		data.closeFile();
@@ -119,6 +124,6 @@ public class EyeTracker {
 	 */
 	public static void main(String[] args) throws TException, DRPCExecutionException, InterruptedException, IOException {
 		// TODO Auto-generated method stub
-		new EyeTracker("54.194.20.206", 2, "test", 20, 200);
+		new EyeTracker("54.194.27.90", 2, "test", 20, 40);
 	}
 }

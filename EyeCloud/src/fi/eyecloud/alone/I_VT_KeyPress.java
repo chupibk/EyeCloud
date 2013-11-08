@@ -42,7 +42,7 @@ public class I_VT_KeyPress {
 	public I_VT_KeyPress(String filePath, String output) {
 		// Velocity of a gaze
 		float preVelocity = 0;
-		sObjectTmp = new SObject();
+		sObjectTmp = new SObject(0, 0, 0, 0, 0);
 		
 		ReadTextFile data = new ReadTextFile(filePath);
 		sumX = sumY = count = numberFixation = 0;
@@ -252,7 +252,7 @@ public class I_VT_KeyPress {
 			keypress = "0";
 			
 			if (count > 1)
-				sObjectTmp = new SObject();
+				sObjectTmp = new SObject(0, 0, 0, 0, 0);
 		}
 		
 		//System.out.println(count + " - " + startTime + " - " + duration);

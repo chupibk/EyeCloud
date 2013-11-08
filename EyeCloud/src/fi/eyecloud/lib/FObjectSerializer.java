@@ -10,14 +10,18 @@ public class FObjectSerializer extends Serializer<FObject>{
 	@Override
 	public FObject read(Kryo arg0, Input arg1, Class<FObject> arg2) {
 		// TODO Auto-generated method stub
-		FObject f = (FObject) arg0.readClassAndObject(arg1);
+		FObject f = new FObject(arg1.readInt(), arg1.readInt(), arg1.readInt(), arg1.readInt(), arg1.readInt());
 		return f;
 	}
 
 	@Override
 	public void write(Kryo arg0, Output arg1, FObject arg2) {
 		// TODO Auto-generated method stub
-		arg0.writeClassAndObject(arg1, arg2);
+		arg1.writeInt(arg2.gazeX);
+		arg1.writeInt(arg2.gazeY);
+		arg1.writeInt(arg2.startTime);
+		arg1.writeInt(arg2.duration);
+		arg1.writeInt(arg2.keyPress);
 	}
 
 }

@@ -5,19 +5,21 @@ import java.util.List;
 
 public class SObject {
 
-	private int duration;
-	private float distance;
-	private float velocity;
-	private float acceleration;
+	int duration;
+	int rawNumber;
+	float distance;
+	float velocity;
+	float acceleration;
 	
-	private List<Integer> listX, listY, listTime, listDur;
-	private List<Float> listVel, listDis, listAcc;
+	List<Integer> listX, listY, listTime, listDur;
+	List<Float> listVel, listDis, listAcc;
 	
-	public SObject(){
-		duration = 0;
-		distance = 0;
-		velocity = 0;
-		acceleration = 0;
+	public SObject(int dur, int r, float dis, float v, float a){
+		duration = dur;
+		distance = dis;
+		velocity = v;
+		acceleration = a;
+		rawNumber = r;
 		
 		listX = new ArrayList<Integer>();
 		listY = new ArrayList<Integer>();
@@ -59,6 +61,7 @@ public class SObject {
 
 			velocity = velocity / listX.size();
 			acceleration = acceleration / listX.size();
+			rawNumber = listX.size();
 		}
 	}
 	
@@ -67,7 +70,7 @@ public class SObject {
 	}
 	
 	public int getRawNumber(){
-		return listX.size();
+		return rawNumber;
 	}
 	
 	public float getDistance(){
@@ -82,11 +85,11 @@ public class SObject {
 		return acceleration;
 	}
 	
-	public int getStartTime(){
-		if (listTime.size() > 0)
-			return listTime.get(0);
-		return 0;
-	}
+	//public int getStartTime(){
+	//	if (listTime.size() > 0)
+	//		return listTime.get(0);
+	//	return 0;
+	//}
 	
 	/**
 	 * @param args
