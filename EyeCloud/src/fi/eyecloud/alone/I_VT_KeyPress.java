@@ -24,8 +24,9 @@ public class I_VT_KeyPress {
 	private int currentLine = 0;
 	private int numberFixation;
 	private String keypress = "0";
+	private int numberKeypress;
 	private Map<String, Integer> mapHeader;
-	BufferedWriter out, svm;
+	BufferedWriter out, svmTrain, svmTest;
 	
 	List<SqObject> sequences = new ArrayList<SqObject>();
 	List<FObject> fObjects = new ArrayList<FObject>();
@@ -43,6 +44,7 @@ public class I_VT_KeyPress {
 		// Velocity of a gaze
 		float preVelocity = 0;
 		sObjectTmp = new SObject(0, 0, 0, 0, 0);
+		numberKeypress = 0;
 		
 		ReadTextFile data = new ReadTextFile(filePath);
 		sumX = sumY = count = numberFixation = 0;
@@ -65,6 +67,7 @@ public class I_VT_KeyPress {
 					Constants.EventKey).equals("-1")) {
 				keypress = getField(current.split(Constants.SPLIT_MARK),
 						Constants.EventKey);
+				numberKeypress++;
 			} else {
 				if (pre == null)
 					pre = current;
@@ -141,40 +144,64 @@ public class I_VT_KeyPress {
 		List<FeatureObject> features = new ArrayList<FeatureObject>();
 		System.out.println(sequences.size());
 		
-		FileWriter fw;
+		FileWriter fwTrain, fwTest;
 		try {
-			fw = new FileWriter("classification/result/training/LauraTest.txt");
-			svm = new BufferedWriter(fw);
-			for (int i=0; i < sequences.size(); i++){
+			fwTrain = new FileWriter("classification/training/AjayaCMD.train");
+			fwTest = new FileWriter("classification/training/AjayaCMD.test");
+			svmTrain = new BufferedWriter(fwTrain);
+			svmTest = new BufferedWriter(fwTest);
+			for (int i=0; i < sequences.size()*2/3; i++){
 				FeatureObject f = new FeatureObject(sequences.get(i));
 				features.add(f);
-				svm.write(f.getIntention() + " ");
-				svm.write("1:" + f.getFixationMean() + " ");
-				svm.write("2:" + f.getFixationSum() + " ");
-				svm.write("3:" + f.getFixationEvent() + " ");
-				svm.write("4:" + f.getFixationPrior() + " ");
-				svm.write("5:" + f.getSaccadeMean() + " ");
-				svm.write("6:" + f.getSaccadeSum() + " ");
-				svm.write("7:" + f.getSaccadeLast() + " ");
-				svm.write("8:" + f.getSaccadeMeanDistance() + " ");
-				svm.write("9:" + f.getSaccadeSumDistance() + " ");
-				svm.write("10:" + f.getSaccadeLastDistance() + " ");
-				svm.write("11:" + f.getSaccadeVelocityMean() + " ");
-				svm.write("12:" + f.getSaccadeLastVelocity() + " ");
-				svm.write("13:" + f.getSaccadeAccelerationMean());
-				svm.write("\n");
+				svmTrain.write(f.getIntention() + " ");
+				svmTrain.write("1:" + f.getFixationMean() + " ");
+				svmTrain.write("2:" + f.getFixationSum() + " ");
+				svmTrain.write("3:" + f.getFixationEvent() + " ");
+				svmTrain.write("4:" + f.getFixationPrior() + " ");
+				svmTrain.write("5:" + f.getSaccadeMean() + " ");
+				svmTrain.write("6:" + f.getSaccadeSum() + " ");
+				svmTrain.write("7:" + f.getSaccadeLast() + " ");
+				svmTrain.write("8:" + f.getSaccadeMeanDistance() + " ");
+				svmTrain.write("9:" + f.getSaccadeSumDistance() + " ");
+				svmTrain.write("10:" + f.getSaccadeLastDistance() + " ");
+				svmTrain.write("11:" + f.getSaccadeVelocityMean() + " ");
+				svmTrain.write("12:" + f.getSaccadeLastVelocity() + " ");
+				svmTrain.write("13:" + f.getSaccadeAccelerationMean());
+				svmTrain.write("\n");
 				//System.out.println(f.getIntention() + " , " + f.getFixationMean() + "," + f.getFixationSum() + "," + f.getSaccadeMean() + "," + f.getSaccadeSum());
-			}	
-			svm.close();
+			}
+			
+			for (int i=sequences.size()*2/3; i < sequences.size(); i++){
+				FeatureObject f = new FeatureObject(sequences.get(i));
+				features.add(f);
+				svmTest.write(f.getIntention() + " ");
+				svmTest.write("1:" + f.getFixationMean() + " ");
+				svmTest.write("2:" + f.getFixationSum() + " ");
+				svmTest.write("3:" + f.getFixationEvent() + " ");
+				svmTest.write("4:" + f.getFixationPrior() + " ");
+				svmTest.write("5:" + f.getSaccadeMean() + " ");
+				svmTest.write("6:" + f.getSaccadeSum() + " ");
+				svmTest.write("7:" + f.getSaccadeLast() + " ");
+				svmTest.write("8:" + f.getSaccadeMeanDistance() + " ");
+				svmTest.write("9:" + f.getSaccadeSumDistance() + " ");
+				svmTest.write("10:" + f.getSaccadeLastDistance() + " ");
+				svmTest.write("11:" + f.getSaccadeVelocityMean() + " ");
+				svmTest.write("12:" + f.getSaccadeLastVelocity() + " ");
+				svmTest.write("13:" + f.getSaccadeAccelerationMean());
+				svmTest.write("\n");
+				//System.out.println(f.getIntention() + " , " + f.getFixationMean() + "," + f.getFixationSum() + "," + f.getSaccadeMean() + "," + f.getSaccadeSum());
+			}			
+			
+			svmTrain.close();
+			fwTrain.close();			
+			svmTest.close();
+			fwTest.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		//System.out.println(sObjects.size());
-		for (int i=0; i < 100; i++){
-			//sequences.get(i).printSequence();
-		}
+		System.out.println("Intention: " + numberKeypress);
 	}
 
 	/**
@@ -272,7 +299,7 @@ public class I_VT_KeyPress {
 		// TODO Auto-generated method stub
 		System.gc();
 		long start = System.currentTimeMillis();
-		new I_VT_KeyPress("classification/LauraTest.txt", "classification/result/LauraTest.txt");
+		new I_VT_KeyPress("classification/AjayaCMD.txt", "classification/result/AjayaCMD.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}
 }
