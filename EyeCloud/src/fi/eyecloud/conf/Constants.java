@@ -78,6 +78,12 @@ public class Constants {
 	 * Classification
 	 */
 	public static int FIXATION_SEQUENCE_NUMBER		= 3;
+	public static int N_FOLD_CROSS_VALIDATION		= 5;
+	public static int C_START						= -5;
+	public static int C_END							= 15;
+	public static int GAMMA_START					= -15;
+	public static int GAMMA_END						= 3;
+	public static int STEP							= 2;
 	
 	/**
 	 * Upload host

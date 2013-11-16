@@ -1,5 +1,7 @@
 package fi.eyecloud.test;
 
+import java.math.BigDecimal;
+
 public class Test {
 
 	/**
@@ -7,9 +9,10 @@ public class Test {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String s = "";
-		String data[] = s.split(",");
-		System.out.println(data.length);
+		String s = "5E-4";
+		BigDecimal bg = new BigDecimal(s);
+		System.out.println(bg);
+		System.out.println(Math.log(bg.doubleValue()) / Math.log(2));
 	}
 
 }

@@ -2,6 +2,8 @@ package fi.eyecloud.svm;
 
 import java.io.IOException;
 
+import fi.eyecloud.conf.Constants;
+
 public class Test {
 
 	/**
@@ -25,20 +27,14 @@ public class Test {
 		System.out.println("Scale Testing file: Done");
 		
 		// Grid search for finding c and g
-		svm_grid grid = new svm_grid(5, "svm/AjayaCMD.train.scale");
+		svm_grid grid = new svm_grid(Constants.N_FOLD_CROSS_VALIDATION, "svm/AjayaCMD.train.scale");
 		System.out.println("Grid done: " + grid.getC() + " , " + grid.getG() + " , " + grid.getAccuracy());
-		
-		// Train with c and g
-		svm_train train = new svm_train();
-		String argvTrain[] = {	"-c", Double.toString(grid.getC()), "-g", Double.toString(grid.getG()), "-q", 
-								"svm/AjayaCMD.train.scale", "svm/AjayaCMD.model"};
-		train.run(argvTrain, 0);
 		System.out.println("Training done");
 		
 		// Predict
 		svm_predict predict = new svm_predict();
 		String argvPredict[] = {"svm/AjayaCMD.test.scale","", "svm/AjayaCMD.predict"};
-		predict.run(argvPredict, train.getModel());
+		predict.run(argvPredict, grid.getModel());
 		System.out.println("Predicting done");
 		
 		System.out.println();

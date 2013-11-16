@@ -146,11 +146,11 @@ public class I_VT_KeyPress {
 		
 		FileWriter fwTrain, fwTest;
 		try {
-			fwTrain = new FileWriter("classification/training/AjayaCMD.train");
-			fwTest = new FileWriter("classification/training/AjayaCMD.test");
+			fwTrain = new FileWriter("classification/training/AjayaSmall.train");
+			fwTest = new FileWriter("classification/training/AjayaSmall.test");
 			svmTrain = new BufferedWriter(fwTrain);
 			svmTest = new BufferedWriter(fwTest);
-			for (int i=0; i < sequences.size()*2/3; i++){
+			for (int i=0; i < sequences.size()*3/3; i++){
 				FeatureObject f = new FeatureObject(sequences.get(i));
 				features.add(f);
 				svmTrain.write(f.getIntention() + " ");
@@ -299,7 +299,7 @@ public class I_VT_KeyPress {
 		// TODO Auto-generated method stub
 		System.gc();
 		long start = System.currentTimeMillis();
-		new I_VT_KeyPress("classification/AjayaCMD.txt", "classification/result/AjayaCMD.txt");
+		new I_VT_KeyPress("classification/AjayaSmall.txt", "classification/result/AjayaSmall.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}
 }

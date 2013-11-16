@@ -2,31 +2,41 @@ package fi.eyecloud.svm;
 
 import java.io.IOException;
 
+import fi.eyecloud.conf.Constants;
+
+import libsvm.svm_model;
+import libsvm.svm_parameter;
+import libsvm.svm_problem;
+
 public class svm_grid {
 
 	private double c;
 	private double g;
 	private double accuracy;
+	private svm_model model;
 	
 	public svm_grid(int nFold, String trainFile) throws IOException{
 		accuracy = 0;
+		svm_problem prob = ReadData.runProb(trainFile);
+		svm_parameter bestParam = null;
 		
-		for (int i=-5; i <= 15; i=i+2){
-			for (int j=3; j >= -15; j=j-2){				
-				svm_train train = new svm_train();
+		for (int i=Constants.C_START; i <= Constants.C_END; i=i+Constants.STEP){
+			for (int j=Constants.GAMMA_START; j <= Constants.GAMMA_END; j=j+Constants.STEP){				
 				double tmpC = Math.pow(2, i);
 				double tmpG = Math.pow(2, j);
-				String argv[] = {"-c", Double.toString(tmpC), "-g", Double.toString(tmpG), "-v", Integer.toString(nFold), "-q",trainFile};
-				train.run(argv, 0);
+				svm_parameter param = ReadData.runParameter(tmpC, tmpG);
+				double tmpA = RunSVM.do_cross_validation(prob, param, nFold);
 				
-				if (train.getNFoldAccuracy() > accuracy){
+				if (tmpA > accuracy){
 					c = tmpC;
 					g = tmpG;
-					accuracy = train.getNFoldAccuracy();
-					//System.out.println(c + " , " + g + " , " + accuracy);
+					accuracy = tmpA;
+					bestParam = param;
 				}
 			}
 		}
+		
+		model = RunSVM.svmTrain(prob, bestParam);
 	}
 	
 	public double getC(){
@@ -39,6 +49,10 @@ public class svm_grid {
 	
 	public double getAccuracy(){
 		return accuracy;
+	}
+	
+	public svm_model getModel(){
+		return model;
 	}
 	
 	/**
