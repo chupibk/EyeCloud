@@ -28,20 +28,21 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
 import backtype.storm.StormSubmitter;
-import backtype.storm.drpc.DRPCSpout;
-import backtype.storm.drpc.ReturnResults;
+import backtype.storm.coordination.BatchOutputCollector;
+import backtype.storm.drpc.LinearDRPCTopologyBuilder;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
-import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.topology.base.BaseBasicBolt;
+import backtype.storm.topology.base.BaseBatchBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-public class TrainTest {
+@SuppressWarnings("deprecation")
+public class TrainTestLinear {
 
 	@SuppressWarnings("serial")
 	public static class ReceiveData extends BaseBasicBolt{
@@ -49,9 +50,9 @@ public class TrainTest {
 		@Override
 		public void execute(Tuple input, BasicOutputCollector collector) {
 			// TODO Auto-generated method stub
-			String data[] = input.getString(0).split(Constants.PARAMETER_SPLIT);
+			String data[] = input.getString(1).split(Constants.PARAMETER_SPLIT);
 			Integer id = Integer.parseInt(data[data.length - 1]);
-			collector.emit(new Values(id, data, input.getValue(1)));
+			collector.emit(new Values(id, data, input.getValue(0)));
 		}
 
 		@Override
@@ -388,6 +389,7 @@ public class TrainTest {
 				String data = input.getString(1);
 				vectors.add(data);
 				contextData.setTaskData(VECTORS + id, vectors);
+				collector.emit(new Values(null, 0, (int)0, id, input.getValue(4)));
 			}else{
 				Integer state = input.getInteger(2);
 				if (state == 0){
@@ -427,7 +429,7 @@ public class TrainTest {
 							collector.emit(new Values(prob, c, (int)0, id, input.getValue(4)));
 						}
 						
-						//collector.emit(new Values(null, 0, (int)1, id, input.getValue(4)));
+						collector.emit(new Values(null, 0, (int)1, id, input.getValue(4)));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -477,12 +479,12 @@ public class TrainTest {
 				}
 				
 				model = RunSVM.svmTrain(prob, bestParam);
-				collector.emit(new Values(model, accuracy, c, g, (int)0, input.getInteger(3), input.getValue(4)));
+				collector.emit(new Values(input.getValue(4), model, accuracy, c, g, (int)0, input.getInteger(3)));
 			}else{
 				if (input.getInteger(2) == 1){
-					collector.emit(new Values(null, 0, 0, 0, (int)1, input.getInteger(3), input.getValue(4)));
+					collector.emit(new Values(input.getValue(4), null, 0, 0, 0, (int)1, input.getInteger(3)));
 				}else{	
-					collector.emit(new Values(null, 0, 0, 0, (int)0, input.getInteger(3), input.getValue(4)));
+					collector.emit(new Values(input.getValue(4), null, 0, 0, 0, (int)0, input.getInteger(3)));
 				}
 			}
 		}
@@ -490,197 +492,169 @@ public class TrainTest {
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
 			// TODO Auto-generated method stub
-			declarer.declare(new Fields("model", "accuracy", "c", "gamma", "state", "id","requestid"));
+			declarer.declare(new Fields("requestid", "model", "accuracy", "c", "gamma", "state", "id"));
 		}
 		
 	}	
 	
 	@SuppressWarnings({ "serial", "rawtypes" })
-	public static class SVMEnd extends BaseBasicBolt{
+	public static class SVMEnd extends BaseBatchBolt{
 		TopologyContext contextData;
+		BatchOutputCollector collector;
 		private static String MODEL = "model_";
 		private static String ACCURACY = "accuracy_";
 		private static String C = "c_";
 		private static String GAMMA = "gamma_";
-		private static String COUNT = "count_";
+		private int theLastCheck = 0;
+		private Integer id;
+		private Object returnId;
 		
 		@Override
-		public void prepare(Map conf, TopologyContext context) {
+		public void prepare(Map conf, TopologyContext context, BatchOutputCollector c, Object id) {
 			contextData = context;
+			collector = c;
+			returnId = id;
 		}	
 		
 		@Override
-		public void execute(Tuple input, BasicOutputCollector collector) {
+		public void execute(Tuple input) {
 			// TODO Auto-generated method stub
-			Integer id = input.getInteger(5);
-			if (input.getValue(0) != null){
+			id = input.getInteger(6);
+			
+			if (input.getValue(1) != null){
 				double currentA = 0;
-				int count = 0;
-				
 				if (contextData.getTaskData(ACCURACY + id) != null)
 					currentA = Double.parseDouble(contextData.getTaskData(ACCURACY + id).toString());
-				if (contextData.getTaskData(COUNT + id) != null)
-					count = Integer.parseInt(contextData.getTaskData(COUNT + id).toString());				
-				count++;
-				contextData.setTaskData(COUNT + id, count);
 				
 				if (currentA < input.getDouble(1)){
-					contextData.setTaskData(MODEL + id, input.getValue(0));
-					contextData.setTaskData(ACCURACY + id, input.getDouble(1));
-					contextData.setTaskData(C + id, input.getDouble(2));
-					contextData.setTaskData(GAMMA + id, input.getDouble(3));
-				}
-				
-				if (count >= (Constants.C_END - Constants.C_START)/Constants.STEP + 1){
-					String result = contextData.getTaskData(C + id).toString() + " , " +
-							contextData.getTaskData(GAMMA + id).toString() + " , " +
-							contextData.getTaskData(ACCURACY + id).toString();
-					
-					contextData.setTaskData(MODEL + id, null);
-					contextData.setTaskData(ACCURACY + id, null);
-					contextData.setTaskData(C + id, null);
-					contextData.setTaskData(GAMMA + id, null);	
-					contextData.setTaskData(COUNT + id, null);
-					
-					collector.emit(new Values(result, input.getValue(6)));					
+					contextData.setTaskData(MODEL + id, input.getValue(1));
+					contextData.setTaskData(ACCURACY + id, input.getDouble(2));
+					contextData.setTaskData(C + id, input.getDouble(3));
+					contextData.setTaskData(GAMMA + id, input.getDouble(4));
 				}
 			}else{
-				if (input.getInteger(4) == 1){
-					String result = contextData.getTaskData(C + id).toString() + " , " +
-									contextData.getTaskData(GAMMA + id).toString() + " , " +
-									contextData.getTaskData(ACCURACY + id).toString();
-					contextData.setTaskData(MODEL + id, null);
-					contextData.setTaskData(ACCURACY + id, null);
-					contextData.setTaskData(C + id, null);
-					contextData.setTaskData(GAMMA + id, null);					
-					
-					collector.emit(new Values(result, input.getValue(6)));
+				if (input.getInteger(5) == 1){
+					theLastCheck = 1;
 				}else{
-					collector.emit(new Values("OK", input.getValue(6)));
-				}
+					theLastCheck = 0;
+				}				
 			}
 		}
 		
+        @Override
+        public void finishBatch() {
+			if (theLastCheck == 1){
+				String result = contextData.getTaskData(C + id).toString() + " , " +
+								contextData.getTaskData(GAMMA + id).toString() + " , " +
+								contextData.getTaskData(ACCURACY + id).toString();
+				contextData.setTaskData(MODEL + id, null);
+				contextData.setTaskData(ACCURACY + id, null);
+				contextData.setTaskData(C + id, null);
+				contextData.setTaskData(GAMMA + id, null);					
+				
+				collector.emit(new Values(returnId, result));
+			}else{
+				collector.emit(new Values(returnId, "Ok"));
+			}        	
+        }
+
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
 			// TODO Auto-generated method stub
-			declarer.declare(new Fields("result", "return-info"));
+			declarer.declare(new Fields("id", "result"));
 		}
 		
 	}	
 	
-	public static TopologyBuilder construct(int dataSpout, int receiveBolt,
-			int processBolt, int featureBolt, int svmStartBolt,
-			int svmGridBolt, int svmEndBolt, int returnBolt) {
-		TopologyBuilder builder = new TopologyBuilder();
-		DRPCSpout spout = new DRPCSpout("TrainTest");
-		builder.setSpout("drpc", spout, dataSpout);
-		builder.setBolt("receive", new ReceiveData(), receiveBolt)
-				.shuffleGrouping("drpc");
-		builder.setBolt("process", new ProcessData(), processBolt)
-				.fieldsGrouping("receive", new Fields("id"));
-		builder.setBolt("feature", new Feature(), featureBolt).shuffleGrouping(
-				"process");
-		builder.setBolt("svmstart", new SVMStart(), svmStartBolt)
-				.shuffleGrouping("feature");
-		builder.setBolt("svmgrid", new SVMGrid(), svmGridBolt).shuffleGrouping(
-				"svmstart");
-		builder.setBolt("svmend", new SVMEnd(), svmEndBolt).shuffleGrouping(
-				"svmgrid");
-		builder.setBolt("return", new ReturnResults(), returnBolt)
-				.shuffleGrouping("svmend");
-		return builder;
-	}
-
+    public static LinearDRPCTopologyBuilder construct(int receiveBolt, int processBolt, int featureBolt, int svmStartBolt, int svmGridBolt, int svmEndBolt) {
+    	LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder("TrainTest");
+        builder.addBolt(new ReceiveData(), receiveBolt);
+        builder.addBolt(new ProcessData(), processBolt).fieldsGrouping(new Fields("id"));
+        builder.addBolt(new Feature(), featureBolt).shuffleGrouping();
+        builder.addBolt(new SVMStart(), svmStartBolt).shuffleGrouping();
+        builder.addBolt(new SVMGrid(), svmGridBolt).shuffleGrouping();
+        builder.addBolt(new SVMEnd(), svmEndBolt).fieldsGrouping(new Fields("requestid"));
+        return builder;
+    }
+	
 	/**
 	 * @param args
-	 * @throws InvalidTopologyException
-	 * @throws AlreadyAliveException
+	 * @throws InvalidTopologyException 
+	 * @throws AlreadyAliveException 
 	 */
-	public static void main(String[] args) throws AlreadyAliveException,
-			InvalidTopologyException {
+	public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException {
 		// TODO Auto-generated method stub
-		int n = Integer.parseInt(args[1]);
-		TopologyBuilder builder = construct(n, n, n, n, 1, n, 1, n);
+		//int n = Integer.parseInt(args[1]);
+		//LinearDRPCTopologyBuilder builder = construct(1, 1, n, 1, n, 1);
+        
+        Config conf = new Config();
+        conf.registerSerialization(FObject.class, FObjectSerializer.class);
+        conf.registerSerialization(SObject.class, SObjectSerializer.class);
+        conf.registerSerialization(SqObject.class, SqObjectSerializer.class);
+        
+        if(args==null || args.length==0) {
+            conf.setMaxTaskParallelism(3);
+            LocalDRPC drpc = new LocalDRPC();
+            LinearDRPCTopologyBuilder builder = construct(1, 1, 3, 1, 3, 1);
+            LocalCluster cluster = new LocalCluster();
+            cluster.submitTopology("reach-drpc", conf, builder.createLocalTopology(drpc));
+            
+            ReadTextFile data = new ReadTextFile("classification/AjayaSmall.txt");
+            String currentSend = "";
+            int count = 0;
+            while (data.readNextLine() != null){
+    			int x = (Integer.parseInt(data.getField(Constants.GazePointXLeft)) +
+    					Integer.parseInt(data.getField(Constants.GazePointXRight)))/2;
+    			int y = (Integer.parseInt(data.getField(Constants.GazePointYLeft)) +
+    					Integer.parseInt(data.getField(Constants.GazePointYRight)))/2;			
+    			currentSend = currentSend + x
+    					+ Constants.PARAMETER_SPLIT;
+    			currentSend = currentSend + y
+    					+ Constants.PARAMETER_SPLIT;
+    			int timestamp = Integer.parseInt(data.getField(Constants.Timestamp));
+    			currentSend = currentSend + timestamp + Constants.PARAMETER_SPLIT;
 
-		Config conf = new Config();
-		conf.registerSerialization(FObject.class, FObjectSerializer.class);
-		conf.registerSerialization(SObject.class, SObjectSerializer.class);
-		conf.registerSerialization(SqObject.class, SqObjectSerializer.class);
+    			float dis = (Float
+    					.parseFloat(data.getField(Constants.DistanceLeft)) + Float
+    					.parseFloat(data.getField(Constants.DistanceRight))) / 2;
 
-		if (args == null || args.length == 0) {
-			conf.setMaxTaskParallelism(3);
-			LocalDRPC drpc = new LocalDRPC();
-			// TopologyBuilder builder = construct(drpc, 3, 3, 3, 3, 1, 3, 1,
-			// 3);
-			LocalCluster cluster = new LocalCluster();
-			cluster.submitTopology("reach-drpc", conf, builder.createTopology());
-
-			ReadTextFile data = new ReadTextFile("classification/AjayaCMD.txt");
-			String currentSend = "";
-			int count = 0;
-			while (data.readNextLine() != null) {
-				int x = (Integer.parseInt(data
-						.getField(Constants.GazePointXLeft)) + Integer
-						.parseInt(data.getField(Constants.GazePointXRight))) / 2;
-				int y = (Integer.parseInt(data
-						.getField(Constants.GazePointYLeft)) + Integer
-						.parseInt(data.getField(Constants.GazePointYRight))) / 2;
-				currentSend = currentSend + x + Constants.PARAMETER_SPLIT;
-				currentSend = currentSend + y + Constants.PARAMETER_SPLIT;
-				int timestamp = Integer.parseInt(data
-						.getField(Constants.Timestamp));
-				currentSend = currentSend + timestamp
-						+ Constants.PARAMETER_SPLIT;
-
-				float dis = (Float.parseFloat(data
-						.getField(Constants.DistanceLeft)) + Float
-						.parseFloat(data.getField(Constants.DistanceRight))) / 2;
-
-				currentSend = currentSend + dis + Constants.PARAMETER_SPLIT;
-				currentSend = currentSend + System.currentTimeMillis()
-						+ Constants.PARAMETER_SPLIT;
-				currentSend = currentSend
-						+ Integer.parseInt(data.getField(Constants.Number))
-						+ Constants.PARAMETER_SPLIT;
-
-				int keypress = 0;
-				if (Integer.parseInt(data.getField(Constants.EventKey)) != Constants.UNKNOWN) {
-					keypress = Integer.parseInt(data
-							.getField(Constants.EventKey));
-				}
-				currentSend = currentSend + keypress
-						+ Constants.PARAMETER_SPLIT;
-				count++;
-
-				if (count == 5000) {
-					currentSend = currentSend + "1";
-					System.out.println(currentSend);
-					System.out.println("Output file: "
-							+ drpc.execute("TrainTest", currentSend));
-					count = 0;
-					currentSend = "";
-				}
-			}
-
-			if (count > 0) {
+    			currentSend = currentSend + dis + Constants.PARAMETER_SPLIT;
+    			currentSend = currentSend + System.currentTimeMillis() + Constants.PARAMETER_SPLIT;
+    			currentSend = currentSend + Integer.parseInt(data.getField(Constants.Number)) 
+    										+ Constants.PARAMETER_SPLIT;
+    			
+    			int keypress = 0;
+    			if (Integer.parseInt(data.getField(Constants.EventKey)) != Constants.UNKNOWN){
+    				keypress = Integer.parseInt(data.getField(Constants.EventKey));
+    			}
+    			currentSend = currentSend + keypress + Constants.PARAMETER_SPLIT;   			
+    			count++;
+    			
+    			if (count == 2000){
+    				currentSend = currentSend + "1";
+    				System.out.println(currentSend);
+    				System.out.println("Output file: " + drpc.execute("TrainTest", currentSend));
+    				count = 0;
+    				currentSend = "";
+    			}
+            }
+            
+			if (count > 0){
 				currentSend = currentSend + "1";
-				System.out.println("Output file: "
-						+ drpc.execute("TrainTest", currentSend));
+				System.out.println("Output file: " + drpc.execute("TrainTest", currentSend));
 				count = 0;
 				currentSend = "";
-			}
-
-			long start = System.currentTimeMillis();
-			System.out.println("Final Send: " + drpc.execute("TrainTest", "1"));
-			System.out.println("Running time: "
-					+ (float) (System.currentTimeMillis() - start) / 1000);
-			cluster.shutdown();
-			drpc.shutdown();
-		} else {
-			conf.setNumWorkers(Integer.parseInt(args[1]));
-			StormSubmitter.submitTopology(args[0], conf,
-					builder.createTopology());
-		}
+			}            
+            
+            long start = System.currentTimeMillis();
+            System.out.println("Final Send: " + drpc.execute("TrainTest", "1"));
+            System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);            
+            cluster.shutdown();
+            drpc.shutdown();
+        } else {
+            conf.setNumWorkers(Integer.parseInt(args[1]));
+            //StormSubmitter.submitTopology(args[0], conf, builder.createRemoteTopology());
+        }        
 	}
+
 }

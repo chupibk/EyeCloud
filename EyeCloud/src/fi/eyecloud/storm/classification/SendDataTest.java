@@ -9,7 +9,7 @@ import fi.eyecloud.input.ReadTextFile;
 
 public class SendDataTest {
 
-	public SendDataTest(String hostName, String inputFile) throws TException, DRPCExecutionException{
+	public SendDataTest(String hostName, String inputFile, int max, int id) throws TException, DRPCExecutionException{
 		DRPCClient client = new DRPCClient(hostName, 3772);
 		ReadTextFile data = new ReadTextFile(inputFile);
 		
@@ -43,9 +43,9 @@ public class SendDataTest {
 			currentSend = currentSend + keypress + Constants.PARAMETER_SPLIT;   			
 			count++;
 			
-			if (count == 5000){
-				currentSend = currentSend + "1";
-				System.out.println(currentSend);
+			if (count == max){
+				currentSend = currentSend + id;
+				//System.out.println(currentSend);
 				System.out.println("Output file: " + client.execute("TrainTest", currentSend));
 				count = 0;
 				currentSend = "";
@@ -53,14 +53,14 @@ public class SendDataTest {
         }
         
 		if (count > 0){
-			currentSend = currentSend + "1";
+			currentSend = currentSend + id;
 			System.out.println("Output file: " + client.execute("TrainTest", currentSend));
 			count = 0;
 			currentSend = "";
 		}            
         
         long start = System.currentTimeMillis();
-        System.out.println("Final Send: " + client.execute("TrainTest", "1"));
+        System.out.println("Final Send: " + client.execute("TrainTest", Integer.toString(id)));
         System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);            
 
         data.closeFile();
@@ -74,7 +74,8 @@ public class SendDataTest {
 	 */
 	public static void main(String[] args) throws TException, DRPCExecutionException {
 		// TODO Auto-generated method stub
-		new SendDataTest("", "classification/AjayaCMD.txt");
+		//new SendDataTest("54.194.14.116", "classification/AjayaCMD.txt", 5000, 1);
+		new SendDataTest(args[0], args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
 	}
 
 }
