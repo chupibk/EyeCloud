@@ -15,6 +15,7 @@ public class SendDataTest {
 		
         String currentSend = "";
         int count = 0;
+        long start = System.currentTimeMillis();
         while (data.readNextLine() != null){
 			int x = (Integer.parseInt(data.getField(Constants.GazePointXLeft)) +
 					Integer.parseInt(data.getField(Constants.GazePointXRight)))/2;
@@ -46,7 +47,8 @@ public class SendDataTest {
 			if (count == max){
 				currentSend = currentSend + id;
 				//System.out.println(currentSend);
-				System.out.println("Output file: " + client.execute("TrainTest", currentSend));
+				//System.out.println("Output file: " + client.execute("TrainTest", currentSend));
+				client.execute("TrainTest", currentSend);
 				count = 0;
 				currentSend = "";
 			}
@@ -54,14 +56,16 @@ public class SendDataTest {
         
 		if (count > 0){
 			currentSend = currentSend + id;
-			System.out.println("Output file: " + client.execute("TrainTest", currentSend));
+			//System.out.println("Output file: " + client.execute("TrainTest", currentSend));
+			client.execute("TrainTest", currentSend);
 			count = 0;
 			currentSend = "";
 		}            
-        
-        long start = System.currentTimeMillis();
+		System.out.println("Running time of featuring: " + (float)(System.currentTimeMillis() - start)/1000);  
+		
+        start = System.currentTimeMillis();
         System.out.println("Final Send: " + client.execute("TrainTest", Integer.toString(id)));
-        System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);            
+        System.out.println("Running time of training: " + (float)(System.currentTimeMillis() - start)/1000);            
 
         data.closeFile();
         client.close();		

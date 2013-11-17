@@ -146,8 +146,8 @@ public class I_VT_KeyPress {
 		
 		FileWriter fwTrain, fwTest;
 		try {
-			fwTrain = new FileWriter("classification/training/AjayaSmall.train");
-			fwTest = new FileWriter("classification/training/AjayaSmall.test");
+			fwTrain = new FileWriter("classification/training/AjayaCMD.train");
+			fwTest = new FileWriter("classification/training/AjayaCMD.test");
 			svmTrain = new BufferedWriter(fwTrain);
 			svmTest = new BufferedWriter(fwTest);
 			for (int i=0; i < sequences.size()*3/3; i++){
@@ -299,7 +299,7 @@ public class I_VT_KeyPress {
 		// TODO Auto-generated method stub
 		System.gc();
 		long start = System.currentTimeMillis();
-		new I_VT_KeyPress("classification/AjayaSmall.txt", "classification/result/AjayaSmall.txt");
+		new I_VT_KeyPress("classification/AjayaCMD.txt", "classification/result/AjayaCMD.txt");
 		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
 	}
 }

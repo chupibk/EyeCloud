@@ -27,7 +27,6 @@ import fi.eyecloud.svm.svm_scale;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
-import backtype.storm.StormSubmitter;
 import backtype.storm.coordination.BatchOutputCollector;
 import backtype.storm.drpc.LinearDRPCTopologyBuilder;
 import backtype.storm.generated.AlreadyAliveException;

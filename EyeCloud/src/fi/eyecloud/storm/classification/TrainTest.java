@@ -108,8 +108,11 @@ public class TrainTest {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void execute(Tuple input, BasicOutputCollector collector) {
+			String data[] = input.getString(0).split(Constants.PARAMETER_SPLIT);
+			id = Integer.parseInt(data[data.length - 1]);
+			idEmit = input.getValue(1);			
+			
 			collectorEmit = collector;
-			idEmit = input.getValue(2);
 			
 			// Set values
 			sumX = sumY = count = startTime = duration = currentLine = 0;
@@ -119,8 +122,9 @@ public class TrainTest {
 			sObjects = new ArrayList<SObject>();
 			keypress = 0;
 			
-			id = input.getInteger(0);
-			String data[] = (String[]) input.getValue(1);
+			//idEmit = input.getValue(2);
+			//id = input.getInteger(0);
+			//String data[] = (String[]) input.getValue(1);
         	int length = data.length/Constants.PARAMETER_NUMBER_FIXATION;
         	int x1, y1, time1, x2, y2, time2, index2, event;
         	long send2;
@@ -523,6 +527,7 @@ public class TrainTest {
 					count = Integer.parseInt(contextData.getTaskData(COUNT + id).toString());				
 				count++;
 				contextData.setTaskData(COUNT + id, count);
+				System.out.println(count);
 				
 				if (currentA < input.getDouble(1)){
 					contextData.setTaskData(MODEL + id, input.getValue(0));
@@ -575,10 +580,10 @@ public class TrainTest {
 		TopologyBuilder builder = new TopologyBuilder();
 		DRPCSpout spout = new DRPCSpout("TrainTest");
 		builder.setSpout("drpc", spout, dataSpout);
-		builder.setBolt("receive", new ReceiveData(), receiveBolt)
-				.shuffleGrouping("drpc");
+		//builder.setBolt("receive", new ReceiveData(), receiveBolt)
+		//		.shuffleGrouping("drpc");
 		builder.setBolt("process", new ProcessData(), processBolt)
-				.fieldsGrouping("receive", new Fields("id"));
+				.shuffleGrouping("drpc");
 		builder.setBolt("feature", new Feature(), featureBolt).shuffleGrouping(
 				"process");
 		builder.setBolt("svmstart", new SVMStart(), svmStartBolt)
@@ -601,8 +606,10 @@ public class TrainTest {
 			InvalidTopologyException {
 		// TODO Auto-generated method stub
 		int n = Integer.parseInt(args[1]);
-		TopologyBuilder builder = construct(n, n, n, n, 1, n, 1, n);
-
+		TopologyBuilder builder = construct(1, 1, 1, n, 1, n, 1, 1);
+		LocalDRPC drpc = new LocalDRPC();
+		//TopologyBuilder builder = construct(drpc, 1, 1, 1, 3, 1, 3, 1, 1);
+		
 		Config conf = new Config();
 		conf.registerSerialization(FObject.class, FObjectSerializer.class);
 		conf.registerSerialization(SObject.class, SObjectSerializer.class);
@@ -610,9 +617,6 @@ public class TrainTest {
 
 		if (args == null || args.length == 0) {
 			conf.setMaxTaskParallelism(3);
-			LocalDRPC drpc = new LocalDRPC();
-			// TopologyBuilder builder = construct(drpc, 3, 3, 3, 3, 1, 3, 1,
-			// 3);
 			LocalCluster cluster = new LocalCluster();
 			cluster.submitTopology("reach-drpc", conf, builder.createTopology());
 

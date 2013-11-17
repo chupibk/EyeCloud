@@ -83,7 +83,7 @@ public class Constants {
 	public static int C_END							= 15;
 	public static int GAMMA_START					= -15;
 	public static int GAMMA_END						= 3;
-	public static int STEP							= 2;
+	public static int STEP							= 4;
 	
 	/**
 	 * Upload host
