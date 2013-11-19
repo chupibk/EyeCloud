@@ -24,9 +24,14 @@ public class I_VT_KeyPress {
 	private int currentLine = 0;
 	private int numberFixation;
 	private String keypress = "0";
+	@SuppressWarnings("unused")
 	private int numberKeypress;
+	private int intention, nonintention;
 	private Map<String, Integer> mapHeader;
-	BufferedWriter out, svmTrain, svmTest;
+	BufferedWriter out;
+	
+	private long readingDataTime;
+	private long processingTime;
 	
 	List<SqObject> sequences = new ArrayList<SqObject>();
 	List<FObject> fObjects = new ArrayList<FObject>();
@@ -40,11 +45,16 @@ public class I_VT_KeyPress {
 	 * @param filePath: text file
 	 * @param VT: velocity threshold
 	 */
-	public I_VT_KeyPress(String filePath, String output) {
+	public I_VT_KeyPress(String filePath, String output, BufferedWriter svmTrain, BufferedWriter svmTest) {
+		long start = System.currentTimeMillis();
 		// Velocity of a gaze
 		float preVelocity = 0;
 		sObjectTmp = new SObject(0, 0, 0, 0, 0);
 		numberKeypress = 0;
+		readingDataTime = 0;
+		processingTime = 0;
+		intention = 0;
+		nonintention = 0;
 		
 		ReadTextFile data = new ReadTextFile(filePath);
 		sumX = sumY = count = numberFixation = 0;
@@ -62,7 +72,8 @@ public class I_VT_KeyPress {
 		String current = null;
 		while ((current = data.readNextLine()) != null) {
 			// System.out.println(current);
-
+			readingDataTime += data.getTimeOfReading();
+			
 			if (!getField(current.split(Constants.SPLIT_MARK),
 					Constants.EventKey).equals("-1")) {
 				keypress = getField(current.split(Constants.SPLIT_MARK),
@@ -142,17 +153,16 @@ public class I_VT_KeyPress {
 		
 		// Sequence Object
 		List<FeatureObject> features = new ArrayList<FeatureObject>();
-		System.out.println(sequences.size());
 		
-		FileWriter fwTrain, fwTest;
 		try {
-			fwTrain = new FileWriter("classification/training/AjayaCMD.train");
-			fwTest = new FileWriter("classification/training/AjayaCMD.test");
-			svmTrain = new BufferedWriter(fwTrain);
-			svmTest = new BufferedWriter(fwTest);
-			for (int i=0; i < sequences.size()*3/3; i++){
+			for (int i=0; i < sequences.size()*4/5; i++){
 				FeatureObject f = new FeatureObject(sequences.get(i));
 				features.add(f);
+				if (f.getIntention() == 1){
+					intention++;
+				}else{
+					nonintention++;
+				}
 				svmTrain.write(f.getIntention() + " ");
 				svmTrain.write("1:" + f.getFixationMean() + " ");
 				svmTrain.write("2:" + f.getFixationSum() + " ");
@@ -171,9 +181,14 @@ public class I_VT_KeyPress {
 				//System.out.println(f.getIntention() + " , " + f.getFixationMean() + "," + f.getFixationSum() + "," + f.getSaccadeMean() + "," + f.getSaccadeSum());
 			}
 			
-			for (int i=sequences.size()*2/3; i < sequences.size(); i++){
+			for (int i=sequences.size()*4/5; i < sequences.size(); i++){
 				FeatureObject f = new FeatureObject(sequences.get(i));
 				features.add(f);
+				if (f.getIntention() == 1){
+					intention++;
+				}else{
+					nonintention++;
+				}				
 				svmTest.write(f.getIntention() + " ");
 				svmTest.write("1:" + f.getFixationMean() + " ");
 				svmTest.write("2:" + f.getFixationSum() + " ");
@@ -192,16 +207,12 @@ public class I_VT_KeyPress {
 				//System.out.println(f.getIntention() + " , " + f.getFixationMean() + "," + f.getFixationSum() + "," + f.getSaccadeMean() + "," + f.getSaccadeSum());
 			}			
 			
-			svmTrain.close();
-			fwTrain.close();			
-			svmTest.close();
-			fwTest.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		System.out.println("Intention: " + numberKeypress);
+		processingTime = System.currentTimeMillis() - start - readingDataTime;
 	}
 
 	/**
@@ -292,14 +303,35 @@ public class I_VT_KeyPress {
 		currentLine = lineId;
 	}
 
+	public long getReadingTime(){
+		return readingDataTime;
+	}
+	
+	public long getProcessingTime(){
+		return processingTime;
+	}
+	
+	public int getNumberIntention(){
+		return intention;
+	}
+	
+	public int getNumberNonIntention(){
+		return nonintention;
+	}
+	
 	/**
 	 * @param args
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		System.gc();
-		long start = System.currentTimeMillis();
-		new I_VT_KeyPress("classification/AjayaCMD.txt", "classification/result/AjayaCMD.txt");
-		System.out.println("Running time: " + (float)(System.currentTimeMillis() - start)/1000);
+		FileWriter fwTrain, fwTest;
+		BufferedWriter svmTrain, svmTest;
+		fwTrain = new FileWriter("dataset/svm/eye.train");
+		fwTest = new FileWriter("dataset/svm/eye.test");
+		svmTrain = new BufferedWriter(fwTrain);
+		svmTest = new BufferedWriter(fwTest);		
+		new I_VT_KeyPress("classification/AjayaCMD.txt", "classification/result/AjayaCMD.txt", svmTrain, svmTest);
 	}
 }

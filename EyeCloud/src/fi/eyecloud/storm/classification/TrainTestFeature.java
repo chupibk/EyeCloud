@@ -1,18 +1,8 @@
 package fi.eyecloud.storm.classification;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-
-import libsvm.svm_model;
-import libsvm.svm_parameter;
-import libsvm.svm_problem;
 
 import fi.eyecloud.conf.Constants;
 import fi.eyecloud.conf.Library;
@@ -24,10 +14,6 @@ import fi.eyecloud.lib.SObject;
 import fi.eyecloud.lib.SObjectSerializer;
 import fi.eyecloud.lib.SqObject;
 import fi.eyecloud.lib.SqObjectSerializer;
-import fi.eyecloud.svm.ReadData;
-import fi.eyecloud.svm.RunSVM;
-import fi.eyecloud.svm.svm_predict;
-import fi.eyecloud.svm.svm_scale;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.LocalDRPC;
@@ -45,27 +31,8 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-public class TrainTest {
+public class TrainTestFeature {
 
-	@SuppressWarnings("serial")
-	public static class ReceiveData extends BaseBasicBolt{
-
-		@Override
-		public void execute(Tuple input, BasicOutputCollector collector) {
-			// TODO Auto-generated method stub
-			String data[] = input.getString(0).split(Constants.PARAMETER_SPLIT);
-			Integer id = Integer.parseInt(data[data.length - 1]);
-			collector.emit(new Values(id, data, input.getValue(1)));
-		}
-
-		@Override
-		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			// TODO Auto-generated method stub
-			declarer.declare(new Fields("id", "data", "requestid"));
-		}
-		
-	}
-	
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt{
 		private TopologyContext contextData;
@@ -112,7 +79,6 @@ public class TrainTest {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void execute(Tuple input, BasicOutputCollector collector) {
-			long start = System.currentTimeMillis();
 			String data[] = input.getString(0).split(Constants.PARAMETER_SPLIT);
 			id = Integer.parseInt(data[data.length - 1]);
 			idEmit = input.getValue(1);			
@@ -171,24 +137,11 @@ public class TrainTest {
 			if (contextData.getTaskData(KEYPRESS + id) != null)
 				keypress = Integer.parseInt(contextData.getTaskData(KEYPRESS + id).toString());
 			
-			if (data.length == 2){
+			if (data.length == 1){
 				if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
 					storeFix(0, 0, 0, 0, 0, 0);
 				}
-			
-	        	// 1: train
-	        	// 2: test
-				// 3: check
-				if (data[0].equals("1")){
-					collectorEmit.emit(new Values((int)0, null, (int)1, id, idEmit));				
-				}else
-				if (data[0].equals("2")){
-					collectorEmit.emit(new Values((int)0, null, (int)2, id, idEmit));
-				}else{
-					collectorEmit.emit(new Values((int)0, null, (int)3, id, idEmit));
-				}
-					
-					
+				
 	        	contextData.setTaskData(X_1 + id, null);
 	        	contextData.setTaskData(Y_1 + id, null);
 	        	contextData.setTaskData(TIME_1 + id, null);
@@ -206,6 +159,7 @@ public class TrainTest {
 	        	contextData.setTaskData(SOBJECTS + id, null);
 	        	contextData.setTaskData(KEYPRESS + id, null);
 	        	
+	        	collectorEmit.emit(new Values((int)0, null, (int)1, id, idEmit));
 				return;
 			}
 			
@@ -269,8 +223,7 @@ public class TrainTest {
         	contextData.setTaskData(SOBJECTS + id, sObjects);
         	contextData.setTaskData(KEYPRESS + id, keypress);
         	
-        	// Emit processing time as a sequence
-        	collectorEmit.emit(new Values((int)0, System.currentTimeMillis() - start, (int) 0, id, idEmit));
+        	collectorEmit.emit(new Values((int)0, null, (int) 0, id, idEmit));
 		}
 		
     	/**
@@ -367,7 +320,7 @@ public class TrainTest {
 							+"\n";	
 				collector.emit(new Values((int)1, result, input.getInteger(2), input.getInteger(3), input.getValue(4)));
 			}else{				
-				collector.emit(new Values((int)0, input.getLong(1), input.getInteger(2), input.getInteger(3), input.getValue(4)));
+				collector.emit(new Values((int)0, null, input.getInteger(2), input.getInteger(3), input.getValue(4)));
 			}	
 		}
 
@@ -377,327 +330,17 @@ public class TrainTest {
 			declarer.declare(new Fields("check", "feature", "state", "id", "requestid"));
 		}
 	}
-	
-	@SuppressWarnings("serial")
-	public static class SVMStart extends BaseBasicBolt{
-		TopologyContext contextData;
-		private List<String> vectors;
-		private static String VECTORS = "vector_";
-		private static String TEST_VECTORS = "testdata_";
-		private static String TRAIN		= "_train";
-		private static String TEST		= "_predict";
-		private static String SCALE		= "_scale";
-		private static String RANGE		= "_range";
 		
-		@SuppressWarnings("rawtypes")
-		@Override
-		public void prepare(Map conf, TopologyContext context) {
-			contextData = context;
-		}		
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public void execute(Tuple input, BasicOutputCollector collector) {
-			// TODO Auto-generated method stub
-			Integer id = input.getInteger(3);
-			
-			if (contextData.getTaskData(VECTORS + id) != null){
-				vectors = (List<String>) contextData.getTaskData(VECTORS + id);
-			}else{
-				vectors = new ArrayList<String>();
-			}
-			
-			if (input.getInteger(0) == 1){
-				String data = input.getString(1);
-				vectors.add(data);
-				contextData.setTaskData(VECTORS + id, vectors);
-			}else{
-				Integer state = input.getInteger(2);
-				if (state == 0){
-					// Return training data
-					// Emit c as processing time
-					collector.emit(new Values(null, input.getLong(1), (int)0, id, input.getValue(4)));
-				}else
-				if (state == 1){
-					// Reset stored data
-					contextData.setTaskData(VECTORS + id, null);
-					
-					// Return when training finishes
-					FileWriter fwTrain, fwTest;
-					BufferedWriter svmTrain, svmTest;
-					
-					// Shuffle data
-					List<String> shuffle = new ArrayList<String>();
-					while (vectors.size() > 0){
-						Random ran = new Random();
-						int n = ran.nextInt(vectors.size());
-						shuffle.add(vectors.get(n));
-						vectors.remove(n);
-					}
-					
-					try {
-						fwTrain = new FileWriter(VECTORS + id + TRAIN);
-						fwTest = new FileWriter(VECTORS + id + TEST);
-						svmTrain = new BufferedWriter(fwTrain);
-						svmTest = new BufferedWriter(fwTest);
-						
-						for (int i =0; i < shuffle.size()*4/5; i++){
-							svmTrain.write(shuffle.get(i));
-						}
-						
-						for (int i =shuffle.size()*4/5; i < shuffle.size(); i++){
-							svmTest.write(shuffle.get(i));
-						}						
-						
-						svmTest.close();
-						fwTest.close();
-						svmTrain.close();
-						fwTrain.close();
-						
-						// Scaling and Training
-						svm_scale scaleTrain = new svm_scale();
-						String argvScaleTrain[] = {"-l", "-1", "-u", "1", "-s", VECTORS + id + RANGE, VECTORS + id + TRAIN};
-						scaleTrain.run(argvScaleTrain, VECTORS + id + TRAIN + SCALE);
-						System.out.println("Scale Training file: Done");
-						
-						// Scale Test
-						svm_scale scaleTest = new svm_scale();
-						String argvScaleTest[] = {"-r", VECTORS + id + RANGE, VECTORS + id + TEST};
-						scaleTest.run(argvScaleTest, VECTORS + id + TEST + SCALE);		
-						System.out.println("Scale Testing file: Done");
-						// Get back
-						FileReader fr = new FileReader(VECTORS + id + TEST + SCALE);
-						BufferedReader in = new BufferedReader(fr);
-						List<String> test = new ArrayList<String>();
-						String tmp;
-						
-						while ((tmp = in.readLine()) != null){
-							test.add(tmp);
-						}
-						in.close();
-						fr.close();						
-						contextData.setTaskData(TEST_VECTORS + id, test);
-						
-						collector.emit(new Values(null, null, (int)1, id, input.getValue(4)));
-						// Grid search for finding c and g
-						svm_problem prob = ReadData.runProb(VECTORS + id + TRAIN + SCALE);
-						for (int c=Constants.C_START; c <= Constants.C_END; c=c+Constants.STEP){
-							collector.emit(new Values(prob, c, (int)0, id, input.getValue(4)));
-						}
-						
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}					
-				}else
-				if (state == 2){
-					// Test
-					List<String> test = (List<String>) contextData.getTaskData(TEST_VECTORS + id);
-					collector.emit(new Values(null, test, (int)2, id, input.getValue(4)));
-				}else{
-					collector.emit(new Values(null, null, (int)3, id, input.getValue(4)));
-				}
-			}	
-		}
-
-		@Override
-		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			// TODO Auto-generated method stub
-			declarer.declare(new Fields("prob", "c", "state", "id", "requestid"));
-		}
-		
-	}	
-	
-	@SuppressWarnings("serial")
-	public static class SVMGrid extends BaseBasicBolt{
-		private double c;
-		private double g;
-		private double accuracy;
-		private svm_model model;
-		
-		@Override
-		public void execute(Tuple input, BasicOutputCollector collector) {
-			c = 0;
-			g = 0;
-			accuracy = 0;
-			
-			// TODO Auto-generated method stub
-			if (input.getValue(0) != null){
-				svm_problem prob = (svm_problem) input.getValue(0);
-				svm_parameter bestParam = null;
-				double tmpC = Math.pow(2, input.getInteger(1));
-				
-				for (int j=Constants.GAMMA_START; j <= Constants.GAMMA_END; j=j+Constants.STEP){
-					double tmpG = Math.pow(2, j);
-					svm_parameter param = ReadData.runParameter(tmpC, tmpG);
-					double tmpA = RunSVM.do_cross_validation(prob, param, Constants.N_FOLD_CROSS_VALIDATION);
-					
-					if (tmpA > accuracy){
-						c = tmpC;
-						g = tmpG;
-						accuracy = tmpA;
-						bestParam = param;
-					}					
-				}
-				
-				model = RunSVM.svmTrain(prob, bestParam);
-				collector.emit(new Values(model, accuracy, c, g, (int)0, input.getInteger(3), input.getValue(4)));
-			}else{
-				// 2: test
-				if (input.getInteger(2) == 2){
-					collector.emit(new Values(null, input.getValue(1), 0, 0, (int)2, input.getInteger(3), input.getValue(4)));
-				}else
-				// 1: train
-				if (input.getInteger(2) == 1){
-					collector.emit(new Values(null, 0, 0, 0, (int)1, input.getInteger(3), input.getValue(4)));
-				}else
-				// 3: check	
-				if (input.getInteger(2) == 3){
-					collector.emit(new Values(null, 0, 0, 0, (int)3, input.getInteger(3), input.getValue(4)));
-				}
-				else{	
-					// Emit accuracy as processing time
-					collector.emit(new Values(null, input.getLong(1), 0, 0, (int)0, input.getInteger(3), input.getValue(4)));
-				}
-			}
-		}
-
-		@Override
-		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			// TODO Auto-generated method stub
-			declarer.declare(new Fields("model", "accuracy", "c", "gamma", "state", "id","requestid"));
-		}
-		
-	}	
-	
-	@SuppressWarnings({ "serial", "rawtypes" })
-	public static class SVMEnd extends BaseBasicBolt{
-		TopologyContext contextData;
-		private static String MODEL = "model_";
-		private static String ACCURACY = "accuracy_";
-		private static String C = "c_";
-		private static String GAMMA = "gamma_";
-		private static String COUNT = "count_";
-		private static String TEST_VECTORS = "testdata_";		
-		private static String PREDICT		= "_predict";
-		private static String RUNNING_TIME	= "running_";
-		private static String RESULT		= "result";
-		
-		@Override
-		public void prepare(Map conf, TopologyContext context) {
-			contextData = context;
-		}	
-		
-		@Override
-		public void execute(Tuple input, BasicOutputCollector collector) {
-			// TODO Auto-generated method stub
-			Integer id = input.getInteger(5);
-			if (input.getValue(0) != null){
-				double currentA = 0;
-				int count = 0;
-				
-				if (contextData.getTaskData(ACCURACY + id) != null)
-					currentA = Double.parseDouble(contextData.getTaskData(ACCURACY + id).toString());
-				if (contextData.getTaskData(COUNT + id) != null)
-					count = Integer.parseInt(contextData.getTaskData(COUNT + id).toString());				
-				count++;
-				contextData.setTaskData(COUNT + id, count);
-				System.out.println(count);
-				
-				if (currentA < input.getDouble(1)){
-					contextData.setTaskData(MODEL + id, input.getValue(0));
-					contextData.setTaskData(ACCURACY + id, input.getDouble(1));
-					contextData.setTaskData(C + id, input.getDouble(2));
-					contextData.setTaskData(GAMMA + id, input.getDouble(3));
-				}
-				
-				if (count >= (Constants.C_END - Constants.C_START)/Constants.STEP + 1){
-					String result = contextData.getTaskData(C + id).toString() + " , " +
-							contextData.getTaskData(GAMMA + id).toString() + " , " +
-							contextData.getTaskData(ACCURACY + id).toString();
-					
-					contextData.setTaskData(RESULT + id, result);
-					long start = Long.parseLong(contextData.getTaskData(RUNNING_TIME + id).toString());
-					contextData.setTaskData(RUNNING_TIME + id, System.currentTimeMillis() - start);
-				}
-			}else{
-				if (input.getInteger(4) == 1){
-					contextData.setTaskData(RUNNING_TIME + id, System.currentTimeMillis());
-					contextData.setTaskData(RESULT + id, "Not yet");
-					collector.emit(new Values("Running OK", input.getValue(6)));	
-				}else
-				if (input.getInteger(4) == 2){
-					svm_model model = (svm_model) contextData.getTaskData(MODEL + id);
-					@SuppressWarnings("unchecked")
-					List<String> test = (List<String>) input.getValue(1);
-					FileWriter fwTest;
-					BufferedWriter svmTest;
-					try {
-						fwTest = new FileWriter(TEST_VECTORS + id);
-						svmTest = new BufferedWriter(fwTest);
-						
-						for (int i =0; i < test.size(); i++){
-							svmTest.write(test.get(i) + "\n");
-						}
-						
-						svmTest.close();
-						fwTest.close();
-						
-						svm_predict predict = new svm_predict();
-						String argvPredict[] = {TEST_VECTORS + id,"", TEST_VECTORS + id + PREDICT};
-						String result = Double.toString(predict.run(argvPredict, model));
-						
-						contextData.setTaskData(MODEL + id, null);
-						contextData.setTaskData(ACCURACY + id, null);
-						contextData.setTaskData(C + id, null);
-						contextData.setTaskData(GAMMA + id, null);	
-						contextData.setTaskData(COUNT + id, null);
-						
-						collector.emit(new Values(result, input.getValue(6)));						
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}else
-				if (input.getInteger(4) == 3){
-					String result = contextData.getTaskData(RESULT + id).toString() + " -- "
-									+ contextData.getTaskData(RUNNING_TIME + id).toString();
-					collector.emit(new Values(result, input.getValue(6)));
-				}
-				else{
-					collector.emit(new Values(Long.toString(input.getLong(1)), input.getValue(6)));
-				}
-			}
-		}
-		
-		@Override
-		public void declareOutputFields(OutputFieldsDeclarer declarer) {
-			// TODO Auto-generated method stub
-			declarer.declare(new Fields("result", "return-info"));
-		}
-		
-	}	
-	
-	public static TopologyBuilder construct(int dataSpout, int receiveBolt,
-			int processBolt, int featureBolt, int svmStartBolt,
-			int svmGridBolt, int svmEndBolt, int returnBolt) {
+	public static TopologyBuilder construct(int dataSpout, int processBolt, int featureBolt, int returnBolt) {
 		TopologyBuilder builder = new TopologyBuilder();
 		DRPCSpout spout = new DRPCSpout("TrainTest");
 		builder.setSpout("drpc", spout, dataSpout);
-		//builder.setBolt("receive", new ReceiveData(), receiveBolt)
-		//		.shuffleGrouping("drpc");
 		builder.setBolt("process", new ProcessData(), processBolt)
 				.shuffleGrouping("drpc");
 		builder.setBolt("feature", new Feature(), featureBolt).shuffleGrouping(
 				"process");
-		builder.setBolt("svmstart", new SVMStart(), svmStartBolt)
-				.shuffleGrouping("feature");
-		builder.setBolt("svmgrid", new SVMGrid(), svmGridBolt).shuffleGrouping(
-				"svmstart");
-		builder.setBolt("svmend", new SVMEnd(), svmEndBolt).shuffleGrouping(
-				"svmgrid");
 		builder.setBolt("return", new ReturnResults(), returnBolt)
-				.shuffleGrouping("svmend");
+				.shuffleGrouping("process");
 		return builder;
 	}
 
@@ -709,8 +352,8 @@ public class TrainTest {
 	public static void main(String[] args) throws AlreadyAliveException,
 			InvalidTopologyException {
 		// TODO Auto-generated method stub
-		//int n = Integer.parseInt(args[1]);
-		TopologyBuilder builder = construct(1, 1, 1, 5, 1, 10, 1, 1);
+		int n = Integer.parseInt(args[1]);
+		TopologyBuilder builder = construct(1, 1, n, 1);
 		LocalDRPC drpc = new LocalDRPC();
 		//TopologyBuilder builder = construct(drpc, 1, 1, 1, 3, 1, 3, 1, 1);
 		

@@ -4,7 +4,9 @@ import libsvm.*;
 import java.io.*;
 import java.util.*;
 
-class svm_predict {
+
+public class svm_predict {
+	
 	private static svm_print_interface svm_print_null = new svm_print_interface() {
 		public void print(String s) {
 		}
@@ -30,7 +32,7 @@ class svm_predict {
 		return Integer.parseInt(s);
 	}
 
-	private static void predict(BufferedReader input, DataOutputStream output,
+	private static double predict(BufferedReader input, DataOutputStream output,
 			svm_model model, int predict_probability) throws IOException {
 		int correct = 0;
 		int total = 0;
@@ -108,6 +110,7 @@ class svm_predict {
 		} else
 			svm_predict.info("Accuracy = " + (double) correct / total * 100
 					+ "% (" + correct + "/" + total + ") (classification)\n");
+			return (double) correct / total * 100;
 	}
 
 	private static void exit_with_help() {
@@ -119,10 +122,11 @@ class svm_predict {
 		System.exit(1);
 	}
 
-	public void run(String argv[], svm_model modelInput) throws IOException {
+	public double run(String argv[], svm_model modelInput) throws IOException {
 		int i, predict_probability = 0;
 		svm_print_string = svm_print_stdout;
-
+		double accuracy = 0;
+		
 		// parse options
 		for (i = 0; i < argv.length; i++) {
 			if (argv[i].charAt(0) != '-')
@@ -165,7 +169,7 @@ class svm_predict {
 							.info("Model supports probability estimates, but disabled in prediction.\n");
 				}
 			}
-			predict(input, output, model, predict_probability);
+			accuracy = predict(input, output, model, predict_probability);
 			input.close();
 			output.close();
 		} catch (FileNotFoundException e) {
@@ -173,6 +177,8 @@ class svm_predict {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			exit_with_help();
 		}
+		
+		return accuracy;
 	}
 
 	public static void main(String argv[]) throws IOException {

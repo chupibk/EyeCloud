@@ -27,11 +27,12 @@ public class Constants {
 	public final static String Duration				= "Duration";
 	public final static String Delay				= "Delay";
 	public final static String EventKey				= "EventKey";
+	public final static String Fixation				= "Fixation";
 	
 	public static final String HEADER[] = {	Timestamp, Number, GazePointXLeft, GazePointYLeft, CamXLeft, CamYLeft, 
 											DistanceLeft, PupilLeft, ValidityLeft, GazePointXRight, GazePointYRight, 
 											CamXRight, CamYRight, DistanceRight, PupilRight, ValidityRight, GazePointX,
-											GazePointY, StimuliName, StimuliID, Duration, Delay, EventKey};	
+											GazePointY, StimuliName, StimuliID, Duration, Delay, EventKey, Fixation};	
 	
 	/**
 	 * Screen setting

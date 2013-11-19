@@ -16,6 +16,7 @@ public class ReadTextFile {
 	private Map<String, Integer> mapHeader = new HashMap<String, Integer>();
 	private String currentLine;
 	private String inputFile;
+	private long timeOfReading;
 	
 	/**
 	 * Read Text File
@@ -64,13 +65,16 @@ public class ReadTextFile {
 	 * @return Next line or null if EOF
 	 */
 	public String readNextLine(){
+		long start = System.currentTimeMillis();
 		try {
 			currentLine = br.readLine();
+			timeOfReading = System.currentTimeMillis() - start;
 			return currentLine;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 
@@ -118,6 +122,10 @@ public class ReadTextFile {
 	
 	public String getCurrentLine(){
 		return currentLine;
+	}
+	
+	public long getTimeOfReading(){
+		return timeOfReading;
 	}
 	
 	/**

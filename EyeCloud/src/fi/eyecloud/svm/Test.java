@@ -16,29 +16,31 @@ public class Test {
 		// TODO Auto-generated method stub
 		// Scale Train
 		svm_scale scaleTrain = new svm_scale();
-		String argvScaleTrain[] = {"-l", "-1", "-u", "1", "-s", "svm/AjayaCMD.range", "svm/AjayaCMD.train"};
-		scaleTrain.run(argvScaleTrain, "svm/AjayaCMD.train.scale");
+		String argvScaleTrain[] = {"-l", "-1", "-u", "1", "-s", "dataset/svm/eye.range", "dataset/svm/eye.train"};
+		scaleTrain.run(argvScaleTrain, "dataset/svm/eye.train.scale");
 		System.out.println("Scale Training file: Done");
 		
 		// Scale Test
 		svm_scale scaleTest = new svm_scale();
-		String argvScaleTest[] = {"-r", "svm/AjayaCMD.range", "svm/AjayaCMD.test"};
-		scaleTest.run(argvScaleTest, "svm/AjayaCMD.test.scale");		
+		String argvScaleTest[] = {"-r", "dataset/svm/eye.range", "dataset/svm/eye.test"};
+		scaleTest.run(argvScaleTest, "dataset/svm/eye.test.scale");		
 		System.out.println("Scale Testing file: Done");
 		
+		System.out.println();
 		// Grid search for finding c and g
-		svm_grid grid = new svm_grid(Constants.N_FOLD_CROSS_VALIDATION, "svm/AjayaCMD.train.scale");
+		svm_grid grid = new svm_grid(Constants.N_FOLD_CROSS_VALIDATION, "dataset/svm/eye.train.scale");
 		System.out.println("Grid done: " + grid.getC() + " , " + grid.getG() + " , " + grid.getAccuracy());
 		System.out.println("Training done");
-		
-		// Predict
-		svm_predict predict = new svm_predict();
-		String argvPredict[] = {"svm/AjayaCMD.test.scale","", "svm/AjayaCMD.predict"};
-		predict.run(argvPredict, grid.getModel());
-		System.out.println("Predicting done");
+		System.out.println("Training time:" + (System.currentTimeMillis() - start) + "ms");
 		
 		System.out.println();
-		System.out.println("Running time:" + (System.currentTimeMillis() - start) + "ms");
+		// Predict
+		start = System.currentTimeMillis();
+		svm_predict predict = new svm_predict();
+		String argvPredict[] = {"dataset/svm/eye.test.scale","", "dataset/svm/eye.predict"};
+		predict.run(argvPredict, grid.getModel());
+		System.out.println("Predicting done");
+		System.out.println("Predicting time:" + (System.currentTimeMillis() - start) + "ms");
 	}
 
 }
