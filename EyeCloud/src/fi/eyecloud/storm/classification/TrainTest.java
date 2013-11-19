@@ -416,7 +416,7 @@ public class TrainTest {
 				if (state == 0){
 					// Return training data
 					// Emit c as processing time
-					collector.emit(new Values(null, input.getLong(1), (int)0, id, input.getValue(4)));
+					collector.emit(new Values(null, input.getLong(1), 0, (int)0, id, input.getValue(4)));
 				}else
 				if (state == 1){
 					// Reset stored data
@@ -478,11 +478,13 @@ public class TrainTest {
 						fr.close();						
 						contextData.setTaskData(TEST_VECTORS + id, test);
 						
-						collector.emit(new Values(null, null, (int)1, id, input.getValue(4)));
+						collector.emit(new Values(null, null, null, (int)1, id, input.getValue(4)));
 						// Grid search for finding c and g
 						svm_problem prob = ReadData.runProb(VECTORS + id + TRAIN + SCALE);
 						for (int c=Constants.C_START; c <= Constants.C_END; c=c+Constants.STEP){
-							collector.emit(new Values(prob, c, (int)0, id, input.getValue(4)));
+							for (int g=Constants.GAMMA_START; g <= Constants.GAMMA_END; g=g+Constants.STEP){
+								collector.emit(new Values(prob, c, g, (int)0, id, input.getValue(4)));
+							}	
 						}
 						
 					} catch (IOException e) {
@@ -493,9 +495,9 @@ public class TrainTest {
 				if (state == 2){
 					// Test
 					List<String> test = (List<String>) contextData.getTaskData(TEST_VECTORS + id);
-					collector.emit(new Values(null, test, (int)2, id, input.getValue(4)));
+					collector.emit(new Values(null, test, null, (int)2, id, input.getValue(4)));
 				}else{
-					collector.emit(new Values(null, null, (int)3, id, input.getValue(4)));
+					collector.emit(new Values(null, null, null, (int)3, id, input.getValue(4)));
 				}
 			}	
 		}
@@ -503,7 +505,7 @@ public class TrainTest {
 		@Override
 		public void declareOutputFields(OutputFieldsDeclarer declarer) {
 			// TODO Auto-generated method stub
-			declarer.declare(new Fields("prob", "c", "state", "id", "requestid"));
+			declarer.declare(new Fields("prob", "c", "g", "state", "id", "requestid"));
 		}
 		
 	}	
@@ -526,38 +528,37 @@ public class TrainTest {
 				svm_problem prob = (svm_problem) input.getValue(0);
 				svm_parameter bestParam = null;
 				double tmpC = Math.pow(2, input.getInteger(1));
+				double tmpG = Math.pow(2, input.getInteger(2));
 				
-				for (int j=Constants.GAMMA_START; j <= Constants.GAMMA_END; j=j+Constants.STEP){
-					double tmpG = Math.pow(2, j);
-					svm_parameter param = ReadData.runParameter(tmpC, tmpG);
-					double tmpA = RunSVM.do_cross_validation(prob, param, Constants.N_FOLD_CROSS_VALIDATION);
-					
-					if (tmpA > accuracy){
-						c = tmpC;
-						g = tmpG;
-						accuracy = tmpA;
-						bestParam = param;
-					}					
-				}
+				svm_parameter param = ReadData.runParameter(tmpC, tmpG);
+				double tmpA = RunSVM.do_cross_validation(prob, param,
+						Constants.N_FOLD_CROSS_VALIDATION);
+
+				if (tmpA > accuracy) {
+					c = tmpC;
+					g = tmpG;
+					accuracy = tmpA;
+					bestParam = param;
+				}			
 				
 				model = RunSVM.svmTrain(prob, bestParam);
-				collector.emit(new Values(model, accuracy, c, g, (int)0, input.getInteger(3), input.getValue(4)));
+				collector.emit(new Values(model, accuracy, c, g, (int)0, input.getInteger(4), input.getValue(5)));
 			}else{
 				// 2: test
-				if (input.getInteger(2) == 2){
-					collector.emit(new Values(null, input.getValue(1), 0, 0, (int)2, input.getInteger(3), input.getValue(4)));
+				if (input.getInteger(3) == 2){
+					collector.emit(new Values(null, input.getValue(1), 0, 0, (int)2, input.getInteger(4), input.getValue(5)));
 				}else
 				// 1: train
-				if (input.getInteger(2) == 1){
-					collector.emit(new Values(null, 0, 0, 0, (int)1, input.getInteger(3), input.getValue(4)));
+				if (input.getInteger(3) == 1){
+					collector.emit(new Values(null, 0, 0, 0, (int)1, input.getInteger(4), input.getValue(5)));
 				}else
 				// 3: check	
-				if (input.getInteger(2) == 3){
-					collector.emit(new Values(null, 0, 0, 0, (int)3, input.getInteger(3), input.getValue(4)));
+				if (input.getInteger(3) == 3){
+					collector.emit(new Values(null, 0, 0, 0, (int)3, input.getInteger(4), input.getValue(5)));
 				}
 				else{	
 					// Emit accuracy as processing time
-					collector.emit(new Values(null, input.getLong(1), 0, 0, (int)0, input.getInteger(3), input.getValue(4)));
+					collector.emit(new Values(null, input.getLong(1), 0, 0, (int)0, input.getInteger(4), input.getValue(5)));
 				}
 			}
 		}
@@ -611,7 +612,8 @@ public class TrainTest {
 					contextData.setTaskData(GAMMA + id, input.getDouble(3));
 				}
 				
-				if (count >= (Constants.C_END - Constants.C_START)/Constants.STEP + 1){
+				if (count >= 	((Constants.C_END - Constants.C_START)/Constants.STEP + 1) * 
+								((Constants.GAMMA_END - Constants.GAMMA_START)/Constants.STEP + 1)){
 					String result = contextData.getTaskData(C + id).toString() + " , " +
 							contextData.getTaskData(GAMMA + id).toString() + " , " +
 							contextData.getTaskData(ACCURACY + id).toString();
@@ -709,8 +711,8 @@ public class TrainTest {
 	public static void main(String[] args) throws AlreadyAliveException,
 			InvalidTopologyException {
 		// TODO Auto-generated method stub
-		//int n = Integer.parseInt(args[1]);
-		TopologyBuilder builder = construct(1, 1, 1, 5, 1, 10, 1, 1);
+		int n = Integer.parseInt(args[1]);
+		TopologyBuilder builder = construct(1, 1, 1, n/4, 1, n, 1, 1);
 		LocalDRPC drpc = new LocalDRPC();
 		//TopologyBuilder builder = construct(drpc, 1, 1, 1, 3, 1, 3, 1, 1);
 		
