@@ -49,7 +49,7 @@ public class FScore {
 	 */
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		new FScore("dataset/svm/eye.test.scale", "dataset/svm/eye.predict");
+		new FScore("dataset/svm/testdata_10", "dataset/svm/testdata_10_predict");
 	}
 
 }

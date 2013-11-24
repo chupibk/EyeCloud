@@ -8,11 +8,11 @@ import javax.swing.JPanel;
 import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.gui.lib.StringLabel;
 
-public class HeatmapFromText {
+public class HeatmapFromTextMulticore {
 
 	private JPanel Screen = new JPanel();
 	
-	public HeatmapFromText(String media, BufferedImage heatmap){
+	public HeatmapFromTextMulticore(String media, BufferedImage heatmap){
 		JFrame frame = new JFrame(StringLabel.HEATMAP_FRAME_TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
@@ -33,8 +33,8 @@ public class HeatmapFromText {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		long start = System.currentTimeMillis();
-		HeatmapIntensity intensity = new HeatmapIntensity();
-		//HeatmapMulticore intensity = new HeatmapMulticore();
+		//HeatmapIntensity intensity = new HeatmapIntensity();
+		HeatmapMulticore intensity = new HeatmapMulticore();
 		if (args.length == 0)
 			intensity.run("data/heatmap/100000.txt", 1, GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
 		else
@@ -44,7 +44,7 @@ public class HeatmapFromText {
 				GuiConstants.MEDIA_WIDTH, GuiConstants.MEDIA_HEIGHT);
 		System.out.println("Colorization time: " + (System.currentTimeMillis() - start1));
 		System.out.println("Running time: " + (System.currentTimeMillis() - start));
-		new HeatmapFromText("data/17JuneMedia.png", color.getImage());
+		new HeatmapFromTextMulticore("data/17JuneMedia.png", color.getImage());
 	}
 
 }

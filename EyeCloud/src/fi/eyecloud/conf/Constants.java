@@ -37,8 +37,8 @@ public class Constants {
 	/**
 	 * Screen setting
 	 */
-	public static int RESOLUTION_WIDTH					= 1280;
-	public static int RESOLUTION_HEIGHT					= 1024;
+	public static int RESOLUTION_WIDTH					= 1280; //1920
+	public static int RESOLUTION_HEIGHT					= 1024; //1080
 	public static int SCREEN_WIDTH					= 35;
 	public static int SCREEN_HEIGHT					= 26;
 	
