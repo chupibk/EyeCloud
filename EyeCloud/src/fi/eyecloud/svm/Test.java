@@ -7,6 +7,8 @@ import fi.eyecloud.conf.Constants;
 public class Test {
 
 	/**
+	 * Local testing for whole steps of SVM
+	 * 
 	 * @param args
 	 * @throws IOException 
 	 */

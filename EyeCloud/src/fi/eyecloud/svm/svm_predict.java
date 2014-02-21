@@ -4,7 +4,12 @@ import libsvm.*;
 import java.io.*;
 import java.util.*;
 
-
+/**
+ * Predict library from SVMLIB
+ * 
+ * @author chung
+ *
+ */
 public class svm_predict {
 	
 	private static svm_print_interface svm_print_null = new svm_print_interface() {

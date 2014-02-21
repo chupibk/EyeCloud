@@ -6,6 +6,8 @@ import fi.eyecloud.input.ReadTextFile;
 public class FixationHistogram {
 
 	/**
+	 * Calculate histogram of fixation duration distribution
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {

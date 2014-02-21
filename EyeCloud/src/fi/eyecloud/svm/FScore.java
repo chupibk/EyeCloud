@@ -6,6 +6,13 @@ import java.io.IOException;
 
 public class FScore {
 
+	/**
+	 * Calculate F Score
+	 * 
+	 * @param testFile
+	 * @param predictFile
+	 * @throws IOException
+	 */
 	public FScore(String testFile, String predictFile) throws IOException{
 		FileReader frTest = new FileReader(testFile);
 		BufferedReader test = new BufferedReader(frTest);

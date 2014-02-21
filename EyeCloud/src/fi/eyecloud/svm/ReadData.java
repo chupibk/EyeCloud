@@ -14,6 +14,12 @@ import libsvm.svm_problem;
 
 public class ReadData {
 
+	/** 
+	 * Read data to convert to svm object
+	 * 
+	 * @param s
+	 * @return
+	 */
 	private static double atof(String s) {
 		double d = Double.valueOf(s).doubleValue();
 		if (Double.isNaN(d) || Double.isInfinite(d)) {

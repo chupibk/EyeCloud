@@ -8,6 +8,15 @@ import backtype.storm.generated.DRPCExecutionException;
 
 public class Simulator {
 
+	/**
+	 * Simulation function
+	 * 
+	 * @param server
+	 * @param p
+	 * @param s
+	 * @param min
+	 * @param max
+	 */
 	public Simulator(String server[], String p, int s, int min, int max) {
 		System.gc();
 		for (int i = min; i < max; i++) {

@@ -7,6 +7,12 @@ import fi.eyecloud.input.ReadTextFile;
 
 public class CreateBalancedData {
 
+	/**
+	 * Create a balance dataset
+	 * 
+	 * @param inputFile
+	 * @return
+	 */
 	public List<Integer> getListFixation(String inputFile){
 		List<Integer> fixations = new ArrayList<Integer>();
 		ReadTextFile data = new ReadTextFile(inputFile);

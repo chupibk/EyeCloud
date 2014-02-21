@@ -11,6 +11,8 @@ import backtype.storm.generated.InvalidTopologyException;
 public class DeployAll {
 
 	/**
+	 * Deploy all on the cloud cluster
+	 * 
 	 * @param args
 	 * @throws InvalidTopologyException 
 	 * @throws AlreadyAliveException 

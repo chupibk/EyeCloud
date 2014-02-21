@@ -27,6 +27,12 @@ import fi.eyecloud.utils.UploadData;
 
 @SuppressWarnings("deprecation")
 public class OfflineHeatmap {
+	/**
+	 * Read data from text files
+	 * 
+	 * @author chung
+	 *
+	 */
     @SuppressWarnings("serial")
 	public static class ReadData extends BaseBasicBolt {
 
@@ -80,6 +86,12 @@ public class OfflineHeatmap {
         }
     }
     
+    /**
+     * Calculate intensity for each pixel
+     * 
+     * @author chung
+     *
+     */
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt {
 		private double gaussianWindow[][];
@@ -138,6 +150,12 @@ public class OfflineHeatmap {
         }
     }    
      
+	/**
+	 * Aggregate results
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings({ "serial", "rawtypes" })
 	public static class AggregatorData extends BaseBatchBolt {
 		BatchOutputCollector _collector;

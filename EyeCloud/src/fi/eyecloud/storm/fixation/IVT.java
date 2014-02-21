@@ -19,6 +19,13 @@ import fi.eyecloud.input.ReadTextFile;
 @SuppressWarnings("deprecation")
 public class IVT {
     @SuppressWarnings("serial")
+    
+    /**
+     * Testing version of IVT
+     * 
+     * @author chung
+     *
+     */
 	public static class ProcessData extends BaseBasicBolt {
     	private int sumX;
     	private int sumY;

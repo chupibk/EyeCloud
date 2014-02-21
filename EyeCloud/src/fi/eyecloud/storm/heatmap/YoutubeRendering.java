@@ -24,6 +24,12 @@ import fi.eyecloud.utils.ClientFile;
 @SuppressWarnings("deprecation")
 public class YoutubeRendering {
 
+	/**
+	 * Receive data from clients
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt {
 		private double gaussianWindow[][] = null;
@@ -115,6 +121,12 @@ public class YoutubeRendering {
 		}
 	}
 
+	/**
+	 * Calculate intensity on each node, and aggregate to one node
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class AggregatorData extends BaseBasicBolt {
 		private TopologyContext contextData;
@@ -191,6 +203,12 @@ public class YoutubeRendering {
 		}
 	}
 
+	/**
+	 * Store data and return back to the clients.
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class ReturnData extends BaseBasicBolt {
 

@@ -7,6 +7,14 @@ import libsvm.svm_problem;
 
 public class RunSVM {
 
+	/**
+	 * Do cross validation
+	 * 
+	 * @param prob
+	 * @param param
+	 * @param nr_fold
+	 * @return
+	 */
 	public static double do_cross_validation(svm_problem prob, svm_parameter param,
 			int nr_fold) {
 		int i;
@@ -23,6 +31,13 @@ public class RunSVM {
 		return nFoldAccuracy;
 	}
 	
+	/**
+	 * Do training
+	 * 
+	 * @param prob
+	 * @param param
+	 * @return
+	 */
 	public static svm_model svmTrain(svm_problem prob, svm_parameter param){
 		String error_msg;
 		error_msg = svm.svm_check_parameter(prob, param);

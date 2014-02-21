@@ -15,6 +15,13 @@ public class svm_grid {
 	private double accuracy;
 	private svm_model model;
 	
+	/**
+	 * Grid searching
+	 * 
+	 * @param nFold
+	 * @param trainFile
+	 * @throws IOException
+	 */
 	public svm_grid(int nFold, String trainFile) throws IOException{
 		accuracy = 0;
 		svm_problem prob = ReadData.runProb(trainFile);
