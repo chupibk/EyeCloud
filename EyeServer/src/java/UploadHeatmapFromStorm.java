@@ -21,6 +21,12 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+/**
+ * Upload heatmap from storm
+ * 
+ * @author chung
+ */
+
 @WebServlet(name = "UploadHeatmapFromStorm", urlPatterns = {"/UploadHeatmapFromStorm"})
 public class UploadHeatmapFromStorm extends HttpServlet {
 

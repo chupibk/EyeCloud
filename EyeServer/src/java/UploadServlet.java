@@ -21,6 +21,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+/**
+ * Upload class
+ * 
+ */
+
 @WebServlet(name = Constants.UPLOAD_NAME, urlPatterns = {Constants.UPLOAD_LINK})
 public class UploadServlet extends HttpServlet {
 

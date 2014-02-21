@@ -23,6 +23,13 @@ public class IVTSendToStorm {
 		}		
 	}
 	
+        /**
+         * Send data to the cluster for multi-source gaze visualization.
+         * 
+         * @param filePath
+         * @param output
+         * @throws Exception 
+         */
 	public IVTSendToStorm(String filePath, String output) throws Exception {
 		int timePeriod = 10000;
 		

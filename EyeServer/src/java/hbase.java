@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ *  Hbase class
+ * 
  * @author chung-pi <cdao@cs.uef.fi>
  */
 @WebServlet(urlPatterns = {"/hbase"})

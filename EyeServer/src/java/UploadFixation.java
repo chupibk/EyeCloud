@@ -21,6 +21,11 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+/**
+ * Upload fixations
+ * 
+ * @author chung
+ */
 @WebServlet(name = "UploadFixation", urlPatterns = {"/UploadFixation"})
 public class UploadFixation extends HttpServlet {
 

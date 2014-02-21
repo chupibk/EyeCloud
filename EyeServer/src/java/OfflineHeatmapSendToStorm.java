@@ -6,6 +6,14 @@ import libs.ReadTextFile;
 
 public class OfflineHeatmapSendToStorm {
 
+    /**
+     *  Send data to the cluster for offline heatmap.
+     * 
+     * @param textPath
+     * @param mediaPath
+     * @param outputName
+     * @throws Exception 
+     */
     public OfflineHeatmapSendToStorm(String textPath, String mediaPath, String outputName) throws Exception {
         int numberPart = 5;
 

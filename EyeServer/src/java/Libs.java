@@ -9,7 +9,8 @@ import java.util.List;
  * and open the template in the editor.
  */
 /**
- *
+ * Libs for rendering
+ * 
  * @author chung-pi <cdao@cs.uef.fi>
  */
 public class Libs {
