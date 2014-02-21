@@ -22,8 +22,20 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Fixation detection on the cloud
+ * 
+ * @author chung
+ *
+ */
 public class CloudFixation {
 
+	/**
+	 * Receiving data from eye trackers
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class ReceiveData extends BaseBasicBolt{
 
@@ -43,6 +55,12 @@ public class CloudFixation {
 		
 	}
 	
+	/**
+	 * Detect fixations on each small piece of data, store them to a buffer memory, and then merge to the same fixation.
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt{
 		private TopologyContext contextData;

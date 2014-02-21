@@ -9,6 +9,8 @@ import backtype.storm.utils.DRPCClient;
 public class CheckStatus {
 	
 	/**
+	 * Check status on the cloud cluster
+	 * 
 	 * @param args
 	 * @throws DRPCExecutionException 
 	 * @throws TException 

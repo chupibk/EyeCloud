@@ -14,6 +14,19 @@ import backtype.storm.utils.DRPCClient;
 
 public class EyeTracker {
 	
+	/**
+	 * Eye tracker simulation
+	 * 
+	 * @param hostName
+	 * @param dataPath
+	 * @param prefix
+	 * @param segment
+	 * @param id
+	 * @throws TException
+	 * @throws DRPCExecutionException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
 	public EyeTracker(String hostName, int dataPath, String prefix, int segment, int id) throws TException, DRPCExecutionException, InterruptedException, IOException{
 		DRPCClient client = new DRPCClient(hostName, 3772);
 		ReadTextFile data = new ReadTextFile("exp/" + dataPath + ".txt");

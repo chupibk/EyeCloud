@@ -40,6 +40,13 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Linear funtiong usage
+ * 
+ * @author chung
+ *
+ */
+
 @SuppressWarnings("deprecation")
 public class TrainTestLinear {
 

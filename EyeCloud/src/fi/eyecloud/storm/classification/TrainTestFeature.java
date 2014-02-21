@@ -31,6 +31,12 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Testing by features
+ * 
+ * @author chung
+ *
+ */
 public class TrainTestFeature {
 
 	@SuppressWarnings("serial")

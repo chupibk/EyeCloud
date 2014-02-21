@@ -45,8 +45,17 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Testing training results
+ * 
+ * @author chung
+ *
+ */
 public class TrainTest {
 
+	/**
+	 * Receive data from clients
+	 */
 	@SuppressWarnings("serial")
 	public static class ReceiveData extends BaseBasicBolt{
 
@@ -66,6 +75,9 @@ public class TrainTest {
 		
 	}
 	
+	/**
+	 * Split data
+	 */
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt{
 		private TopologyContext contextData;
@@ -340,6 +352,9 @@ public class TrainTest {
 		}
 	}
 	
+	/**
+	 * Calculate features fo fixation and saccade
+	 */
 	@SuppressWarnings("serial")
 	public static class Feature extends BaseBasicBolt{
 
@@ -378,6 +393,9 @@ public class TrainTest {
 		}
 	}
 	
+	/**
+	 * Start SVM training
+	 */
 	@SuppressWarnings("serial")
 	public static class SVMStart extends BaseBasicBolt{
 		TopologyContext contextData;
@@ -510,7 +528,12 @@ public class TrainTest {
 		
 	}	
 	
+
+	/**
+	 * Start grid searching
+	 */
 	@SuppressWarnings("serial")
+
 	public static class SVMGrid extends BaseBasicBolt{
 		private double c;
 		private double g;
@@ -571,6 +594,10 @@ public class TrainTest {
 		
 	}	
 	
+
+	/**
+	 * Finish traing
+	 */
 	@SuppressWarnings({ "serial", "rawtypes" })
 	public static class SVMEnd extends BaseBasicBolt{
 		TopologyContext contextData;
@@ -702,6 +729,7 @@ public class TrainTest {
 				.shuffleGrouping("svmend");
 		return builder;
 	}
+
 
 	/**
 	 * @param args

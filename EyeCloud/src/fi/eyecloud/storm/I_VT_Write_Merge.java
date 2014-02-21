@@ -10,6 +10,12 @@ import fi.eyecloud.input.ReadTextFile;
 
 public class I_VT_Write_Merge {
 
+	/**
+	 * Merging on the client
+	 * 
+	 * @param o
+	 * @param data
+	 */
 	public static void writeFile(BufferedWriter o, String data){
 		String split[] = data.split(Constants.PARAMETER_SPLIT);
 		for (int i=0; i < split.length/5; i++){

@@ -6,6 +6,11 @@ import fi.eyecloud.evaluation.AccuracyRate;
 
 public class Evaluation {
 
+	/**
+	 * Evaluation of results
+	 * 
+	 * @param prefix
+	 */
 	public Evaluation(String prefix){
 		int correctRate = 0;
 		float delay = 0;

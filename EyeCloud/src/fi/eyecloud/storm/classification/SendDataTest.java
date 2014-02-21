@@ -9,6 +9,17 @@ import fi.eyecloud.input.ReadTextFile;
 
 public class SendDataTest {
 
+	/**
+	 * Sending data to classification
+	 * 
+	 * @param hostName
+	 * @param folder
+	 * @param numberFile
+	 * @param max
+	 * @param id
+	 * @throws TException
+	 * @throws DRPCExecutionException
+	 */
 	public SendDataTest(String hostName, String folder, int numberFile, int max, int id)
 			throws TException, DRPCExecutionException {
 		DRPCClient client = new DRPCClient(hostName, 3772);

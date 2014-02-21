@@ -31,8 +31,20 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Classification on the cloud
+ * 
+ * @author chung
+ *
+ */
 public class Classification {
-
+	
+	/**
+	 * Receive data from eye trackers
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class ReceiveData extends BaseBasicBolt{
 
@@ -52,6 +64,12 @@ public class Classification {
 		
 	}
 	
+	/**
+	 * Split data and send to other nodes for distribution
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt{
 		private TopologyContext contextData;
@@ -310,6 +328,12 @@ public class Classification {
 		}
 	}
 	
+	/**
+	 * Checking features
+	 * 
+	 * @author chung
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class Feature extends BaseBasicBolt{
 
