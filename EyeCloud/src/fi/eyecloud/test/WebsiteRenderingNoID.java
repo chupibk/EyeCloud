@@ -21,6 +21,12 @@ import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.utils.ClientFile;
  
+/**
+ * 
+ * Rendering testing
+ * @author chung
+ *
+ */
 @SuppressWarnings("deprecation")
 public class WebsiteRenderingNoID {
 

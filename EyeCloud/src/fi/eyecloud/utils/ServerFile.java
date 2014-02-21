@@ -11,6 +11,12 @@ import java.net.Socket;
 
 import fi.eyecloud.conf.Constants;
 
+/**
+ * Running on servers for receiving files.
+ * 
+ * @author chung
+ *
+ */
 public class ServerFile extends Thread {
 	public static final int PORT = 3332;
 	public static final int BUFFER_SIZE = 100;

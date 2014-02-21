@@ -5,6 +5,12 @@ import java.io.*;
 import java.util.*;
 import java.text.DecimalFormat;
 
+/**
+ * SVM library from LIBSVM
+ * 
+ * @author chung
+ *
+ */
 @SuppressWarnings("unused")
 public class svm_scale
 {

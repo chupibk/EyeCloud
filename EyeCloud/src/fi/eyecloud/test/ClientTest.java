@@ -7,6 +7,8 @@ import backtype.storm.utils.DRPCClient;
 public class ClientTest {
 
 	/**
+	 * Client test on the client
+	 * 
 	 * @param args
 	 * @throws DRPCExecutionException 
 	 * @throws TException 

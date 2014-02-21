@@ -13,7 +13,12 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-
+/**
+ * Manula DRPC testing
+ * 
+ * @author chung
+ *
+ */
 public class ManualDRPC {
     @SuppressWarnings("serial")
 	public static class ExclamationBolt extends BaseBasicBolt {

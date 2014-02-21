@@ -24,6 +24,15 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
  * 
  */
 public class UploadData {
+	
+	/**
+	 * Upload data to clients
+	 * 
+	 * @param host
+	 * @param img
+	 * @param output
+	 * @return
+	 */
 	public static String upload(String host, BufferedImage img, String output) {
 		HttpClient httpClient;
 		HttpPost postRequest;

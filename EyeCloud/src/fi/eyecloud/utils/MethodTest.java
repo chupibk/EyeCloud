@@ -12,6 +12,12 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
+/**
+ * Testing methods
+ * 
+ * @author chung
+ *
+ */
 @SuppressWarnings("deprecation")
 public class MethodTest {
     @SuppressWarnings("serial")

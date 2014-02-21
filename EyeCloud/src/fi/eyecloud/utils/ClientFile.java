@@ -14,6 +14,13 @@ import javax.imageio.ImageIO;
 import fi.eyecloud.conf.Constants;
 
 public class ClientFile {
+	
+	/**
+	 * Sending file to servers
+	 * 
+	 * @param image
+	 * @throws IOException
+	 */
 	public ClientFile (BufferedImage image) throws IOException{
 		String fileName = "/home/eyecloud/data/tmp" + System.currentTimeMillis() + ".png";
 		File file = new File(fileName);
