@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- *
+ * Send data to the cluster for multi-source gaze visualization.
+ * 
  * @author chung-pi
  */
 @WebServlet(urlPatterns = {"/DRPC"})

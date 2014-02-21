@@ -8,6 +8,11 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
+/**
+ * CRUD Testing for HBase
+ * 
+ * @author chung
+ */
 public class CRUD {
 	HTable table;
 

@@ -33,7 +33,7 @@ public class Constants {
     public static final String TEMP         = "/tmp/";
     public static final String FRAME_TYPE   = ".png";
     
-    /* */
+    /* Upload path */
     public static final String FIXATION_UPLOAD_PATH = "/files/fixation/upload/";
     public static final String FIXATION_UPLOAD_RESULT = "/files/fixation/result/";
     

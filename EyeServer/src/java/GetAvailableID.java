@@ -16,7 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * Get available ID for experiments
+ * 
  * @author chung-pi <cdao@cs.uef.fi>
  */
 @WebServlet(urlPatterns = {"/GetAvailableID"})

@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.thrift7.TException;
 
 /**
- *
+ *  Get Image from servers
+ * 
  * @author chung-pi <cdao@cs.uef.fi>
  */
 @WebServlet(urlPatterns = {"/GetImage"})
