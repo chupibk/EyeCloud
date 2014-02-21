@@ -7,6 +7,9 @@ import com.esotericsoftware.kryo.io.Output;
 
 public class SqObjectSerializer extends Serializer<SqObject>{
 
+	/**
+	 * Using for sending
+	 */
 	@Override
 	public SqObject read(Kryo arg0, Input arg1, Class<SqObject> arg2) {
 		// TODO Auto-generated method stub

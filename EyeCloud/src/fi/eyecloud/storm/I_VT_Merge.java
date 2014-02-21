@@ -20,6 +20,12 @@ import fi.eyecloud.conf.Library;
 import fi.eyecloud.input.ReadTextFile;
 
 @SuppressWarnings("deprecation")
+/**
+ * IVT merging on the cloud
+ * 
+ * @author chung
+ *
+ */
 public class I_VT_Merge {
     @SuppressWarnings("serial")
 	public static class ProcessData extends BaseBasicBolt {

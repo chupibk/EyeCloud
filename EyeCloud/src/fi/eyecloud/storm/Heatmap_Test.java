@@ -11,6 +11,13 @@ import fi.eyecloud.input.ReadTextFile;
 import fi.eyecloud.utils.ImageUtils;
 
 public class Heatmap_Test {
+	
+	/**
+	 * Heatmap client testing
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
     public static void main(String[] args) throws Exception {
 			String HOSTNAME = "54.229.78.45";//args[0];
 			int numberPart = 3;//Integer.parseInt(args[1]);

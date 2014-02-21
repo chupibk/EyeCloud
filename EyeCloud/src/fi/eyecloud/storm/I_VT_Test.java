@@ -6,6 +6,12 @@ import fi.eyecloud.input.ReadTextFile;
 
 public class I_VT_Test {
 
+	/**
+	 * Client testing
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		String HOSTNAME = "192.168.40.9"; //"54.229.50.244";
 		int timePeriod = 2000; 	//ms

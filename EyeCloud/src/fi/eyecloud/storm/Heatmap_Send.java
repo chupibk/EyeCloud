@@ -7,6 +7,12 @@ import fi.eyecloud.gui.lib.GuiConstants;
 import fi.eyecloud.input.ReadTextFile;
 
 public class Heatmap_Send {
+	/**
+	 * Heatmap sending testing
+	 * 
+	 * @param args
+	 * @throws Exception
+	 */
     public static void main(String[] args) throws Exception {
 			String HOSTNAME = "54.229.84.177";//args[0];
 			int numberPart = 1;//Integer.parseInt(args[1]);

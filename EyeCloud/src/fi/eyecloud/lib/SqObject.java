@@ -9,6 +9,10 @@ public class SqObject {
 	List<FObject> fObjects;
 	List<SObject> sObjects;
 	
+	/**
+	 * Sequence object
+	 * 
+	 */
 	public SqObject(){
 		fObjects = new ArrayList<FObject>();
 		sObjects = new ArrayList<SObject>();

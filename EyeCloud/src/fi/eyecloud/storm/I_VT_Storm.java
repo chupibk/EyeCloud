@@ -28,6 +28,12 @@ import fi.eyecloud.conf.Library;
 import fi.eyecloud.input.ReadTextFile;
 
 @SuppressWarnings("deprecation")
+/**
+ * IVT Testing on the cloud not using DRPC
+ * 
+ * @author chung
+ *
+ */
 public class I_VT_Storm {
     @SuppressWarnings("serial")
 	public static class LoadData extends BaseBasicBolt {
