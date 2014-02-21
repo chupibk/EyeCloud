@@ -16,6 +16,12 @@ public class HeatmapPaint extends JPanel{
 	private Image scaledMedia;
 	private BufferedImage heatmap;
 	
+	/**
+	 * Paint from BufferedImage and stimulus
+	 * 
+	 * @param media
+	 * @param h
+	 */
 	public HeatmapPaint(String media, BufferedImage h){
 		try {
 			inputMedia = ImageIO.read(new File(media));

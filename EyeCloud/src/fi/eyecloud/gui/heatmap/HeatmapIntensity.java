@@ -45,6 +45,13 @@ public class HeatmapIntensity implements Intensity{
 		}
 	}
 	
+	/**
+	 * Calculate Gaussian function
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public double gaussian2D(int x, int y){
 		double value;
 		value = Math.exp(-(x*x + y*y)/(2*GuiConstants.SIGMA_USED*GuiConstants.SIGMA_USED));		

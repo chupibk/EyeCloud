@@ -7,6 +7,10 @@ public class HeatmapIntensityCloud implements Intensity{
 
 	private double intensity[][];
 	
+	/**
+	 * Input data, width and height of stimulus
+	 * 
+	 */
 	@Override
 	public void run(String input, int option, int w, int h) {
 		// TODO Auto-generated method stub
@@ -18,18 +22,30 @@ public class HeatmapIntensityCloud implements Intensity{
 		}
 	}
 
+	/**
+	 * Empty now
+	 * 
+	 */
 	@Override
 	public void fromFixation() {
 		// TODO Auto-generated method stub
 		
 	}
 	
+	/**
+	 * Empty now
+	 * 
+	 */
 	@Override
 	public void fromGazePoints(int duration) {
 		// TODO Auto-generated method stub
 		
 	}	
 
+	/**
+	 * Empty now
+	 * 
+	 */
 	@Override
 	public double[][] getIntensity() {
 		// TODO Auto-generated method stub

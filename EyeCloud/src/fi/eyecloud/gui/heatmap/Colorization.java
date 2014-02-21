@@ -9,6 +9,13 @@ public class Colorization {
 	private BufferedImage image;
 	private long timeMax;
 	
+	/**
+	 * Colorization for each pixel
+	 * 
+	 * @param intensity
+	 * @param width
+	 * @param height
+	 */
 	public Colorization(double[][] intensity, int width, int height){
 		long start = System.currentTimeMillis();
         GetMaxMin maxMin = new GetMaxMin(intensity, width, height);

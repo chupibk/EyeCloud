@@ -6,6 +6,13 @@ public class GetMaxMin {
 
 	private double min, max;
 	
+	/**
+	 * Get max, min value of intensity
+	 * 
+	 * @param intensity
+	 * @param width
+	 * @param height
+	 */
 	public GetMaxMin(double[][] intensity, int width, int height){
 		min = max = Constants.UNKNOWN;
 		for (int i=0; i < width; i++){

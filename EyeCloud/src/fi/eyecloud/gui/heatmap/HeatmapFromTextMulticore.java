@@ -12,6 +12,12 @@ public class HeatmapFromTextMulticore {
 
 	private JPanel Screen = new JPanel();
 	
+	/**
+	 * Create heatmap fro multi core results
+	 * 
+	 * @param media
+	 * @param heatmap
+	 */
 	public HeatmapFromTextMulticore(String media, BufferedImage heatmap){
 		JFrame frame = new JFrame(StringLabel.HEATMAP_FRAME_TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

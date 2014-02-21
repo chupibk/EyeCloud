@@ -10,6 +10,9 @@ import fi.eyecloud.gui.lib.StringLabel;
 public class FixationFromText {
 	private JPanel Screen = new JPanel();
 	
+	/**
+	 * Draw fixations over stimulus for visulization
+	 */
 	public FixationFromText(){
 		JFrame frame = new JFrame(StringLabel.FIXATION_FRAME_TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

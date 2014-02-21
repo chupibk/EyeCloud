@@ -18,6 +18,9 @@ public class FixationPaint extends JPanel {
 	private Image inputMedia;
 	private Image scaledMedia;
 	
+	/**
+	 * Input is gaze points and stimulus images
+	 */
 	public FixationPaint(){
 		try {
 			inputMedia = ImageIO.read(new File("data/17JuneMedia.png"));
@@ -36,6 +39,11 @@ public class FixationPaint extends JPanel {
         this.drawPoint(g);
     }
     
+    /**
+     * Draw raw data
+     * 
+     * @param g
+     */
     public void drawPoint(Graphics g){
 		ReadTextFile data = new ReadTextFile("data/AjayaCMD.txt");
 		int preX, preY;
@@ -59,6 +67,11 @@ public class FixationPaint extends JPanel {
 		}
     }
     
+    /**
+     * Draw fixations
+     * 
+     * @param g
+     */
     public void drawFixation(Graphics g){
 		ReadTextFile data = new ReadTextFile("data/AjayaCMD.txt");
 		ReadTextFile offline = new ReadTextFile("data/AjayaCMDResult.txt");

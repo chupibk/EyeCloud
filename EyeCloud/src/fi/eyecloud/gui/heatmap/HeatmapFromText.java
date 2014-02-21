@@ -12,6 +12,12 @@ public class HeatmapFromText {
 
 	private JPanel Screen = new JPanel();
 	
+	/**
+	 * Draw heatmap visualization from text file
+	 * 
+	 * @param media
+	 * @param heatmap
+	 */
 	public HeatmapFromText(String media, BufferedImage heatmap){
 		JFrame frame = new JFrame(StringLabel.HEATMAP_FRAME_TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
