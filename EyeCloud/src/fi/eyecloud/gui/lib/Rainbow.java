@@ -3,6 +3,10 @@ package fi.eyecloud.gui.lib;
 public class Rainbow {
 	private int rgb[];
 	
+	/**
+	 * Generate Rainbow color
+	 * 
+	 */
 	public Rainbow(){
 		/*
 	    int width;

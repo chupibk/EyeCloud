@@ -23,11 +23,11 @@ public class GuiConstants {
 	// Do not change the below line
 	public final static int ERROR_USED			= ERROR/SCREEN_RATE;
 	
-	// Heatmap
+	// Heatmap color setting
 	public final static int ALPHA				= 150;
 	public final static int RAINBOW_SIZE		= 1000;
 	
-	// Gaussian
+	// Gaussian settings
 	/**
 	 * Sigma of Gaussian
 	 */

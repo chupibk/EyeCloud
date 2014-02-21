@@ -7,6 +7,10 @@ import com.esotericsoftware.kryo.io.Output;
 
 public class FObjectSerializer extends Serializer<FObject>{
 
+	/**
+	 * Using for sending
+	 * 
+	 */
 	@Override
 	public FObject read(Kryo arg0, Input arg1, Class<FObject> arg2) {
 		// TODO Auto-generated method stub

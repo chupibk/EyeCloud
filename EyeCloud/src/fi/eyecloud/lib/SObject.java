@@ -13,6 +13,15 @@ public class SObject {
 	
 	List<Integer> listX, listY, listTime, listDur;
 	List<Float> listVel, listDis, listAcc;
+	/**
+	 * Saccade Object
+	 * 
+	 * @param dur
+	 * @param r
+	 * @param dis
+	 * @param v
+	 * @param a
+	 */
 	
 	public SObject(int dur, int r, float dis, float v, float a){
 		duration = dur;

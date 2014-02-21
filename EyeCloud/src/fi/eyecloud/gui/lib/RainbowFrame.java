@@ -12,6 +12,10 @@ import javax.swing.JFrame;
 public class RainbowFrame extends JComponent {
   BufferedImage image;
 
+  /**
+   * Initialize for color list
+   * 
+   */
   public void initialize() {
     int width = getSize().width;
     int height = getSize().height;

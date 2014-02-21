@@ -15,6 +15,16 @@ public class IntensityMulticore implements Callable<double[][]> {
 	private int h;
 	private int d;
 
+	/**
+	 * Intensity from multicore results
+	 * 
+	 * @param m
+	 * @param c
+	 * @param w
+	 * @param h
+	 * @param g
+	 * @param d
+	 */
 	public IntensityMulticore(Map<String, Integer> m, List<String> c, int w, int h, double[][] g, int d) {
 		this.mapHeader = m;
 		this.childData = c;

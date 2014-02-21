@@ -10,6 +10,15 @@ public class FObject {
 	
 	int rawNumber;
 	
+	/**
+	 * Fixation object
+	 * 
+	 * @param x
+	 * @param y
+	 * @param t
+	 * @param d
+	 * @param k
+	 */
 	public FObject(int x, int y, int t, int d, int k){
 		rawNumber = 0;
 		keyPress = k;
