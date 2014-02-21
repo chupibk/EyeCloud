@@ -2,7 +2,7 @@ package fi.eyecloud.conf;
 
 public class Constants {
 	/**
-	 * Header setting
+	 * Header setting for input file. Change if they are different from your file.
 	 */
 	public final static String Timestamp 			= "RecordingTimestamp";
 	public final static String Number 				= "GazePointIndex";
@@ -29,13 +29,14 @@ public class Constants {
 	public final static String EventKey				= "EventKey";
 	public final static String Fixation				= "Fixation";
 	
+	// Don't change here
 	public static final String HEADER[] = {	Timestamp, Number, GazePointXLeft, GazePointYLeft, CamXLeft, CamYLeft, 
 											DistanceLeft, PupilLeft, ValidityLeft, GazePointXRight, GazePointYRight, 
 											CamXRight, CamYRight, DistanceRight, PupilRight, ValidityRight, GazePointX,
 											GazePointY, StimuliName, StimuliID, Duration, Delay, EventKey, Fixation};	
 	
 	/**
-	 * Screen setting
+	 * Screen setting of stimulus
 	 */
 	public static int RESOLUTION_WIDTH					= 1280; //1920
 	public static int RESOLUTION_HEIGHT					= 1024; //1080
@@ -43,14 +44,14 @@ public class Constants {
 	public static int SCREEN_HEIGHT					= 26;
 	
 	/**
-	 * Eye tracker setting
+	 * Eye tracker setting: sample rate
 	 */
 	public static int SAMPLE_RATE				= 50;
 	public static int THOUSAND					= 1000;
 	public static int TEN						= 10;
 	
 	/**
-	 * Text file setting
+	 * Text file setting: how to split a line
 	 */
 	public static final String SPLIT_MARK			= "\t";
 	public static int UNKNOWN						= -1;	
@@ -65,18 +66,18 @@ public class Constants {
 	public static int KIND_FIXATION					= 1;
 	
 	/**
-	 * Storm setting
+	 * Storm sending data setting: number of elements
 	 */
 	public static String PARAMETER_SPLIT			= ",";
 	public static int PARAMETER_NUMBER_FIXATION		= 7;
 	
 	/**
-	 * Heatmap 
+	 * Heatmap: number of elements for sending
 	 */
 	public static int PARAMETER_NUMBER_HEATMAP		= 3;
 	
 	/**
-	 * Classification
+	 * Classification settings: N-Fold, C, and Gamma constants
 	 */
 	public static int FIXATION_SEQUENCE_NUMBER		= 3;
 	public static int N_FOLD_CROSS_VALIDATION		= 5;
@@ -87,7 +88,7 @@ public class Constants {
 	public static int STEP							= 4;
 	
 	/**
-	 * Upload host
+	 * Upload host for uploadig gaze points
 	 */
 	public static String UPLOAD_HOST = "http://10.1.2.4/UploadHeatmapFromStorm";
 	public static String HOSTNAME = "10.1.2.4";

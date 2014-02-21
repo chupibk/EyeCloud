@@ -22,6 +22,12 @@ public class AccuracyRate {
 	private String onlineFile;
 	private String offlineFile;
 	
+	/**
+	 * Calculate accuracy rate of I-VT algorithm compared to offline mode (data is not divided)
+	 * 
+	 * @param online
+	 * @param offline
+	 */
 	public AccuracyRate(String online, String offline){
 		System.out.println(online);
 		AFN = 0;
@@ -37,6 +43,9 @@ public class AccuracyRate {
 		this.calMF();
 	}
 	
+	/**
+	 * Calculate Average Fixation Duration and Average Fixation Number
+	 */
 	public void calAFN_AFD(){
 		ReadTextFile online = new ReadTextFile(onlineFile);
 		while (online.readNextLine() != null){
@@ -51,6 +60,9 @@ public class AccuracyRate {
 		AFD = (float)totalDuration / AFN;
 	}
 	
+	/**
+	 * Calculate Matching fixation
+	 */
 	public void calMF(){
 		ReadTextFile online = new ReadTextFile(onlineFile);
 		ReadTextFile offline = new ReadTextFile(offlineFile);

@@ -21,10 +21,10 @@ public class I_VT {
 	BufferedWriter out;
 	
 	/**
-	 * I-VT algorithm
+	 * Standard alone of I-VT algorithm used for testing results
 	 * 
-	 * @param filePath: text file
-	 * @param VT: velocity threshold
+	 * @param filePath: input text file
+	 * @param output: output text file
 	 */
 	public I_VT(String filePath, String output) {
 		ReadTextFile data = new ReadTextFile(filePath);

@@ -9,6 +9,11 @@ import fi.eyecloud.input.ReadTextFile;
 
 public class ClientMerge {
 	
+	/**
+	 * Client Merge implementation. Fixations of online fixation detection is merged on the client side.
+	 * 
+	 * @param onlineFile
+	 */
 	public ClientMerge(String onlineFile){
 		ReadTextFile online = new ReadTextFile(onlineFile);
 		

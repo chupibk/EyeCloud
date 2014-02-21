@@ -1,5 +1,5 @@
 /**
- * 
+ * EyeCloud settings come here
  */
 /**
  * @author chung-pi

@@ -40,7 +40,7 @@ public class I_VT_KeyPress {
 	private SObject sObjectTmp = null;
 	
 	/**
-	 * I-VT algorithm
+	 * Standard version of I-VT algorithm used for classification training, output is used for training steps
 	 * 
 	 * @param filePath: text file
 	 * @param VT: velocity threshold
@@ -253,6 +253,14 @@ public class I_VT_KeyPress {
 		}		
 	}
 	
+	/**
+	 * Store fixation points
+	 * 
+	 * @param x
+	 * @param y
+	 * @param time
+	 * @param lineId
+	 */
 	public void storeFix(int x, int y, int time, int lineId){
 		if (count > 0 && duration > Constants.FIXATION_DURATION_THRESHOLD) {
 			try {
