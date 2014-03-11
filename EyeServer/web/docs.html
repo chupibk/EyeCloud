@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/page.css">
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <script src="js/lib/ajaxForm.js"></script> 
+        <title>Eye Cloud</title>
+    </head>
+    <body>
+        <div id="container">
+            <div id="header">
+                <div id="logo">
+                    EyeCloud
+                </div>
+                <div id="page_title">
+                    Cloud computing for Eye Tracking Analysis
+                </div>                
+                <div id="menu">
+                    <div class="item">
+                        <a href="index.html">Home</a>
+                    </div>
+                    <div class="item">
+                        <a href="docs.html">Documentation</a>
+                    </div>         
+                    <div class="item">
+                        <a href="http://cs.joensuu.fi/pages/int/">Contact</a>
+                    </div>                       
+                </div>
+            </div>
+
+            <div id='content'>
+                <div id="intro">
+                    <blockquote class="style1">
+                        <span>
+                            Eye tracking is known in usability and psychology studies and often used mainly in laboratories 
+                            for research related to human visual system, cognitive process, and human-computer interaction. 
+                            There has been no eye tracking technology that can be applied and used for smart devices, 
+                            such as remote controls and smart phones in everyday life. Google glass is a possible gadget 
+                            to be integrated with eye tracking cameras in the future, but it is still a long way to become 
+                            reality. The reason of such slow progress is that eye tracking is suffering from slow local 
+                            computation of huge data aggregation and analysis, for example, heavy computation of taking 
+                            eye images, calculating gaze points, storing data, detecting fixations and saccades, and 
+                            visualize data. They are preventing eye tracking analysis from online processing and 
+                            pervasive usage.
+                            <br/> <br/>
+                            Cloud computing and storage in which resources and computation tasks can be accessed, 
+                            controlled, and processed through the global Internet is becoming increasingly popular. 
+                            We propose a cloud computing solution to overcome slow computation and speed up analysis. 
+                            We name it as EyeCloud service. We are using Hadoop and Storm frameworks to build EyeCloud 
+                            and create following three applications.                  
+                        </span>
+                    </blockquote>
+                </div>
+                <div id="app1">
+                    <div class='apptitle'>
+                        Github repository
+                    </div>
+                    <ul>
+                        <li><a href="https://github.com/chupibk/EyeCloud/">https://github.com/chupibk/EyeCloud/</a></li>
+                        <li>EyeCloud directory for Storm source code</li>
+                        <li>EyeServer directory for Java servlet server source code</li>
+                    </ul>
+                </div>
+
+                <div class='app2'>
+                    <div class='apptitle'>
+                        War and Jar files, and Source code
+                    </div> 
+                    <ul>
+                        <li><a href="http://cs.uef.fi/~cdao/eyecloud/install/EyeCloud.jar">EyeCloud.jar</a></li>
+                        <li><a href="http://cs.uef.fi/~cdao/eyecloud/install/EyeServer.war">EyeServer.war</a></li>
+                        <li><a href="http://cs.uef.fi/~cdao/eyecloud/docs/EyeCloud.zip">All source code</a></li>
+                    </ul>
+                </div>
+
+                <div class='app2'>
+                    <div class='apptitle'>
+                        Documentation and Java Docs
+                    </div>   
+                    <ul>
+                        <li><a href="http://cs.uef.fi/~cdao/eyecloud/docs/user.pdf">User Manual</a></li>
+                        <li><a href="http://cs.uef.fi/~cdao/eyecloud/docs/developer.pdf">Developer Guide</a></li>
+                        <li><a href="http://cs.uef.fi/~cdao/eyecloud/docs/Storm_Java_Docs.zip">Java Docs: Storm</a></li>
+                        <li><a href="http://cs.uef.fi/~cdao/eyecloud/docs/Servlet_Java_Docs.zip">Java Docs: Servlet</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <div id='footer'>
+                Copyright &#169; 2013 <a href='http://cs.joensuu.fi/pages/int/'> Interactive Technologies Research Group, School of Computing, University of Eastern Finland</a>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="js/page.js"></script>
+    </body>
+</html>

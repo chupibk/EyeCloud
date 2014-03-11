@@ -1,10 +1,3 @@
-<%-- 
-    Document   : index
-    Created on : Jul 5, 2013, 3:43:36 PM
-    Author     : chung-pi
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -27,13 +20,13 @@
                 </div>                
                 <div id="menu">
                     <div class="item">
-                        Home
+                        <a href="index.html">Home</a>
                     </div>
                     <div class="item">
-                        Documentation
+                        <a href="docs.html">Documentation</a>
                     </div>         
                     <div class="item">
-                        Contact
+                        <a href="http://cs.joensuu.fi/pages/int/">Contact</a>
                     </div>                       
                 </div>
             </div>
@@ -42,42 +35,45 @@
                 <div id="intro">
                     <blockquote class="style1">
                         <span>
-                            Recently, eye tracking has been receiving more attention, especially debuting of <a href='http://www.google.com/glass/start/'>Google glass</a> - a
-                            wearable device showing that eye tracking technology is coming to use in real life. Traditionally, eye
-                            tracking is known as psychology study and used in laboratory for researches related to people’s visual
-                            system and cognitive process. It is time for eye tracking technology to escape from laboratory
-                            environment and applied widely in the wild. However, eye tracking is suffering from slow local
-                            computation and huge eye data collected and analyzed that are preventing it from online processing. 
-                            Cloud computing and storage that means everything can be accessed, controlled, and processed via the global
-                            Internet is becoming increasingly popular. Many research fields such as video, image, and speech
-                            processing as well as machine learning and human-robot interaction are testing its feasibility and
-                            benefiting from cloud solutions. Eye tracking is not an exception to follow that mainstream. We
-                            propose the cloud computing solution to break out slow computation and speed up analysis. We name
-                            it as EyeCloud service.
-                            <br/><br/>
-                            The main purpose of EyeCloud is step by step to apply cloud computing to eye tracking research
-                            firstly and gradually to real life usage. First of all, EyeCloud helps tasks running slowly in local
-                            computing be processed faster in cloud environment. Secondly, EyeCloud plays a role as platform in
-                            which real-time eye tracking applications can be deployed.
-                            We base on <a href="http://hadoop.apache.org/">Hadoop</a> framework to build EyeCloud and applications developed 
-                            with <a href="http://storm-project.net/">Storm</a> and
-                            MapReduce models can run on EyeCloud. Beneath are 3 applications deployed successfully on EyeCloud.
+                            Eye tracking is known in usability and psychology studies and often used mainly in laboratories 
+                            for research related to human visual system, cognitive process, and human-computer interaction. 
+                            There has been no eye tracking technology that can be applied and used for smart devices, 
+                            such as remote controls and smart phones in everyday life. Google glass is a possible gadget 
+                            to be integrated with eye tracking cameras in the future, but it is still a long way to become 
+                            reality. The reason of such slow progress is that eye tracking is suffering from slow local 
+                            computation of huge data aggregation and analysis, for example, heavy computation of taking 
+                            eye images, calculating gaze points, storing data, detecting fixations and saccades, and 
+                            visualize data. They are preventing eye tracking analysis from online processing and 
+                            pervasive usage.
+                            <br/> <br/>
+                            Cloud computing and storage in which resources and computation tasks can be accessed, 
+                            controlled, and processed through the global Internet is becoming increasingly popular. 
+                            We propose a cloud computing solution to overcome slow computation and speed up analysis. 
+                            We name it as EyeCloud service. We are using Hadoop and Storm frameworks to build EyeCloud 
+                            and create following three applications.                  
                         </span>
                     </blockquote>
                 </div>
                 <div id="app1">
                     <div class='apptitle'>
-                        Multi-source gaze visualization with real-time heatmap
+                        Real-time heatmap rendering
                     </div>
                     <iframe src="//www.youtube.com/embed/Sxd6rMHAfiE" frameborder="0" allowfullscreen></iframe>
                     <div class="description">
                         <blockquote class="style2">
                             <span>
-                                "Based on a problem of how to aggregate and visualize gaze data from many sources of eye trackers which
-                                many scenarios might require such as in re mote conference, when we want to know participants’ point of
-                                interests in a slide show or when we want to summarize gaze data from million viewers of a website. 
-                                Multi-source gaze visualization is absolutely relevant for those cases. This application provides two kinds
-                                of experiment: one for static stimulus like a web page or slide and one used for dynamic stimulus like video."
+                                "This application helps connect to local eye trackers, 
+                                upload data from them to EyeCloud. On the cloud server, gaze points are aggregated to 
+                                calculate heatmap intensity for each pixel of heatmap images based on Gaussian topological 
+                                function. Heatmap computation is distributed on the cloud server including a master and 
+                                a number of slaves. Heatmap images are returned to a client in real-time.
+                                <br/>
+                                Based on a problem of how to aggregate and visualize gaze data from multiple 
+                                eye trackers that many scenarios might require. In remote conference, for example, when 
+                                we want to know participants’ point of interests in a slide show or when we want to 
+                                summarize gaze data from viewers of a website. Real-time heatmap rendering is 
+                                relevant for those cases. This application supports experiments with: static stimuli 
+                                and dynamic stimuli."
                             </span>
                         </blockquote>
                     </div>
@@ -228,14 +224,18 @@
 
                 <div class='app2'>
                     <div class='apptitle'>
-                        Fixation computation
+                        Fixation detection
                     </div>   
                     <div class="description2">
                         <blockquote class="style2">
                             <span>
-                                "Fixation is the most important classification of eye tracking analysis and fast fixation
-                                detection improves analysis efficiency. We implemented I-VT algorithm on EyeCloud and it shows
-                                fast detection, but slow uploading gaze data to EyeCloud is a problem."
+                                "This application provides fixation detection service in which users can upload raw gaze 
+                                data and receive returned fixations. Fixation is the most important classification of 
+                                eye tracking analysis and fast fixation detection improves analysis efficiency. 
+                                We implemented I-VT algorithm on EyeCloud and it shows fast detection. However, 
+                                the step of uploading gaze data to EyeCloud is a bottleneck because it depends 
+                                on network connection speed. If the uploaded text file has a big size, the time 
+                                for uploading data might be longer than detection time."
                             </span>
                         </blockquote>
                     </div>
@@ -344,10 +344,16 @@
                     <div class="description2">
                         <blockquote class="style2">
                             <span>
-                                "Heatmap is a useful visualization tool that gives us which parts of a stimulus that are paid attention much
-                                or many viewers were looking at. Normally, heatmap rendering with Gaussian point spread function runs slowly
-                                on a local PC. EyeCloud can speed up such rendering by distributed computing on a cloud cluster. 10~20 times faster
-                                than local PCs can be feasible."
+                                "This application provides heatmap offline rendering: upload text data and get returned 
+                                heatmap images. It is different from the real-time heatmap rendering application 
+                                that aggregates data and renders heatmap. In this application, users upload their 
+                                text file containing gaze points.
+                                <br/>
+                                Heatmap is an eye tracking visualization tool that gains insighs into what observers 
+                                were looking at and how the stimulus is perceived. Heatmap rendering with Gaussian 
+                                point spread function runs slowly on a local PC. EyeCloud can speed up rendering by 
+                                distributed computing on a cloud cluster. EyeCloud decreases running time10~20 times 
+                                faster than local PCs."
                             </span>
                         </blockquote>
                     </div>
@@ -444,7 +450,7 @@
 
             </div>
             <div id='footer'>
-                Copyright © 2013 <a href='http://cs.joensuu.fi/pages/int/'> Interactive Technologies Research Group, School of Computing, University of Eastern Finland</a>
+                Copyright &#169; 2013 <a href='http://cs.joensuu.fi/pages/int/'> Interactive Technologies Research Group, School of Computing, University of Eastern Finland</a>
             </div>
         </div>
 

@@ -248,7 +248,7 @@ public class YoutubeRendering {
 	
 	public static LinearDRPCTopologyBuilder construct(int numberProcess,int numberAggregator, int numberReturn) {
 		LinearDRPCTopologyBuilder builder = new LinearDRPCTopologyBuilder(
-				"website_rendering");
+				"youtube_rendering");
 		builder.addBolt(new ProcessData(), numberProcess);
 		builder.addBolt(new AggregatorData(), numberAggregator).fieldsGrouping(new Fields("timeid"));
 		builder.addBolt(new ReturnData(), numberReturn).shuffleGrouping();

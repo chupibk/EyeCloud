@@ -279,7 +279,7 @@ function sendToServer() {
     $.ajax({
         dataType: 'jsonp',
         data: sendData,
-        url: "DRPC",
+        url: "DRPCVideo",
         success: function(result) {
             $("#send_status").html(result);
             console.log("Ok sending: " + result);
