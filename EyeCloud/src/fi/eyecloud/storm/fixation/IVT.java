@@ -47,17 +47,17 @@ public class IVT {
         	
         	Object id = tuple.getValue(0);
         	String data[] = tuple.getString(1).split(Constants.PARAMETER_SPLIT);
-        	int length = data.length/Constants.PARAMETER_NUMBER_FIXATION;
+        	int length = data.length/Constants.PARAMETER_NUMBER_FIXATION_IVT;
         	int x1,y1,time1,x2,y2,time2;
         	float dis1, dis2;
         	x1 = y1 = time1 = 0;
         	dis1 = 0;
         	
         	for (int i=0; i < length; i++){
-        		x2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION]);
-        		y2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 1]);
-        		time2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION + 2]);
-        		dis2 = Float.parseFloat(data[i*Constants.PARAMETER_NUMBER_FIXATION + 3]);
+        		x2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION_IVT]);
+        		y2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION_IVT + 1]);
+        		time2 = Integer.parseInt(data[i*Constants.PARAMETER_NUMBER_FIXATION_IVT + 2]);
+        		dis2 = Float.parseFloat(data[i*Constants.PARAMETER_NUMBER_FIXATION_IVT + 3]);
         		
         		if (i == 0){
         			x1 = x2;

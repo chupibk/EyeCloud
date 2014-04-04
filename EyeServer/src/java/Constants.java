@@ -11,7 +11,7 @@ public class Constants {
     /**
      * Host name
      */
-    public final static String HOSTNAME = "192.168.40.9";
+    public final static String HOSTNAME = "localhost";
     //public final static String  HOSTNAME = "ec2-54-229-95-189.eu-west-1.compute.amazonaws.com";
     public final static int     PORT        = 3772;
     

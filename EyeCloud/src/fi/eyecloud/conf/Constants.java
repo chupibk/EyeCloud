@@ -70,6 +70,7 @@ public class Constants {
 	 */
 	public static String PARAMETER_SPLIT			= ",";
 	public static int PARAMETER_NUMBER_FIXATION		= 7;
+	public static int PARAMETER_NUMBER_FIXATION_IVT		= 4;
 	
 	/**
 	 * Heatmap: number of elements for sending
@@ -90,8 +91,8 @@ public class Constants {
 	/**
 	 * Upload host for uploadig gaze points
 	 */
-	public static String UPLOAD_HOST = "http://10.1.2.4/UploadHeatmapFromStorm";
-	public static String HOSTNAME = "10.1.2.4";
+	public static String UPLOAD_HOST = "http://master/UploadHeatmapFromStorm";
+	public static String HOSTNAME = "master";
 }
 
 
